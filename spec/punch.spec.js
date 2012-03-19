@@ -108,7 +108,27 @@ describe("traversing templates", function() {
 
   });
 
-  it("calls to handle static files for other files", function() {
+  it("skips partial templates from rendering", function(){
+    var config = {"template_dir": "templates"}; 
+
+    spyOn(fs, 'readdir').andCallFake(function(path, callback){
+      if(fs.readdir.mostRecentCall.args[0] === "templates"){
+        callback(null, ["_test.html.mustache"]); 
+      } else {
+        callback("Not a directory", null); 
+      }
+    });
+
+    spyOn(punch, "fetchAndRender");
+
+    punch.traverseTemplates(config);
+
+    expect(punch.fetchAndRender).not.toHaveBeenCalled();
+
+
+  });
+
+  it("calls to handle static files", function() {
     var config = {"template_dir": "templates", "output_dir": "public"}; 
 
     spyOn(fs, 'readdir').andCallFake(function(path, callback){
@@ -180,6 +200,7 @@ describe("rendering content", function(){
     spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(punch, "fetchTemplate"); 
     spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchPartials"); 
 
     punch.fetchAndRender("templates/sub/simple.mustache", config);
 
@@ -193,6 +214,7 @@ describe("rendering content", function(){
     spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(punch, "fetchTemplate"); 
     spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchPartials"); 
 
     punch.fetchAndRender("templates/sub/simple.mustache", config);
 
@@ -206,15 +228,30 @@ describe("rendering content", function(){
     spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(punch, "fetchTemplate"); 
     spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchPartials"); 
 
     punch.fetchAndRender("templates/sub/simple.mustache", config);
 
     expect(punch.fetchContent.mostRecentCall.args[0]).toEqual("contents/sub/simple");
   });
 
+  it("fetches partials for the template", function(){
+    var config = {"template_dir": "templates"};
+
+    spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
+    spyOn(punch, "fetchTemplate"); 
+    spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchPartials"); 
+
+    punch.fetchAndRender("templates/sub/simple.mustache", config);
+
+    expect(punch.fetchPartials.mostRecentCall.args[0]).toEqual("templates/sub");
+
+  });
+
   it("saves the output after render", function(){
 
-    var config = {"output_dir": "public", "output_extension": "html"};
+    var config = {"output_dir": "public", "output_extension": ".html"};
 
     var fake_renderer = {
       afterRender: null    
@@ -226,6 +263,7 @@ describe("rendering content", function(){
 
     spyOn(punch, "fetchTemplate"); 
     spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchPartials"); 
 
     spyOn(fs, "stat").andCallFake(function(path, callback){
       var fake_stats = {isDirectory: function(){ return true; }};  
@@ -254,6 +292,7 @@ describe("rendering content", function(){
 
     spyOn(punch, "fetchTemplate"); 
     spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchPartials"); 
 
     spyOn(fs, "stat").andCallFake(function(path, callback){
       var fake_stats = {isDirectory: function(){ return true; }};  
@@ -272,7 +311,124 @@ describe("rendering content", function(){
 
 });
 
-describe("fetch templates", function(){
+describe("fetching partials", function(){
+
+  it("fetches partials from ancestors", function(){
+    spyOn(punch, "fetchPartialsWithCache"); 
+
+    punch.fetchPartials("templates/sub/sub2", function(){ });
+
+    expect(punch.fetchPartialsWithCache.callCount).toEqual(3);
+  }); 
+
+  it("invokes the callback with collected partials", function(){
+    var output = null; 
+
+    spyOn(punch, "fetchPartialsWithCache").andCallFake(function(path, callback){
+      var key = path.split("/").pop();
+      var output = {};
+      output[key] = "bar"
+      callback(output); 
+    });
+
+    punch.fetchPartials("templates/sub/sub2", function(partials){
+      output = partials
+    });
+
+    waits(100);
+
+    runs(function(){
+      expect(output).toEqual({"templates": "bar", "sub": "bar", "sub2": "bar"}); 
+    });
+  });
+
+});
+
+describe("fetching partials with cache", function(){
+
+  it("if a partial is already fetched it's served from the cache", function(){
+    var partials = {"_test": "partial"};
+    punch.partials["templates/sub/sub1"] = partials;
+
+    spyOn(punch, "fetchPartialsInDir");
+
+    punch.fetchPartialsWithCache("templates/sub/sub1", function(){ }); 
+
+    expect(punch.fetchPartialsInDir).not.toHaveBeenCalled();
+
+  }); 
+
+  it("caches fetched partials", function(){
+
+    var partials = {"_test": "partial"};
+
+    spyOn(punch, "fetchPartialsInDir").andCallFake(function(path, callback){
+      callback(partials); 
+    })
+
+    punch.fetchPartialsWithCache("templates/sub/sub1", function(){ }); 
+
+    expect(punch.partials["templates/sub/sub1"]).toEqual(partials);
+  });
+});
+
+describe("fetching partials from the directory", function(){
+
+  it("returns an empty object if there's an error in reading path", function(){
+    var output = null;
+
+    spyOn(fs, "readdir").andCallFake(function(path, callback){
+      callback("error", null); 
+    }); 
+
+    punch.fetchPartialsInDir("templates/sub", function(partials){
+      output = partials; 
+    });
+
+    expect(output).toEqual({});
+  });
+
+  it("fetches the template for each partial available in path", function(){
+
+    spyOn(fs, "readdir").andCallFake(function(path, callback){
+      callback(null, ["test.mustache", "_test.html", "_test.mustache", "_foo.mustache"]); 
+    });
+     
+    spyOn(punch, "fetchTemplate"); 
+
+    punch.fetchPartialsInDir("templates/sub", function(){ });
+
+    expect(punch.fetchTemplate.callCount).toEqual(2);
+  });
+
+  it("invokes the callback with partials", function(){
+
+    var output = null;
+
+    spyOn(fs, "readdir").andCallFake(function(path, callback){
+      callback(null, ["test.mustache", "_test.html", "_test.mustache", "_foo.mustache"]); 
+    });
+     
+    spyOn(punch, "fetchTemplate").andCallFake(function(path, callback){
+      callback("sample");  
+    }); 
+
+    punch.fetchPartialsInDir("templates/sub", function(partials){ 
+      output = partials 
+    });
+
+    waits(100);
+
+    runs(function(){
+      expect(output).toEqual({ "test": "sample", "foo": "sample" });
+    });
+  });
+
+
+
+});
+
+describe("fetching templates", function(){
 
   it("fetches the template from path", function(){
 
@@ -328,7 +484,7 @@ describe("fetch templates", function(){
 
 });
 
-describe("fetch content", function(){
+describe("fetching content", function(){
 
   it("fetches shared content", function(){
  
