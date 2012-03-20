@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+var fs = require("fs");
+var punch = require("./lib/punch.js");
+
+var args = process.argv.slice(2);
+var config_file = args[0] || "config.json";
+
+fs.readFile(config_file, function(err, data){
+
+  // if there's an error we assume the config doesn't exist.
+  if(err){
+    var supplied_config = {}; 
+  } else {
+    var supplied_config = JSON.parse(data);  
+  } 
+
+  // call generate with loaded config
+  punch.generate(supplied_config);
+
+});
