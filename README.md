@@ -8,13 +8,22 @@ Installation
 
 * Download and Install Node.js.
  
-  http://nodejs.org/#download 
+    http://nodejs.org/#download 
 
 * Install `npm`
 
-  curl http://npmjs.org/install.sh | sh
+    curl http://npmjs.org/install.sh | sh
 
 * Then run `npm intall punch`
+
+Usage
+-----
+
+Go inside your site's directory and then run `punch` to generate the output. 
+
+If you got a `config.json` file inside the site's directory its configurations will be used to generate  the site. Alternatively, you can provide a path to custom configuration file when running punch (eg. `punch path/to/config`) 
+
+If no configuration found, `punch` will use the default configurations. According to default configurations, you expect to have `templates` and `contents` directories and output will be written to `public` directory.
 
 Sample
 ------
