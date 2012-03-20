@@ -263,15 +263,13 @@ describe("rendering content", function(){
       callback("directory doesn't exist", null);
     });
     spyOn(fs, "writeFile");
-    spyOn(fs, "mkdir").andCallFake(function(path, callback){
-      callback(null); 
-    });
+    spyOn(fs, "mkdirSync");
 
     punch.fetchAndRender("templates/sub/simple.mustache", config);
 
     fake_renderer.afterRender("sample output");
 
-    expect(fs.mkdir.callCount).toEqual(2);
+    expect(fs.mkdirSync.callCount).toEqual(2);
     
   });
 

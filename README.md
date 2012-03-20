@@ -12,7 +12,7 @@ Installation
 
 * Install `npm`
 
-    curl http://npmjs.org/install.sh | sh
+    `curl http://npmjs.org/install.sh | sh`
 
 * Then run `npm intall punch`
 
