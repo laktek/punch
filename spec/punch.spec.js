@@ -19,17 +19,17 @@ describe("registering a parser", function(){
 });
 
 describe("returning an instance of renderer", function(){
-  var fake_obj = jasmine.createSpy();
-  punch.registeredRenderers["sample"] = fake_obj;
+  var fake_renderer = jasmine.createSpy();
+  punch.registeredRenderers["sample"] = fake_renderer;
 
-  expect(punch.rendererFor("sample") instanceof fake_obj).toBeTruthy();
+  expect(punch.rendererFor("sample") instanceof fake_renderer).toBeTruthy();
 });
 
 describe("returning an instance of parser", function(){
-  var fake_obj = jasmine.createSpy();
-  punch.registeredParsers["sample"] = fake_obj;
+  var fake_parser = jasmine.createSpy();
+  punch.registeredParsers["sample"] = fake_parser;
 
-  expect(punch.parserFor("sample") instanceof fake_obj).toBeTruthy();
+  expect(punch.parserFor("sample") instanceof fake_parser).toBeTruthy();
 });
 
 describe("traversing templates", function() {
