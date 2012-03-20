@@ -18,6 +18,20 @@ describe("registering a parser", function(){
   });
 });
 
+describe("returning an instance of renderer", function(){
+  var fake_obj = jasmine.createSpy();
+  punch.registeredRenderers["sample"] = fake_obj;
+
+  expect(punch.rendererFor("sample") instanceof fake_obj).toBeTruthy();
+});
+
+describe("returning an instance of parser", function(){
+  var fake_obj = jasmine.createSpy();
+  punch.registeredParsers["sample"] = fake_obj;
+
+  expect(punch.parserFor("sample") instanceof fake_obj).toBeTruthy();
+});
+
 describe("traversing templates", function() {
 
   it("traverses recursively", function(){
