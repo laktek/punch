@@ -1,7 +1,7 @@
 # Punch 
-### Generate static sites with mustache templates & json
+### Generate static sites with Mustache templates & JSON
 
-I'll update the README soon with more elaborative details and examples.
+NOTE: I will update the README with more elaborative details and examples.
 
 Installation
 ------------
@@ -15,6 +15,11 @@ Installation
   curl http://npmjs.org/install.sh | sh
 
 * Then run `npm intall punch`
+
+Sample
+------
+
+Checkout the sample available at `/sample` to understand the directory structure and configurations.
 
 Conventions
 -----------
