@@ -2,56 +2,6 @@ var util = require("util");
 var fs = require("fs");
 var punch = require("../lib/punch.js");
 
-describe("loading config", function() {
-
-  it("overrides default config", function() {
-    var configUpdated = false;
-    var extension = "";
-    var default_config = {"extension": "shtml"}; 
-
-    spyOn(fs, 'readFile').andCallFake(function(file, callback){
-      callback(null, new Buffer(JSON.stringify({"extension": "html"}))); 
-    });
-
-    punch.extendConfig(default_config, function(config){
-      extension = config.extension;
-      configUpdated = true; 
-    });
-
-    waitsFor(function() {
-      return configUpdated;
-    }, "config didn't update", 10000);
-
-    runs(function () {
-      expect(extension).toEqual("html");
-    });
-  });
-
-  it("returns default config for an unspecified value", function() {
-    var configUpdated = false;
-    var foo = "";
-    var default_config = {"foo": "bar"}
-
-    spyOn(fs, 'readFile').andCallFake(function(file, callback){
-      callback("File doesn't exist", null); 
-    });
-
-    punch.extendConfig(default_config, function(config){
-      foo = config.foo;
-      configUpdated = true; 
-    });
-
-    waitsFor(function() {
-      return configUpdated;
-    }, "config didn't update", 10000);
-
-    runs(function () {
-      expect(foo).toEqual("bar");
-    });
-  });
-
-});
-
 describe("registering a renderer", function(){
   it("adds the renderer to registered renderers", function(){
     punch.registerRenderer("sample", "../spec/sample_renderer"); 
@@ -275,12 +225,12 @@ describe("rendering content", function(){
 
     fake_renderer.afterRender("sample output");
 
-    expect(fs.writeFile).toHaveBeenCalledWith("public/sub/simple.html", "sample output");
+    expect(fs.writeFile.mostRecentCall.args.slice(0, 2)).toEqual(["public/sub/simple.html", "sample output"]);
   });
 
   it("creates the output directory if it doesn't exist", function(){
  
-    var config = {"output_dir": "public", "output_extension": "html"};
+    var config = {"output_dir": "public", "output_extension": ".html"};
 
     var fake_renderer = {
       afterRender: null    
@@ -295,17 +245,19 @@ describe("rendering content", function(){
     spyOn(punch, "fetchPartials"); 
 
     spyOn(fs, "stat").andCallFake(function(path, callback){
-      var fake_stats = {isDirectory: function(){ return true; }};  
+      var fake_stats = {isDirectory: function(){ return false; }};  
       callback("directory doesn't exist", null);
     });
     spyOn(fs, "writeFile");
-    spyOn(fs, "mkdirSync");
+    spyOn(fs, "mkdir").andCallFake(function(path, callback){
+      callback(null); 
+    });
 
     punch.fetchAndRender("templates/sub/simple.mustache", config);
 
     fake_renderer.afterRender("sample output");
 
-    expect(fs.mkdirSync).toHaveBeenCalledWith("public");
+    expect(fs.mkdir.callCount).toEqual(2);
     
   });
 
@@ -358,9 +310,25 @@ describe("fetching partials with cache", function(){
 
   }); 
 
+  it("joins the queue if a partial is currently being fetched", function(){
+
+    var callback_func = function(){};
+
+    punch.partials = {};
+    punch.callbacksForPartial = { "templates/sub/sub1": [ function(){} ] };
+
+    punch.fetchPartialsWithCache("templates/sub/sub1", callback_func); 
+
+    expect(punch.callbacksForPartial["templates/sub/sub1"][1]).toEqual(callback_func);
+
+  });
+
   it("caches fetched partials", function(){
 
     var partials = {"_test": "partial"};
+
+    punch.partials = {};
+    punch.callbacksForPartial = {};
 
     spyOn(punch, "fetchPartialsInDir").andCallFake(function(path, callback){
       callback(partials); 
@@ -369,6 +337,29 @@ describe("fetching partials with cache", function(){
     punch.fetchPartialsWithCache("templates/sub/sub1", function(){ }); 
 
     expect(punch.partials["templates/sub/sub1"]).toEqual(partials);
+  });
+
+  it("invokes pending callbacks after the partials are fetched", function(){
+    var output = [];
+
+    punch.partials = {};
+    punch.callbacksForPartial = {};
+
+    spyOn(punch, "fetchPartialsInDir").andCallFake(function(path, callback){
+      setTimeout(function () {
+        callback({}); 
+      }, 200);
+    });
+    
+    punch.fetchPartialsWithCache("templates/sub/sub1", function(){ output.push("first"); }); 
+    punch.fetchPartialsWithCache("templates/sub/sub1", function(){ output.push("second"); }); 
+
+    waits(200);
+
+    runs(function(){
+      expect(output).toEqual(["first", "second"]); 
+    });
+
   });
 });
 
@@ -379,6 +370,20 @@ describe("fetching partials from the directory", function(){
 
     spyOn(fs, "readdir").andCallFake(function(path, callback){
       callback("error", null); 
+    }); 
+
+    punch.fetchPartialsInDir("templates/sub", function(partials){
+      output = partials; 
+    });
+
+    expect(output).toEqual({});
+  });
+
+  it("returns an empty object if there's no partials in the path", function(){
+    var output = null;
+
+    spyOn(fs, "readdir").andCallFake(function(path, callback){
+      callback(null, ["index.mustache"]); 
     }); 
 
     punch.fetchPartialsInDir("templates/sub", function(partials){
@@ -410,7 +415,7 @@ describe("fetching partials from the directory", function(){
     });
      
     spyOn(punch, "fetchTemplate").andCallFake(function(path, callback){
-      callback("sample");  
+      callback(null, "sample");  
     }); 
 
     punch.fetchPartialsInDir("templates/sub", function(partials){ 
@@ -423,8 +428,6 @@ describe("fetching partials from the directory", function(){
       expect(output).toEqual({ "test": "sample", "foo": "sample" });
     });
   });
-
-
 
 });
 
