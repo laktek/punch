@@ -1,5 +1,5 @@
 # Punch 
-### Easy way to generate static sites with Mustache templates & JSON
+### An easy way to generate static sites with Mustache templates & JSON
 
 NOTE: I will update the README with more elaborative details and examples.
 
