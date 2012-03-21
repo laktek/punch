@@ -649,7 +649,7 @@ describe("fetch content from a directory", function(){
     var output = null;
  
     spyOn(fs, 'readdir').andCallFake(function(path, callback){
-      callback(null, ["test.mustache"]); 
+      callback(null, ["test.markdown"]); 
     });
 
     spyOn(fs, 'readFile').andCallFake(function(path, callback){
@@ -670,6 +670,21 @@ describe("fetch content from a directory", function(){
       expect(output).toEqual({"test": "sample content"});
     });
  
+
+  });
+
+  it("ignores hidden files", function(){
+    var output = null;
+ 
+    spyOn(fs, 'readdir').andCallFake(function(path, callback){
+      callback(null, ["test.markdown", ".hidden"]); 
+    });
+
+    spyOn(fs, 'readFile');
+
+    punch.fetchContentFromDir("contents/simple", function(){});
+
+    expect(fs.readFile.callCount).toEqual(1);
 
   });
 
