@@ -106,7 +106,6 @@ describe("calling render", function(){
     mustache_instance.content = {};
     mustache_instance.template = "sample template";
 
-    var callback = jasmine.createSpy();
     var output = mustache_instance.render();
 
     expect(output).toEqual("sample template"); 
