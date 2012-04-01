@@ -45,11 +45,32 @@ describe("traversing templates", function() {
       }
     });
 
+    spyOn(fs, 'mkdirSync');
     spyOn(punch, "fetchAndRender");
 
-    punch.traverseTemplates(config, punch.contentRenderer, function(){ });
+    punch.traverseTemplates(config);
 
     expect(punch.fetchAndRender).toHaveBeenCalledWith("templates/sub_dir/sub.mustache", config);
+
+  });
+
+  it("creates sub-directories in the output path", function(){
+    var config = {"template_dir": "templates", "output_dir": "public"}; 
+
+    spyOn(fs, 'mkdirSync');
+    spyOn(punch, "fetchAndRender");
+
+    spyOn(fs, 'readdir').andCallFake(function(path, callback){
+      if(fs.readdir.mostRecentCall.args[0] === "templates"){
+        callback(null, ["index.mustache", "sub_dir"]); 
+      } else {
+        callback(null, ["sub.mustache"]); 
+      }
+    });
+
+    punch.traverseTemplates(config);
+
+    expect(fs.mkdirSync).toHaveBeenCalledWith("public/sub_dir");
 
   });
 
@@ -64,6 +85,7 @@ describe("traversing templates", function() {
       }
     });
 
+    spyOn(fs, 'mkdirSync');
     spyOn(punch, "fetchAndRender");
 
     punch.traverseTemplates(config);
@@ -83,6 +105,7 @@ describe("traversing templates", function() {
       }
     });
 
+    spyOn(fs, 'mkdirSync');
     spyOn(punch, "fetchAndRender");
 
     punch.traverseTemplates(config);
@@ -92,17 +115,18 @@ describe("traversing templates", function() {
 
   });
 
-  it("calls to handle static files", function() {
+  it("handle other file types as static files", function() {
     var config = {"template_dir": "templates", "output_dir": "public"}; 
 
     spyOn(fs, 'readdir').andCallFake(function(path, callback){
       if(fs.readdir.mostRecentCall.args[0] === "templates"){
         callback(null, ["index.html"]); 
       } else {
-        callback("Not a directory", null); 
+        callback({errno: 27, code: 'ENOTDIR'}, null); 
       }
     });
 
+    spyOn(fs, 'mkdirSync');
     spyOn(punch, "staticFileHandler");
 
     punch.traverseTemplates(config);
@@ -110,6 +134,7 @@ describe("traversing templates", function() {
     expect(punch.staticFileHandler).toHaveBeenCalledWith("templates/index.html", config);
 
   });
+
 
 });
 
@@ -158,7 +183,7 @@ describe("handling static files", function(){
 
 describe("rendering content", function(){
 
-  it("instantiatesa new renderer", function(){
+  it("instantiates a new renderer", function(){
     var config = {};
 
     spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
@@ -240,37 +265,6 @@ describe("rendering content", function(){
     fake_renderer.afterRender("sample output");
 
     expect(fs.writeFile.mostRecentCall.args.slice(0, 2)).toEqual(["public/sub/simple.html", "sample output"]);
-  });
-
-  it("creates the output directory if it doesn't exist", function(){
- 
-    var config = {"output_dir": "public", "output_extension": ".html"};
-
-    var fake_renderer = {
-      afterRender: null    
-    };
-
-    spyOn(punch, "rendererFor").andCallFake(function(){
-      return fake_renderer;
-    });  
-
-    spyOn(punch, "fetchTemplate"); 
-    spyOn(punch, "fetchContent"); 
-    spyOn(punch, "fetchPartials"); 
-
-    spyOn(fs, "stat").andCallFake(function(path, callback){
-      var fake_stats = {isDirectory: function(){ return false; }};  
-      callback("directory doesn't exist", null);
-    });
-    spyOn(fs, "writeFile");
-    spyOn(fs, "mkdirSync");
-
-    punch.fetchAndRender("templates/sub/simple.mustache", config);
-
-    fake_renderer.afterRender("sample output");
-
-    expect(fs.mkdirSync.callCount).toEqual(2);
-    
   });
 
 });
