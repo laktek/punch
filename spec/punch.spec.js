@@ -32,6 +32,57 @@ describe("returning an instance of parser", function(){
   expect(punch.parserFor("sample") instanceof fake_parser).toBeTruthy();
 });
 
+describe("prepare output directory", function(){
+
+  it("creates the output directory if it doesn't exist", function(){
+    var config = {"template_dir": "templates"}; 
+
+    spyOn(fs, 'stat').andCallFake(function(path, callback){
+      callback(null, {isDirectory: function(){ return false }} );
+    });
+
+    spyOn(punch, "traverseTemplates");
+    spyOn(fs, "mkdirSync");
+
+    punch.prepareOutputDirectory(config);
+
+    expect(fs.mkdirSync).toHaveBeenCalled();
+  
+  });
+
+  it("will not create the output directory if it exists", function(){
+    var config = {"template_dir": "templates"}; 
+
+    spyOn(fs, 'stat').andCallFake(function(path, callback){
+      callback(null, {isDirectory: function(){ return true }} );
+    });
+
+    spyOn(punch, "traverseTemplates");
+    spyOn(fs, "mkdirSync");
+
+    punch.prepareOutputDirectory(config);
+
+    expect(fs.mkdirSync).not.toHaveBeenCalled();
+
+  });
+
+  it("it calls to traverse templates", function(){
+    var config = {"template_dir": "templates"}; 
+
+    spyOn(fs, 'stat').andCallFake(function(path, callback){
+      callback(null, {isDirectory: function(){ return true }} );
+    });
+
+    spyOn(punch, "traverseTemplates");
+
+    punch.prepareOutputDirectory(config);
+
+    expect(punch.traverseTemplates).toHaveBeenCalledWith(config);
+
+  });
+
+});
+
 describe("traversing templates", function() {
 
   it("traverses recursively", function(){
