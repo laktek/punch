@@ -95,11 +95,8 @@ describe("traversing templates", function() {
         callback(null, ["sub.mustache"]); 
       }
     });
-    
-    spyOn(fs, 'stat').andCallFake(function(path, callback){
-      callback(null, {isDirectory: function(){ return true }} );
-    });
 
+    spyOn(fs, 'mkdirSync');
     spyOn(punch, "fetchAndRender");
 
     punch.traverseTemplates(config);
@@ -110,10 +107,6 @@ describe("traversing templates", function() {
 
   it("creates sub-directories in the output path", function(){
     var config = {"template_dir": "templates", "output_dir": "public"}; 
-
-    spyOn(fs, 'stat').andCallFake(function(path, callback){
-      callback(null, {isDirectory: function(){ return false }} );
-    });
 
     spyOn(fs, 'mkdirSync');
     spyOn(punch, "fetchAndRender");
@@ -132,30 +125,6 @@ describe("traversing templates", function() {
 
   });
 
-  it("will skip creating already existing sub-directories in the output path", function(){
-    var config = {"template_dir": "templates", "output_dir": "public"}; 
-
-    spyOn(fs, 'stat').andCallFake(function(path, callback){
-      callback(null, {isDirectory: function(){ return true }} );
-    });
-
-    spyOn(fs, 'mkdirSync');
-    spyOn(punch, "fetchAndRender");
-
-    spyOn(fs, 'readdir').andCallFake(function(path, callback){
-      if(fs.readdir.mostRecentCall.args[0] === "templates"){
-        callback(null, ["index.mustache", "sub_dir"]); 
-      } else {
-        callback(null, ["sub.mustache"]); 
-      }
-    });
-
-    punch.traverseTemplates(config);
-
-    expect(fs.mkdirSync).not.toHaveBeenCalled();
-
-  });
-
   it("calls to render content when a template is found", function(){
     var config = {"template_dir": "templates"}; 
 
@@ -167,10 +136,7 @@ describe("traversing templates", function() {
       }
     });
 
-    spyOn(fs, 'stat').andCallFake(function(path, callback){
-      callback(null, {isDirectory: function(){ return true }} );
-    });
-
+    spyOn(fs, 'mkdirSync');
     spyOn(punch, "fetchAndRender");
 
     punch.traverseTemplates(config);
@@ -190,10 +156,7 @@ describe("traversing templates", function() {
       }
     });
 
-    spyOn(fs, 'stat').andCallFake(function(path, callback){
-      callback(null, {isDirectory: function(){ return true }} );
-    });
-
+    spyOn(fs, 'mkdirSync');
     spyOn(punch, "fetchAndRender");
 
     punch.traverseTemplates(config);
@@ -214,6 +177,7 @@ describe("traversing templates", function() {
       }
     });
 
+    spyOn(fs, 'mkdirSync');
     spyOn(punch, "staticFileHandler");
 
     punch.traverseTemplates(config);
@@ -221,6 +185,7 @@ describe("traversing templates", function() {
     expect(punch.staticFileHandler).toHaveBeenCalledWith("templates/index.html", config);
 
   });
+
 
 });
 
