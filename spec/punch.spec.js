@@ -198,7 +198,11 @@ describe("handling static files", function(){
       callback("error"); 
     });
 
-    expect(function(){ punch.staticFileHandler("templates/not_exist.html", {"output_dir": "public"}) }).toThrow();
+    spyOn(console, "log");
+
+    punch.staticFileHandler("templates/not_exist.html", {"output_dir": "public"});
+
+    expect(console.log).toHaveBeenCalledWith("error");
   });
 
   it("issues the copy command with correct source and destination", function(){
