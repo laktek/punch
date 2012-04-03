@@ -1,5 +1,6 @@
 var util = require("util");
 var fs = require("fs");
+var child_process = require("child_process");
 var punch = require("../lib/punch.js");
 
 describe("registering a renderer", function(){
@@ -191,43 +192,24 @@ describe("traversing templates", function() {
 
 describe("handling static files", function(){
 
-  it("throws an exception if source file doesn't exist", function(){
-    spyOn(fs, 'readFile').andCallFake(function(path, callback){
-      callback("File not found", null); 
+  it("throws an exception if an error occurrs", function(){
+
+    spyOn(child_process, "exec").andCallFake(function(cmd, callback){
+      callback("error"); 
     });
 
-    expect(function(){ punch.staticFileHandler("templates/not_exist.html", {"output_path": "public"}) }).toThrow();
+    expect(function(){ punch.staticFileHandler("templates/not_exist.html", {"output_dir": "public"}) }).toThrow();
   });
 
-  it("copies source file to output path", function(){
-
-    var buf = new Buffer("sample content");
-
-    spyOn(fs, 'readFile').andCallFake(function(path, callback){
-      callback(null, buf); 
+  it("issues the copy command with correct source and destination", function(){
+ 
+    spyOn(child_process, "exec").andCallFake(function(cmd, callback){
+      callback(); 
     });
 
-    spyOn(fs, 'writeFile')
+    punch.staticFileHandler("templates/sub/foo/static.html", {"output_dir": "public"});
 
-    punch.staticFileHandler("templates/simple.html",  {"output_path": "public"});
-
-    expect(fs.writeFile).toHaveBeenCalled();
-
-  });
-
-  it("preserves the directory structure", function(){
-    var buf = new Buffer("sample content");
-
-    spyOn(fs, 'readFile').andCallFake(function(path, callback){
-      callback(null, buf); 
-    });
-
-    spyOn(fs, 'writeFile')
-
-    punch.staticFileHandler("templates/foo/bar/simple.html", {"output_path": "public"});
-
-    expect(fs.writeFile.mostRecentCall.args[0]).toEqual("public/foo/bar/simple.html");
-
+    expect(child_process.exec.mostRecentCall.args[0]).toEqual("cp templates/sub/foo/static.html public/sub/foo/static.html");
   });
 
 });
