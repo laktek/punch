@@ -2,7 +2,7 @@
     "name": "punch"
   , "description": "Generate static sites with mustache templates & json"
   , "keywords": ["static", "sites", "mustache", "json", "markdown"]
-  , "version": "0.0.9-beta"
+  , "version": "0.0.10-beta"
   , "homepage": "https://github.com/laktek/punch"
   , "author": "Lakshan Perera <lakshan@web2media.net> (http://laktek.com)"
   , "licenses"      : ["MIT"]
