@@ -48,7 +48,7 @@ describe("prepare output directory", function(){
     punch.prepareOutputDirectory(config);
 
     expect(fs.mkdirSync).toHaveBeenCalled();
-  
+
   });
 
   it("will not create the output directory if it exists", function(){
@@ -225,7 +225,7 @@ describe("rendering content", function(){
 
     spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(punch, "fetchTemplate"); 
-    spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchSharedContent"); 
     spyOn(punch, "fetchPartials"); 
 
     punch.fetchAndRender("templates/sub/simple.mustache", config);
@@ -248,11 +248,26 @@ describe("rendering content", function(){
 
   });
 
-  it("fetches content for the template", function(){
-    var config = {"content_dir": "contents"};
+  it("fetches shared content", function(){
+    var config = {"content_dir": "contents", "shared_content": "shared"};
 
     spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(punch, "fetchTemplate"); 
+    spyOn(punch, "fetchSharedContent"); 
+    spyOn(punch, "fetchPartials"); 
+
+    punch.fetchAndRender("templates/sub/simple.mustache", config);
+
+    expect(punch.fetchSharedContent.mostRecentCall.args[0]).toEqual("contents/shared");
+
+  });
+
+  it("fetches content for the template", function(){
+    var config = {"content_dir": "contents", "shared_content": "shared"};
+
+    spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null, "setContent": function(){} }}); 
+    spyOn(punch, "fetchTemplate"); 
+    spyOn(punch, "fetchSharedContent").andCallFake(function(path, callback){ callback({}); }); 
     spyOn(punch, "fetchContent"); 
     spyOn(punch, "fetchPartials"); 
 
@@ -266,7 +281,7 @@ describe("rendering content", function(){
 
     spyOn(punch, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(punch, "fetchTemplate"); 
-    spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchSharedContent"); 
     spyOn(punch, "fetchPartials"); 
 
     punch.fetchAndRender("templates/sub/simple.mustache", config);
@@ -288,7 +303,7 @@ describe("rendering content", function(){
     });  
 
     spyOn(punch, "fetchTemplate"); 
-    spyOn(punch, "fetchContent"); 
+    spyOn(punch, "fetchSharedContent"); 
     spyOn(punch, "fetchPartials"); 
 
     spyOn(fs, "stat").andCallFake(function(path, callback){
@@ -531,37 +546,6 @@ describe("fetching templates", function(){
 });
 
 describe("fetching content", function(){
-
-  it("fetches shared content", function(){
- 
-    var shared_json = {"shared": "content"};
-    var sample_json = {"foo": "bar"};
-    var output = null;
-
-    spyOn(fs, 'readFile').andCallFake(function(path, callback){
-      if(path === "contents/shared.json"){
-        callback(null, new Buffer(JSON.stringify(shared_json))); 
-      } else {
-        callback(null, new Buffer(JSON.stringify(sample_json))); 
-      }
-    });
-
-    spyOn(punch, "fetchContentFromDir").andCallFake(function(path, callback){
-      callback("no directory"); 
-    });
-
-    punch.fetchContent("contents/simple", function(content){
-      output = content;
-    });
-
-    waits(100);
-
-    runs(function(){
-      expect(output).toEqual({"shared": "content", "foo": "bar"});
-    });
-
- 
-  });
 
   it("fetches content from the JSON file of given name", function(){
 
