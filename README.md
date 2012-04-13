@@ -1,5 +1,5 @@
 # Punch 
-### A Fun and easy way to build little websites 
+## A Fun and easy way to build little websites 
 
 Punch is a simple tool to generate a static website out of [Mustache](http://mustache.github.com/) templates and content stored in either [JSON](http://json.org) or [Markdown](daringfireball.net/projects/markdown/) format.
 
@@ -23,7 +23,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 (You can use [Jekyll](https://github.com/mojombo/jekyll) and other similar tools to power a blog)
 
-### Installation
+## Installation
 
 * Download and Install Node.js.
  
@@ -35,7 +35,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 * Then run `npm intall punch`
 
-### Usage
+## Usage
 
 * Start by creating a new directory to hold your site. (`mkdir mysite`)
 
@@ -51,7 +51,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 * Go inside the `public` directory and run `python -m SimpleHTTPServer`. Then point your browser to `http://localhost:8000` to see your site in action!
 
-### Additional Features
+## Additional Features
 
 **Partial templates**
 
@@ -103,13 +103,11 @@ Since Punch's renderer is asynchronous, you can call `setTemplate`, `setContent`
       }
     };
 
-Sample
-------
+## Sample
 
 Checkout the sample available at `/sample` to understand the directory structure and configurations.
 
-Issues & Suggestions
---------------------
+## Issues & Suggestions
 
 Please report any bugs or feature requests here:
 http://github.com/laktek/punch/issues/
