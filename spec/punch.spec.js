@@ -271,7 +271,7 @@ describe("rendering content", function(){
     spyOn(punch, "fetchContent"); 
     spyOn(punch, "fetchPartials"); 
 
-    punch.fetchAndRender("templates/sub/simple.mustache", config);
+    punch.fetchAndRender("templates/sub/simple.html.mustache", config);
 
     expect(punch.fetchContent.mostRecentCall.args[0]).toEqual("contents/sub/simple");
   });
@@ -292,7 +292,7 @@ describe("rendering content", function(){
 
   it("saves the output after render", function(){
 
-    var config = {"output_dir": "public", "output_extension": ".html"};
+    var config = {"output_dir": "public", "output_extension": "html"};
 
     var fake_renderer = {
       afterRender: null    
@@ -317,6 +317,35 @@ describe("rendering content", function(){
     fake_renderer.afterRender("sample output");
 
     expect(fs.writeFile.mostRecentCall.args.slice(0, 2)).toEqual(["public/sub/simple.html", "sample output"]);
+  });
+
+  it("will not set the extension if rendered file already got an extension", function(){
+
+    var config = {"output_dir": "public", "output_extension": "html"};
+
+    var fake_renderer = {
+      afterRender: null    
+    };
+
+    spyOn(punch, "rendererFor").andCallFake(function(){
+      return fake_renderer;
+    });  
+
+    spyOn(punch, "fetchTemplate"); 
+    spyOn(punch, "fetchSharedContent"); 
+    spyOn(punch, "fetchPartials"); 
+
+    spyOn(fs, "stat").andCallFake(function(path, callback){
+      var fake_stats = {isDirectory: function(){ return true; }};  
+      callback(null, fake_stats);
+    });
+    spyOn(fs, "writeFile");
+
+    punch.fetchAndRender("templates/sub/simple.css.mustache", config);
+
+    fake_renderer.afterRender("sample output");
+
+    expect(fs.writeFile.mostRecentCall.args.slice(0, 2)).toEqual(["public/sub/simple.css", "sample output"]);
   });
 
 });
