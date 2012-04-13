@@ -28,7 +28,7 @@ if(args[0] === "setup"){
 
   fs.writeFile('config.json', config_file, function (err) {
     if(!err)
-      console.log("Failed to save the config.json");
+      console.log("Created the config.json");
   });
 
 } else {
