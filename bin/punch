@@ -7,18 +7,46 @@ var fs = require("fs");
 var punch = require(path.join(__dirname,'../lib/punch.js'));
 
 var args = process.argv.slice(2);
-var config_file = args[0] || "config.json";
 
-fs.readFile(config_file, function(err, data){
+if(args[0] === "setup"){
+  // setup site
+  fs.mkdir("templates", function(err){
+    if(!err)
+      console.log("Created templates directory.");
+  }); 
 
-  // if there's an error we assume the config doesn't exist.
-  if(err){
-    var supplied_config = {}; 
-  } else {
-    var supplied_config = JSON.parse(data);  
-  } 
+  fs.mkdir("contents", function(err){
+    if(!err)
+      console.log("Created contents directory.");
+  }); 
 
-  // call generate with loaded config
-  punch.generate(supplied_config);
+  fs.writeFile('config.json', '{ \
+      "template_dir": "templates", \      
+      "content_dir": "contents", \      
+      "output_dir": "public" \
+  }', 
+  function (err) {
+    if(!err)
+      console.log("Failed to save the config.json");
+  });
 
-});
+} else {
+  // generate site
+  var config_file = args[0] || "config.json";
+
+  fs.readFile(config_file, function(err, data){
+
+    // if there's an error we assume the config doesn't exist.
+    if(err){
+      var supplied_config = {}; 
+    } else {
+      var supplied_config = JSON.parse(data);  
+    } 
+
+    // call generate with loaded config
+    punch.generate(supplied_config);
+
+  });
+}
+
+
