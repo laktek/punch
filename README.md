@@ -1,5 +1,5 @@
 # Punch 
-### Fun and easy way to manage little websites 
+### A Fun and easy way to build little websites 
 
 Punch is a simple tool to generate a static website out of [Mustache](http://mustache.github.com/) templates and content stored in either [JSON](http://json.org) or [Markdown](daringfireball.net/projects/markdown/) format.
 
@@ -17,9 +17,10 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 * Portfolio sites
 * Event Marketing sites
 
-(& also for your cat's homepage)
+  (or even for your cat's homepage)
 
-** Remember: Punch is not a blogging engine **
+**Remember: Punch is not a blogging engine**
+
 (You can use [Jekyll](https://github.com/mojombo/jekyll) and other similar tools to power a blog)
 
 ### Installation
@@ -44,7 +45,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 * When rendering a mustache template, Punch will look for relavant content for the template in `contents` directory. You can serve the content in a single `.json` file or as a collection of `.markdown` and `.json` file inside a directory.
 
-For example, to render `about.mustache` template you can provide content in `about.json` file or in a directory called `about` which can have bunch of content in `.markdown` or `.json` format. 
+  For example, to render `about.mustache` template you can provide content in `about.json` file or in a directory called `about` which can have bunch of content in `.markdown` or `.json` format. 
 
 * To generate the site, run the command `punch` in the main site directory. Generated site can be found inside the `public` directory.
 
