@@ -108,11 +108,6 @@ Since Punch's renderer is asynchronous, you can call `setTemplate`, `setContent`
 
 Checkout the sample available at `/sample` to understand the directory structure and configurations.
 
-## Issues & Suggestions
-
-Please report any bugs or feature requests here:
-http://github.com/laktek/punch/issues/
-
 ## Contributing
 
 I welcome you to contribute and be part of Punch:
