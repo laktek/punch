@@ -113,3 +113,12 @@ Checkout the sample available at `/sample` to understand the directory structure
 Please report any bugs or feature requests here:
 http://github.com/laktek/punch/issues/
 
+## Contributing
+
+I welcome you to contribute and be part of Punch:
+
+* Report any bugs or feature requests - http://github.com/laktek/punch/issues/
+* Fork, Refactor and send me pull requests.
+* If you want to put a substantial effort to improve Punch, please feel free to contact me first (http://laktek.com/about).
+
+
