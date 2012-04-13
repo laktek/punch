@@ -110,10 +110,11 @@ Checkout the sample available at `/sample` to understand the directory structure
 
 ## Contributing
 
-I welcome you to contribute and be part of Punch:
+You are encouraged to contribute and be part of Punch:
 
 * Report any bugs or feature requests - http://github.com/laktek/punch/issues/
-* Fork, Refactor and send me pull requests.
-* If you want to put a substantial effort to improve Punch, please feel free to contact me first (http://laktek.com/about).
+* Help with improving the documentation, official site and screencasts.
+* Fork, Refactor and send pull requests.
+* If you have big ideas for Punch, please feel free to contact me (original author - http://laktek.com/about). Let's have a chat.
 
 
