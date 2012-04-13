@@ -15,6 +15,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 * App Promo sites
 * Portfolio sites
+* Project Documentation
 * Event Marketing sites
 
   (or even for your cat's homepage)
@@ -39,7 +40,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 * Start by creating a new directory to hold your site. (`mkdir mysite`)
 
-* Run `punch --setup` to create a skeleton. (it will create a `templates` directory, `contents` directory and `config.json` file)
+* Run `punch setup` to create a skeleton. (it will create a `templates` directory, `contents` directory and `config.json` file)
 
 * Create your site's structure inside the `templates` directory. Punch will try to render templates with `.mustache` extension and any other file (JS, CSS & images) will be copied as it is.
 
@@ -87,18 +88,18 @@ Since Punch's renderer is asynchronous, you can call `setTemplate`, `setContent`
 **Configuration options**
 
     {
-      template_dir: "templates",      // directory to look for templates
-      content_dir: "contents",        // directory to look for contents
-      output_dir: "public",           // directory to save the generated output
-      output_extension: "html",       // default extension to use for output files
-      shared_content: "shared",       // name of the file/directory of shared content inside `contents`
+      "template_dir": "templates",      // directory to look for templates
+      "content_dir": "contents",        // directory to look for contents
+      "output_dir": "public",           // directory to save the generated output
+      "output_extension": "html",       // default extension to use for output files
+      "shared_content": "shared",       // name of the file/directory of shared content inside `contents`
 
       // register new renderers or parsers (paths should be valid node.js require paths)
 
-      renderers: {
+      "renderers": {
         "mustache": "./renderers/mustache" 
       },
-      parsers: {
+      "parsers": {
         "markdown": "./parsers/markdown" 
       }
     };
