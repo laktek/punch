@@ -20,12 +20,13 @@ if(args[0] === "setup"){
       console.log("Created contents directory.");
   }); 
 
-  fs.writeFile('config.json', '{ \
-      "template_dir": "templates", \      
-      "content_dir": "contents", \      
+  var config_file = '{ \
+      "template_dir": "templates", \
+      "content_dir": "contents", \
       "output_dir": "public" \
-  }', 
-  function (err) {
+  }';
+
+  fs.writeFile('config.json', config_file, function (err) {
     if(!err)
       console.log("Failed to save the config.json");
   });
