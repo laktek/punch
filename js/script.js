@@ -29,7 +29,7 @@ $(document).ready(function(){
                           ');
       renderer.setPartials({});
 
-      $.getJSON("https://api.github.com/repos/laktek/punch/watchers?callback=foo", function(data){
+      $.getJSON("https://api.github.com/repos/laktek/punch/watchers?callback=?", function(data){
         renderer.setContent({"followers": data});
       });
     }
