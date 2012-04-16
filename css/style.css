@@ -525,6 +525,25 @@ header h2 {
   font-size: 1.5em;
 }
 
+header.page {
+  border-bottom: 1px double #CCC; 
+  padding: 0.5em 0;
+  margin: 0.5em 0;
+}
+
+header.page h1 {
+  font-size: 2.5em;
+}
+
+header.page h1 a {
+  text-decoration: none;
+  color: #282828;
+}
+
+div.content p {
+  line-height: 1.61;
+}
+
 div#description {
   border-top: 1px double #CCC; 
   border-bottom: 1px double #CCC; 
@@ -533,6 +552,10 @@ div#description {
   text-align: center;
   font-size: 1.5em;
   line-height: 1.5;
+}
+
+div.content h2 {
+  margin: 0.75em 0;
 }
 
 div[role=main] h3 {
@@ -551,10 +574,26 @@ div[role=main] li{
   margin: 0.5em 0; 
 }
 
-div[role=main] code{
+div.content code{
   background: #D2D2CA; 
   border: 1px solid #ccc;
   padding: 0.2em;
+}
+
+div.content pre {
+ background-color: #F8F8F8;
+ border: 1px solid #CCC;
+ line-height: 1.58;
+ overflow: auto;
+ padding: 0.2em 0.5em;
+ border-radius: 0.2em; 
+ margin: 0.5em 0;
+}
+
+div.content pre code {
+  background: inherit; 
+  border: 0;
+  padding: 0;
 }
 
 menu[role=actions]{
