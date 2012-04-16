@@ -24,7 +24,7 @@ $(document).ready(function(){
       };
 
       renderer.setTemplate('{{#followers}} \
-                            <a href="{{url}}" rel="nofollow"><img size="16" src="{{avatar_url}}" alt="{{login}}"/></a> \
+                            <a href="http://github.com/{{login}}" rel="nofollow"><img size="16" src="{{avatar_url}}" title="{{login}}" alt="{{login}}"/></a> \
                             {{/followers}} \
                           ');
       renderer.setPartials({});
