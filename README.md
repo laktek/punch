@@ -47,6 +47,7 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 
 * Here's how our `about.mustache` template will look like.
 
+      ```mustache
       <!doctype html>
 
       <head>
@@ -68,11 +69,13 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
         <ul>
       </body>
       </html>
+      ```
 
 * Now inside `contents` directory let's create a file called `about.json` to hold the corresponding content.
 
 * We'll add the following content in `about.json`.
   
+      ```json
       {
         "title": "About Us",
         "team": [
@@ -92,6 +95,7 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
           }
         ]
       }
+      ```
 
 * We also have a lengthy company overview written in markdwon format. Instead of adding it to the `about.json` file, we'll be keeping it seperately. For that we create a new directory named `about` inside the `contents` directory and save the markdown file there as `overview.markdown`.
 
