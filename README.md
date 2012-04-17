@@ -119,15 +119,18 @@ You can specify reusable partial templates with Punch. Partial templates should 
 
 If you create a JSON file with the name `shared.json` or a directory named `shared` under `contents` its content will be automatically available for all templates in your site.
 
-**Using the renderer in browser**
+**Client-side Rendering**
 
 It's possible to use the Punch's renderer in the browser as well. All you need to do is include the latest [`mustache.js`](https://github.com/janl/mustache.js/) and the [Punch's renderer](https://github.com/laktek/Punch/tree/master/lib/renderers) in your client-side script.
 
+    ```html
     <script type="text/javascript" src="assets/mustache.js"></script>
     <script type="text/javascript" src="node_modules/punch/lib/renderers/mustache.js"></script>
+    ```
 
 Here's how you can use it in the browser:
 
+    ```javascript
     var renderer = new MustacheRenderer();
 
     renderer.afterRender = function(output){
@@ -137,11 +140,13 @@ Here's how you can use it in the browser:
     renderer.setTemplate('<p>{{content}}</p>');
     renderer.setContent({"content": "test"});
     renderer.setPartials({});
+    ```
  
 Since Punch's renderer is asynchronous, you can call `setTemplate`, `setContent` and `setPartials` once you have the data (eg. after loading via AJAX). Rendering will happen when the renderer receives all 3 method calls.
 
 **Configuration options**
 
+    ```json
     {
       "template_dir": "templates",      // directory to look for templates
       "content_dir": "contents",        // directory to look for contents
@@ -158,18 +163,19 @@ Since Punch's renderer is asynchronous, you can call `setTemplate`, `setContent`
         "markdown": "./parsers/markdown" 
       }
     };
+    ```
 
 ## Sample
 
-Checkout the sample available at `/sample` to understand the directory structure and configurations.
+There's a sample available in `/sample`, which will help you to understand the directory structure and configurations.
 
 ## Contributing
 
 You are encouraged to contribute and be part of Punch:
 
 * Report any bugs or feature requests - http://github.com/laktek/punch/issues/
-* Help with improving the documentation, official site and screencasts.
+* Help with improving the documentation, site and screencasts.
 * Fork, Refactor and send pull requests.
-* If you have big ideas for Punch, please feel free to contact me (original author - http://laktek.com/about). Let's have a chat.
+* If you have big ideas for Punch, please feel free to contact me (Lakshan - http://laktek.com/about). Let's have a chat.
 
 
