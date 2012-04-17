@@ -1,5 +1,5 @@
 # Punch 
-## A Fun and easy way to manage modern websites  
+## A Fun and easy way to build modern websites  
 
 Punch is a simple tool to generate a static website out of [Mustache](http://mustache.github.com/) templates and content stored in either [JSON](http://json.org) or [Markdown](daringfireball.net/projects/markdown/) format.
 
