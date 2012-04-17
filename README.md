@@ -5,11 +5,10 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 ### Why Punch is awesome?
 
-* Total freedom over templating (logic-less templates, not tied to any programming language).
-* Flexible content structure (use any JSON data strcuture for your content).
-* Use your favorite editor to edit the site (without getting stuck in a crappy WYSIWYG editor)
-* Use your favorite SCM to version control the content (Git, Darc, Mercurial or even Zip files).
-* Host it anywhere! (all you need is a server capable of serving HTML).
+* Simple templating.
+* Flexible content structure.
+* Supports _client-side rendering_.
+* Can be used with your favorite editor, <abbr title='Source Code Management Software'>SCM</abbr> or host.
 
 ### Punch is great for:
 
@@ -26,31 +25,83 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 ## Installation
 
-* Download and Install Node.js.
- 
-    http://nodejs.org/#download 
+* Download and Install Node.js. http://nodejs.org/#download 
 
-* Install `npm`
+* Install `npm` - `curl http://npmjs.org/install.sh | sh`
 
-    `curl http://npmjs.org/install.sh | sh`
+* Finally, run `npm intall punch`
 
-* Then run `npm intall punch`
+## How to Use 
 
-## Usage
+Here's a step by step guide on how to create a simple HTML site using Punch.
 
-* Start by creating a new directory to hold your site. (`mkdir mysite`)
+* First of all we should create a new directory for our site. (`mkdir awesome_site`)
 
-* Run `punch setup` to create a skeleton. (it will create a `templates` directory, `contents` directory and `config.json` file)
+* Then, go inside the directory (`cd awesome_site`) and run the command `punch setup`.
 
-* Create your site's structure inside the `templates` directory. Punch will try to render templates with `.mustache` extension and any other file (JS, CSS & images) will be copied as it is.
+* This will create two directories to hold `templates` and `contents`. Also, it will add a `config.json` file which contains the default configuration for Punch.
 
-* When rendering a mustache template, Punch will look for relavant content for the template in `contents` directory. You can serve the content in a single `.json` file or as a collection of `.markdown` and `.json` file inside a directory.
+* Say we want to have a page called `about.html`, to give an overview of the company and details of the team members.
 
-  For example, to render `about.mustache` template you can provide content in `about.json` file or in a directory called `about` which can have bunch of content in `.markdown` or `.json` format. 
+* First we must create a corresponding template for the page inside `templates` directory.
 
-* To generate the site, run the command `punch` in the main site directory. Generated site can be found inside the `public` directory.
+* Here's how our `about.mustache` template will look like.
 
-* Go inside the `public` directory and run `python -m SimpleHTTPServer`. Then point your browser to `http://localhost:8000` to see your site in action!
+      <!doctype html>
+
+      <head>
+      <meta charset="utf-8">
+
+      <title>{{title}}</title>
+      </head>
+
+      <body>
+
+        <h1>{{title}}</h1>
+
+       <p>{{{overview}}}</p> 
+        
+        <ul>
+          {{#team}}
+            <li><strong>{{name}} - {{bio}}</li>
+          {[/team]}
+        <ul>
+      </body>
+      </html>
+
+* Now inside `contents` directory let's create a file called `about.json` to hold the corresponding content.
+
+* We'll add the following content in `about.json`.
+  
+      {
+        "title": "About Us",
+        "team": [
+          {
+            "name": "Pointy-Haired Boss",
+            "bio": "CEO, Visionary"
+          },
+
+          {
+            "name": "Wally",
+            "bio": "Senior Engineer"
+          },
+
+          {
+            "name": "Dilbert",
+            "bio": "Engineer"
+          }
+        ]
+      }
+
+* We also have a lengthy company overview written in markdwon format. Instead of adding it to the `about.json` file, we'll be keeping it seperately. For that we create a new directory named `about` inside the `contents` directory and save the markdown file there as `overview.markdown`.
+
+* Now we can generate the site, for that go back to the top-most directory (`cd ../`) and run the command `punch`.
+
+* Punch will output the generated pages in a directory named `public`.
+
+* To view the generated site you can run the command `python -m SimpleHTTPServer` inside the `public` directory. 
+
+* Then point your browser to `http://localhost:8000/about.html` to see the generated about page.
 
 ## Additional Features
 
