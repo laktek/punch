@@ -59,19 +59,75 @@
 
 <div class="content clearfix">
   <h2>User Guide</h2>
-  <div><ul>
-<li><p>Start by creating a new directory to hold your site. (<code>mkdir mysite</code>)</p>
+  <div><p>Here&#39;s a step by step guide on how to create a simple HTML site using Punch.
+
+</p>
+<ul>
+<li><p>First of all we should create a new directory for our site. (<code>mkdir awesome_site</code>)</p>
 </li>
-<li><p>Run <code>punch setup</code> to create a skeleton. (it will create a <code>templates</code> directory, <code>contents</code> directory and <code>config.json</code> file)</p>
+<li><p>Then, go inside the directory (<code>cd awesome_site</code>) and run the command <code>punch setup</code>.</p>
 </li>
-<li><p>Create your site&#39;s structure inside the <code>templates</code> directory. Punch will try to render templates with <code>.mustache</code> extension and any other file (JS, CSS &amp; images) will be copied as it is.</p>
+<li><p>This will create two directories to hold <code>templates</code> and <code>contents</code>. Also, it will add a <code>config.json</code> file which contains the default configuration for Punch.</p>
 </li>
-<li><p>When rendering a mustache template, Punch will look for relavant content for the template in <code>contents</code> directory. You can serve the content in a single <code>.json</code> file or as a collection of <code>.markdown</code> and <code>.json</code> file inside a directory.</p>
-<p>For example, to render <code>about.mustache</code> template you can provide content in <code>about.json</code> file or in a directory called <code>about</code> which can have bunch of content in <code>.markdown</code> or <code>.json</code> format. </p>
+<li><p>Say we want to have a page called <code>about.html</code>, to give an overview of the company and details of the team members.</p>
 </li>
-<li><p>To generate the site, run the command <code>punch</code> in the main site directory. Generated site can be found inside the <code>public</code> directory.</p>
+<li><p>First we must create a corresponding template for the page inside <code>templates</code> directory.</p>
 </li>
-<li><p>Go inside the <code>public</code> directory and run <code>python -m SimpleHTTPServer</code>. Then point your browser to <code>http://localhost:8000</code> to see your site in action!</p>
+<li><p>Here&#39;s how our <code>about.mustache</code> template will look like.</p>
+<pre><code>&lt;!doctype html&gt;
+
+&lt;head&gt;
+&lt;meta charset=&quot;utf-8&quot;&gt;
+
+&lt;title&gt;{{title}}&lt;/title&gt;
+&lt;/head&gt;
+
+&lt;body&gt;
+
+  &lt;h1&gt;{{title}}&lt;/h1&gt;
+
+ &lt;p&gt;{{{overview}}}&lt;/p&gt; 
+
+  &lt;ul&gt;
+    {{#team}}
+      &lt;li&gt;&lt;strong&gt;{{name}} - {{bio}}&lt;/li&gt;
+    {[/team]}
+  &lt;ul&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</li>
+<li><p>Now inside <code>contents</code> directory let&#39;s create a file called <code>about.json</code> to hold the corresponding content.</p>
+</li>
+<li><p>We&#39;ll add the following content in <code>about.json</code>.</p>
+<pre><code>{
+  &quot;title&quot;: &quot;About Us&quot;,
+  &quot;team&quot;: [
+    {
+      &quot;name&quot;: &quot;Pointy-Haired Boss&quot;,
+      &quot;bio&quot;: &quot;CEO, Visionary&quot;
+    },
+
+    {
+      &quot;name&quot;: &quot;Wally&quot;,
+      &quot;bio&quot;: &quot;Senior Engineer&quot;
+    },
+
+    {
+      &quot;name&quot;: &quot;Dilbert&quot;,
+      &quot;bio&quot;: &quot;Engineer&quot;
+    }
+  ]
+}</code></pre>
+</li>
+<li><p>We also have a lengthy company overview written in markdwon format. Instead of adding it to the <code>about.json</code> file, we&#39;ll be keeping it seperately. For that we create a new directory named <code>about</code> inside the <code>contents</code> directory and save the markdown file there as <code>overview.markdown</code>.</p>
+</li>
+<li><p>Now we can generate the site, for that go back to the top-most directory (<code>cd ../</code>) and run the command <code>punch</code>.</p>
+</li>
+<li><p>Punch will output the generated pages in a directory named <code>public</code>.</p>
+</li>
+<li><p>To view the generated site you can run the command <code>python -m SimpleHTTPServer</code> inside the <code>public</code> directory. </p>
+</li>
+<li><p>Then point your browser to <code>http://localhost:8000/about.html</code> to see the generated about page.</p>
 </li>
 </ul>
 <h3>Additional Features</h3>
