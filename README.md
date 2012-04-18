@@ -81,7 +81,7 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
         "team": [
           {
             "name": "Pointy-Haired Boss",
-            "bio": "CEO, Visionary"
+            "bio": "Incompetent Manager"
           },
 
           {
