@@ -16,8 +16,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 * Portfolio sites
 * Project Documentation
 * Event Marketing sites
-
-  (or even for your cat's homepage)
+* or even for your cat's homepage...
 
 **Remember: Punch is not a blogging engine**
 
@@ -32,6 +31,8 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 * Finally, run `npm intall punch`
 
 ## How to Use 
+
+**Watch the Screencast** - http://www.screenr.com/Syh8
 
 Here's a step by step guide on how to create a simple HTML site using Punch.
 
@@ -65,7 +66,7 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
         <ul>
           {{#team}}
             <li><strong>{{name}} - {{bio}}</li>
-          {[/team]}
+          {{/team}}
         <ul>
       </body>
       </html>
