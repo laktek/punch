@@ -28,7 +28,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 * Install `npm` - `curl http://npmjs.org/install.sh | sh`
 
-* Finally, run `npm intall punch`
+* Finally, run `npm install punch`
 
 ## How to Use 
 
