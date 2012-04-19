@@ -32,7 +32,9 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 ## How to Use 
 
-**Watch the Screencast** - http://www.screenr.com/uIh8 
+**Watch the Screencast** - http://vimeo.com/40645795 
+
+**Read the introductory blog post** - http://laktek.com/2012/04/19/punch-a-fun-and-easy-way-to-build-modern-websites/
 
 Here's a step by step guide on how to create a simple HTML site using Punch.
 
