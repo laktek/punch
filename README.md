@@ -67,7 +67,7 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
         
         <ul>
           {{#team}}
-            <li><strong>{{name}} - {{bio}}</li>
+            <li><strong>{{name}}</strong> - {{bio}}</li>
           {{/team}}
         </ul>
       </body>
