@@ -69,7 +69,7 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
           {{#team}}
             <li><strong>{{name}} - {{bio}}</li>
           {{/team}}
-        <ul>
+        </ul>
       </body>
       </html>
       ```
