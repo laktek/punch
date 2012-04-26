@@ -1,0 +1,5 @@
+{
+  "template_dir": "templates",
+  "content_dir": "contents",       
+  "output_dir": "."   
+}

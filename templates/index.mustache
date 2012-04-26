@@ -1,0 +1,45 @@
+{{> header }}
+
+<header role="banner">
+  <h1>{{title}}</h1>
+  <h2>{{tagline}}</h2>
+</header>
+
+<div class="content clearfix">
+
+<div role="main">
+  <div id="description">{{{description}}}</div>
+
+  <h3>Watch a quick Screencast</h3>
+  <div>{{{screencast_html}}}</div>
+
+  <h3>Why Punch?</h3>
+  
+  <ul>
+    {{#why_punch}}
+    <li>{{{.}}}</li>
+    {{/why_punch}}
+  </ul>
+
+  <h3>Install</h3>
+  <ul>
+    {{#install_steps}}
+    <li>{{{.}}}</li>
+    {{/install_steps}}
+  </ul>
+
+  <menu role="actions">
+    <li><a href="user_guide.html">Quick User Guide</a></li>
+    <li><a href="http://laktek.com/2012/04/19/punch-a-fun-and-easy-way-to-build-modern-websites/">Introductory Blog Post</a></li>
+    <li><a href="{{github_url}}">Source Code</a></li>
+  </menu>
+
+  <h3>Watchers</h3>
+  <div id="github_followers"></div>
+  <p><a href="{{github_url}}">Watch Punch on GitHub</a></p>
+
+</div>
+
+</div>
+
+{{> footer }}

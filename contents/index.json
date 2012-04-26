@@ -1,0 +1,18 @@
+{
+    "page_title": "A Fun and Easy Way to Build Modern Websites",
+
+    "screencast_html": "<iframe src='http://player.vimeo.com/video/40645795?title=0&amp;byline=0&amp;portrait=0' width='704' height='396' frameborder='0' webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>",
+
+    "why_punch": [
+      "Simple templating.",
+      "Flexible content structure.",
+      "Supports <em>client-side rendering</em>.",
+      "Can be used with your favorite editor, <abbr title='Source Code Management Software'>SCM</abbr> or host."
+    ],
+
+    "install_steps": [
+      "<a href='http://nodejs.org/#download'>Download</a> and Install Node.js.",
+      "Install npm - <code>curl http://npmjs.org/install.sh | sh</code>",
+      "Finally, run <code>npm install punch</code>"
+    ]
+}

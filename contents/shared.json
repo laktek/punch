@@ -1,0 +1,10 @@
+{
+  "title": "Punch",
+  "tagline": "A Fun and Easy Way to Build Modern Websites",
+
+  "description": "Punch is a simple tool to generate <s>static</s> websites from <a href='http://mustache.github.com/'>Mustache</a> templates and content stored in <a href='http://json.org'>JSON</a> &amp; <a href='daringfireball.net/projects/markdown/'>Markdown</a> format.",
+
+  "site_url": "http://laktek.github.com/punch", 
+
+  "github_url": "http://github.com/laktek/punch"
+}
