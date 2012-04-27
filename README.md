@@ -28,7 +28,7 @@ Punch is a simple tool to generate a static website out of [Mustache](http://mus
 
 * Install `npm` - `curl http://npmjs.org/install.sh | sh`
 
-* Finally, run `npm install punch`
+* Finally, run `npm install -g punch`
 
 ## How to Use 
 
@@ -67,9 +67,9 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
         
         <ul>
           {{#team}}
-            <li><strong>{{name}} - {{bio}}</li>
+            <li><strong>{{name}}</strong> - {{bio}}</li>
           {{/team}}
-        <ul>
+        </ul>
       </body>
       </html>
       ```
