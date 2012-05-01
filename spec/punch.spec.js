@@ -187,6 +187,26 @@ describe("traversing templates", function() {
 
   });
 
+  it("handle the file as a static file if the template extension is not at the end", function() {
+    var config = {"template_dir": "templates", "output_dir": "public"}; 
+
+    spyOn(fs, 'readdir').andCallFake(function(path, callback){
+      if(fs.readdir.mostRecentCall.args[0] === "templates"){
+        callback(null, ["index.mustache.swp"]); 
+      } else {
+        callback({errno: 27, code: 'ENOTDIR'}, null); 
+      }
+    });
+
+    spyOn(fs, 'mkdirSync');
+    spyOn(punch, "staticFileHandler");
+
+    punch.traverseTemplates(config);
+
+    expect(punch.staticFileHandler).toHaveBeenCalledWith("templates/index.mustache.swp", config);
+
+  });
+
 
 });
 
