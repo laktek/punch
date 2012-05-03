@@ -15,12 +15,8 @@ describe("serving files in the output directory", function(){
 
     var dummy_contents = new Buffer("sample output", "binary");
 
-    spyOn(path, "exists").andCallFake(function(filename, callback){
-      callback(true); 
-    });
-
-    spyOn(fs, "statSync").andCallFake(function(file){
-      return {"isDirectory": function(){ return false }} 
+    spyOn(fs, "stat").andCallFake(function(file, callback){
+      return callback(null, {"isDirectory": function(){ return false }}); 
     });
 
     spyOn(fs, "readFile").andCallFake(function(filename, encoding, callback){
@@ -41,12 +37,8 @@ describe("serving files in the output directory", function(){
 
     var dummy_contents = new Buffer("sample output", "binary");
 
-    spyOn(path, "exists").andCallFake(function(filename, callback){
-      callback(true); 
-    });
-
-    spyOn(fs, "statSync").andCallFake(function(file){
-      return {"isDirectory": function(){ return false }} 
+    spyOn(fs, "stat").andCallFake(function(file, callback){
+      return callback(null, {"isDirectory": function(){ return false }}); 
     });
 
     spyOn(fs, "readFile").andCallFake(function(filename, encoding, callback){
@@ -66,8 +58,8 @@ describe("serving files in the output directory", function(){
     var dummy_response = { "writeHead": function(){}, "write": function(){}, "end": function(){} };
     spyOn(dummy_response, "writeHead");
 
-    spyOn(path, "exists").andCallFake(function(filename, callback){
-      callback(false); 
+    spyOn(fs, "stat").andCallFake(function(file, callback){
+      return callback("error", null); 
     });
 
     server.handleRequest(dummy_request, dummy_response);
@@ -85,12 +77,12 @@ describe("serving files in the output directory", function(){
 
     var dummy_contents = new Buffer("sample output", "binary");
 
-    spyOn(path, "exists").andCallFake(function(filename, callback){
-      callback(true); 
-    });
-
-    spyOn(fs, "statSync").andCallFake(function(file){
-      return {"isDirectory": function(){ return true }} 
+    spyOn(fs, "stat").andCallFake(function(file, callback){
+      if(fs.stat.mostRecentCall.args[0].indexOf(".html") > 0){
+        return callback(null, {"isDirectory": function(){ return false }}); 
+      } else {
+        return callback(null, {"isDirectory": function(){ return true }}); 
+      }
     });
 
     spyOn(fs, "readFile").andCallFake(function(filename, encoding, callback){
@@ -103,11 +95,52 @@ describe("serving files in the output directory", function(){
   });
 
   it("returns file.html when /file is requested", function(){
-    //expect(server.handleRequest(dummyRequest)).toEqual(dummyResponse);
+    server.config = { "output_dir": "public" };
+
+    var dummy_request = {"headers": {}, "url": "/sample" };
+
+    var dummy_response = { "writeHead": function(){}, "write": function(){}, "end": function(){} };
+    spyOn(dummy_response, "write");
+
+    var dummy_contents = new Buffer("sample output", "binary");
+
+    spyOn(fs, "stat").andCallFake(function(file, callback){
+      if(fs.stat.mostRecentCall.args[0].indexOf(".html") > 0){
+        return callback(null, {"isDirectory": function(){ return false }}); 
+      } else {
+        return callback("error", null); 
+      }
+    });
+
+    spyOn(fs, "readFile").andCallFake(function(filename, encoding, callback){
+      callback(null, dummy_contents); 
+    });
+
+    server.handleRequest(dummy_request, dummy_response);
+    expect(fs.readFile.mostRecentCall.args[0]).toEqual(process.cwd() + "/public/sample.html");
+
   });
 
   it("will not allow directory path attacks", function(){
-    //expect(server.handleRequest(dummyRequest)).toEqual(dummyResponse);
+    server.config = { "output_dir": "public" };
+
+    var dummy_request = {"headers": {}, "url": "/../../sample.html" };
+
+    var dummy_response = { "writeHead": function(){}, "write": function(){}, "end": function(){} };
+    spyOn(dummy_response, "write");
+
+    var dummy_contents = new Buffer("sample output", "binary");
+
+    spyOn(fs, "stat").andCallFake(function(file, callback){
+      return callback(null, {"isDirectory": function(){ return false }}); 
+    });
+
+    spyOn(fs, "readFile").andCallFake(function(filename, encoding, callback){
+      callback(null, dummy_contents); 
+    });
+
+    server.handleRequest(dummy_request, dummy_response);
+    expect(fs.readFile.mostRecentCall.args[0]).toEqual(process.cwd() + "/public/sample.html");
   });
   
 });
