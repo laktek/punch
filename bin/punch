@@ -4,7 +4,7 @@ var path = require('path');
 var fs   = require('fs');
 
 var fs = require("fs");
-var punch = require(path.join(__dirname,'../lib/punch.js'));
+var generator = require(path.join(__dirname,'../lib/generator.js'));
 
 var args = process.argv.slice(2);
 
@@ -45,7 +45,7 @@ if(args[0] === "setup"){
     } 
 
     // call generate with loaded config
-    punch.generate(supplied_config);
+    generator.generate(supplied_config);
 
   });
 }
