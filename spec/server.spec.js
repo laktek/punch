@@ -1,8 +1,9 @@
 var path = require("path");
 var fs = require("fs");
+var http = require("http");
+var generator = require("../lib/generator.js");
 var server = require("../lib/server.js");
 
-// serves the files in output directory. 
 describe("serving files in the output directory", function(){
 
   it("response body contains the contents of the file", function(){
@@ -145,6 +146,48 @@ describe("serving files in the output directory", function(){
   
 });
 
-// Monitor file modifications and generate the site.
-// describe("monitor file modifications and generate site");
+describe("generating site", function(){
 
+  it("calls to generating site if the template or content is modified", function(){
+    spyOn(server, "isModified").andReturn(true); 
+    spyOn(generator, "generate");
+
+    server.generateIfModified(function(){});
+    expect(generator.generate).toHaveBeenCalled();
+  });
+
+  it("callback is called if no modifications are made", function(){
+    spyOn(server, "isModified").andReturn(false); 
+    spyOn(generator, "generate");
+
+    var callback = jasmine.createSpy();
+    server.generateIfModified(callback);
+    expect(callback).toHaveBeenCalled();
+  });
+
+});
+
+describe("start server", function(){
+
+  it("should extend the default config with supplied config", function(){
+    var supplied_config = {server_port: 4000};
+
+    server.startServer(supplied_config);
+
+    spyOn(http, "createServer");
+
+    expect(server.config.server_port).toEqual(4000);
+  }); 
+
+  it("should start the server on default port if no config provided", function(){
+    var supplied_config = {};
+
+    var listenSpy = jasmine.createSpy();
+    spyOn(http, "createServer").andReturn({"listen": listenSpy});
+
+    server.startServer(supplied_config);
+
+    expect(listenSpy).toHaveBeenCalledWith(9009);
+  });
+
+});
