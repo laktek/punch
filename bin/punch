@@ -5,6 +5,7 @@ var fs   = require('fs');
 
 var fs = require("fs");
 var generator = require(path.join(__dirname,'../lib/generator.js'));
+var server = require(path.join(__dirname,'../lib/server.js'));
 
 var args = process.argv.slice(2);
 
@@ -31,8 +32,28 @@ if(args[0] === "setup"){
       console.log("Created the config.json");
   });
 
+}
+else if(args[0] == "server") {
+  var config_file = "config.json";
+
+  fs.readFile(config_file, function(err, data){
+
+    // if there's an error we assume the config doesn't exist.
+    if(err){
+      var supplied_config = {}; 
+    } else {
+      var supplied_config = JSON.parse(data);  
+    } 
+
+    if(parseInt(args[1]) > 0){
+      supplied_config["server_port"] = parseInt(args[1]);
+    }
+
+    // start server 
+    server.startServer(supplied_config);
+
+  });
 } else {
-  // generate site
   var config_file = args[0] || "config.json";
 
   fs.readFile(config_file, function(err, data){
@@ -44,8 +65,13 @@ if(args[0] === "setup"){
       var supplied_config = JSON.parse(data);  
     } 
 
+    var on_start = function(callback){
+      console.log("Generating site...");
+      callback();
+    }
+
     // call generate with loaded config
-    generator.generate(supplied_config);
+    generator.generate(supplied_config, on_start);
 
   });
 }

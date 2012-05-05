@@ -4,7 +4,59 @@ var http = require("http");
 var generator = require("../lib/generator.js");
 var server = require("../lib/server.js");
 
-describe("serving files in the output directory", function(){
+describe("handling the request", function(){
+
+  it("generates the site before serving files", function(){
+    server.config = { "output_dir": "public" };
+
+    var dummy_request = {"headers": {}, "url": "/sample.html" };
+
+    var dummy_response = { "writeHead": function(){}, "write": function(){}, "end": function(){} };
+    spyOn(dummy_response, "write");
+
+    var dummy_contents = new Buffer("sample output", "binary");
+
+    spyOn(fs, "stat").andCallFake(function(file, callback){
+      return callback(null, {"isDirectory": function(){ return false }}); 
+    });
+
+    spyOn(fs, "readFile").andCallFake(function(filename, encoding, callback){
+      callback(null, dummy_contents); 
+    });
+
+    spyOn(generator, "generate");
+
+    server.handleRequest(dummy_request, dummy_response);
+    expect(generator.generate).toHaveBeenCalled();
+
+  });
+
+  it("won't generate the site if the interval between two requests is under 10 seconds", function(){
+    server.config = { "output_dir": "public" };
+    server.lastRequest = null;
+
+    var dummy_request = {"headers": {}, "url": "/sample.html" };
+
+    var dummy_response = { "writeHead": function(){}, "write": function(){}, "end": function(){} };
+    spyOn(dummy_response, "write");
+
+    var dummy_contents = new Buffer("sample output", "binary");
+
+    spyOn(fs, "stat").andCallFake(function(file, callback){
+      return callback(null, {"isDirectory": function(){ return false }}); 
+    });
+
+    spyOn(fs, "readFile").andCallFake(function(filename, encoding, callback){
+      callback(null, dummy_contents); 
+    });
+
+    spyOn(generator, "generate");
+
+    // dispatch two requests
+    server.handleRequest(dummy_request, dummy_response);
+    server.handleRequest(dummy_request, dummy_response);
+    expect(generator.generate.callCount).toEqual(1);
+  });
 
   it("response body contains the contents of the file", function(){
     server.config = { "output_dir": "public" };
@@ -146,35 +198,14 @@ describe("serving files in the output directory", function(){
   
 });
 
-describe("generating site", function(){
-
-  it("calls to generating site if the template or content is modified", function(){
-    spyOn(server, "isModified").andReturn(true); 
-    spyOn(generator, "generate");
-
-    server.generateIfModified(function(){});
-    expect(generator.generate).toHaveBeenCalled();
-  });
-
-  it("callback is called if no modifications are made", function(){
-    spyOn(server, "isModified").andReturn(false); 
-    spyOn(generator, "generate");
-
-    var callback = jasmine.createSpy();
-    server.generateIfModified(callback);
-    expect(callback).toHaveBeenCalled();
-  });
-
-});
-
 describe("start server", function(){
 
   it("should extend the default config with supplied config", function(){
     var supplied_config = {server_port: 4000};
 
-    server.startServer(supplied_config);
+    spyOn(http, "createServer").andReturn({"listen": function(){}});
 
-    spyOn(http, "createServer");
+    server.startServer(supplied_config);
 
     expect(server.config.server_port).toEqual(4000);
   }); 

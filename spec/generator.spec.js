@@ -33,6 +33,61 @@ describe("returning an instance of parser", function(){
   expect(generator.parserFor("sample") instanceof fake_parser).toBeTruthy();
 });
 
+describe("starting the generation", function(){
+  
+  it("sets the config", function(){
+    var supplied_config = {sample: "test"};
+
+    spyOn(generator, "prepareOutputDirectory");
+
+    generator.generate(supplied_config);
+
+    expect(generator.config.sample).toEqual("test");
+
+  });
+
+  it("calls to prepare output directory if no on start function is provided", function(){
+
+    var supplied_config = {sample: "test"};
+
+    spyOn(generator, "prepareOutputDirectory");
+
+    generator.generate(supplied_config);
+
+    expect(generator.prepareOutputDirectory).toHaveBeenCalled();
+
+  });
+
+  it("calls the on start function with next action as a callback", function(){
+ 
+    var supplied_config = {sample: "test"};
+
+    var on_start = jasmine.createSpy();
+
+    spyOn(generator, "prepareOutputDirectory");
+
+    generator.generate(supplied_config, on_start);
+
+    expect(on_start).toHaveBeenCalled();
+ 
+  });
+
+  it("sets the on complete callback", function(){
+  
+    var supplied_config = {sample: "test"};
+
+    var on_complete = jasmine.createSpy();
+
+    spyOn(generator, "prepareOutputDirectory");
+
+    generator.generate(supplied_config, function(){}, on_complete);
+
+    expect(generator.onComplete).toEqual(on_complete);
+ 
+  });
+
+});
+
 describe("prepare output directory", function(){
 
   it("creates the output directory if it doesn't exist", function(){
