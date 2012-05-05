@@ -60,13 +60,13 @@ describe("starting the generation", function(){
 
   it("calls the on start function with next action as a callback", function(){
  
-    var supplied_config = {sample: "test"};
-
     var on_start = jasmine.createSpy();
+
+    var supplied_config = {sample: "test", "on_start": on_start};
 
     spyOn(generator, "prepareOutputDirectory");
 
-    generator.generate(supplied_config, on_start);
+    generator.generate(supplied_config);
 
     expect(on_start).toHaveBeenCalled();
  
@@ -74,13 +74,13 @@ describe("starting the generation", function(){
 
   it("sets the on complete callback", function(){
   
-    var supplied_config = {sample: "test"};
-
     var on_complete = jasmine.createSpy();
+
+    var supplied_config = {sample: "test", "on_complete": on_complete};
 
     spyOn(generator, "prepareOutputDirectory");
 
-    generator.generate(supplied_config, function(){}, on_complete);
+    generator.generate(supplied_config);
 
     expect(generator.onComplete).toEqual(on_complete);
  
@@ -91,7 +91,8 @@ describe("starting the generation", function(){
 describe("prepare output directory", function(){
 
   it("creates the output directory if it doesn't exist", function(){
-    var config = {"template_dir": "templates"}; 
+
+    generator.config = {"template_dir": "templates"}; 
 
     spyOn(fs, 'stat').andCallFake(function(path, callback){
       callback(null, {isDirectory: function(){ return false }} );
@@ -100,14 +101,14 @@ describe("prepare output directory", function(){
     spyOn(generator, "traverseTemplates");
     spyOn(fs, "mkdirSync");
 
-    generator.prepareOutputDirectory(config);
+    generator.prepareOutputDirectory();
 
     expect(fs.mkdirSync).toHaveBeenCalled();
 
   });
 
   it("will not create the output directory if it exists", function(){
-    var config = {"template_dir": "templates"}; 
+    generator.config = {"template_dir": "templates"}; 
 
     spyOn(fs, 'stat').andCallFake(function(path, callback){
       callback(null, {isDirectory: function(){ return true }} );
@@ -116,14 +117,14 @@ describe("prepare output directory", function(){
     spyOn(generator, "traverseTemplates");
     spyOn(fs, "mkdirSync");
 
-    generator.prepareOutputDirectory(config);
+    generator.prepareOutputDirectory();
 
     expect(fs.mkdirSync).not.toHaveBeenCalled();
 
   });
 
   it("it calls to traverse templates", function(){
-    var config = {"template_dir": "templates"}; 
+    generator.config = {"template_dir": "templates"}; 
 
     spyOn(fs, 'stat').andCallFake(function(path, callback){
       callback(null, {isDirectory: function(){ return true }} );
@@ -131,9 +132,9 @@ describe("prepare output directory", function(){
 
     spyOn(generator, "traverseTemplates");
 
-    generator.prepareOutputDirectory(config);
+    generator.prepareOutputDirectory();
 
-    expect(generator.traverseTemplates).toHaveBeenCalledWith(config);
+    expect(generator.traverseTemplates).toHaveBeenCalled();
 
   });
 
@@ -142,7 +143,7 @@ describe("prepare output directory", function(){
 describe("traversing templates", function() {
 
   it("traverses recursively", function(){
-    var config = {"template_dir": "templates"}; 
+    generator.config = {"template_dir": "templates"}; 
 
     spyOn(fs, 'readdir').andCallFake(function(path, callback){
       if(fs.readdir.mostRecentCall.args[0] === "templates"){
@@ -155,14 +156,14 @@ describe("traversing templates", function() {
     spyOn(fs, 'mkdirSync');
     spyOn(generator, "fetchAndRender");
 
-    generator.traverseTemplates(config);
+    generator.traverseTemplates();
 
-    expect(generator.fetchAndRender).toHaveBeenCalledWith("templates/sub_dir/sub.mustache", config);
+    expect(generator.fetchAndRender).toHaveBeenCalledWith("templates/sub_dir/sub.mustache");
 
   });
 
   it("creates sub-directories in the output path", function(){
-    var config = {"template_dir": "templates", "output_dir": "public"}; 
+    generator.config = {"template_dir": "templates", "output_dir": "public"}; 
 
     spyOn(fs, 'mkdirSync');
     spyOn(generator, "fetchAndRender");
@@ -175,14 +176,14 @@ describe("traversing templates", function() {
       }
     });
 
-    generator.traverseTemplates(config);
+    generator.traverseTemplates();
 
     expect(fs.mkdirSync).toHaveBeenCalledWith("public/sub_dir");
 
   });
 
   it("calls to render content when a template is found", function(){
-    var config = {"template_dir": "templates"}; 
+    generator.config = {"template_dir": "templates"}; 
 
     spyOn(fs, 'readdir').andCallFake(function(path, callback){
       if(fs.readdir.mostRecentCall.args[0] === "templates"){
@@ -195,14 +196,14 @@ describe("traversing templates", function() {
     spyOn(fs, 'mkdirSync');
     spyOn(generator, "fetchAndRender");
 
-    generator.traverseTemplates(config);
+    generator.traverseTemplates();
 
-    expect(generator.fetchAndRender).toHaveBeenCalledWith("templates/test.html.mustache", config);
+    expect(generator.fetchAndRender).toHaveBeenCalledWith("templates/test.html.mustache");
 
   });
 
   it("skips partial templates from rendering", function(){
-    var config = {"template_dir": "templates"}; 
+    generator.config = {"template_dir": "templates"}; 
 
     spyOn(fs, 'readdir').andCallFake(function(path, callback){
       if(fs.readdir.mostRecentCall.args[0] === "templates"){
@@ -215,7 +216,7 @@ describe("traversing templates", function() {
     spyOn(fs, 'mkdirSync');
     spyOn(generator, "fetchAndRender");
 
-    generator.traverseTemplates(config);
+    generator.traverseTemplates();
 
     expect(generator.fetchAndRender).not.toHaveBeenCalled();
 
@@ -223,7 +224,7 @@ describe("traversing templates", function() {
   });
 
   it("handle other file types as static files", function() {
-    var config = {"template_dir": "templates", "output_dir": "public"}; 
+    generator.config = {"template_dir": "templates", "output_dir": "public"}; 
 
     spyOn(fs, 'readdir').andCallFake(function(path, callback){
       if(fs.readdir.mostRecentCall.args[0] === "templates"){
@@ -236,14 +237,14 @@ describe("traversing templates", function() {
     spyOn(fs, 'mkdirSync');
     spyOn(generator, "staticFileHandler");
 
-    generator.traverseTemplates(config);
+    generator.traverseTemplates();
 
-    expect(generator.staticFileHandler).toHaveBeenCalledWith("templates/index.html", config);
+    expect(generator.staticFileHandler).toHaveBeenCalledWith("templates/index.html");
 
   });
 
   it("handle the file as a static file if the template extension is not at the end", function() {
-    var config = {"template_dir": "templates", "output_dir": "public"}; 
+    generator.config = {"template_dir": "templates", "output_dir": "public"}; 
 
     spyOn(fs, 'readdir').andCallFake(function(path, callback){
       if(fs.readdir.mostRecentCall.args[0] === "templates"){
@@ -256,9 +257,9 @@ describe("traversing templates", function() {
     spyOn(fs, 'mkdirSync');
     spyOn(generator, "staticFileHandler");
 
-    generator.traverseTemplates(config);
+    generator.traverseTemplates();
 
-    expect(generator.staticFileHandler).toHaveBeenCalledWith("templates/index.mustache.swp", config);
+    expect(generator.staticFileHandler).toHaveBeenCalledWith("templates/index.mustache.swp");
 
   });
 
@@ -291,54 +292,79 @@ describe("handling static files", function(){
     expect(child_process.exec.mostRecentCall.args[0]).toEqual("cp templates/sub/foo/static.html public/sub/foo/static.html");
   });
 
+  it("increments the running actions when issuing copy command", function(){
+
+    spyOn(generator, "incrementRunningActions");
+
+    spyOn(child_process, "exec");
+
+    generator.staticFileHandler("templates/sub/foo/static.html", {"output_dir": "public"});
+
+    expect(generator.incrementRunningActions).toHaveBeenCalled();
+  });
+
+  it("decrements the running actions on completion of copy command", function(){
+
+    spyOn(generator, "decrementAndCompleteRunningActions");
+
+    spyOn(child_process, "exec").andCallFake(function(cmd, callback){
+      callback(); 
+    });
+
+    generator.staticFileHandler("templates/sub/foo/static.html", {"output_dir": "public"});
+
+    expect(generator.decrementAndCompleteRunningActions).toHaveBeenCalled();
+
+  });
+
 });
 
 describe("rendering content", function(){
 
   it("instantiates a new renderer", function(){
-    var config = {};
+    generator.config = {};
 
     spyOn(generator, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(generator, "fetchTemplate"); 
     spyOn(generator, "fetchSharedContent"); 
     spyOn(generator, "fetchPartials"); 
 
-    generator.fetchAndRender("templates/sub/simple.mustache", config);
+    generator.fetchAndRender("templates/sub/simple.mustache");
 
     expect(generator.rendererFor.mostRecentCall.args[0]).toEqual("mustache");
 
   });
 
   it("fetches the template from the path", function(){
-    var config = {};
+    generator.config = {};
 
     spyOn(generator, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(generator, "fetchTemplate"); 
     spyOn(generator, "fetchContent"); 
     spyOn(generator, "fetchPartials"); 
 
-    generator.fetchAndRender("templates/sub/simple.mustache", config);
+    generator.fetchAndRender("templates/sub/simple.mustache");
 
     expect(generator.fetchTemplate.mostRecentCall.args[0]).toEqual("templates/sub/simple.mustache");
 
   });
 
   it("fetches shared content", function(){
-    var config = {"content_dir": "contents", "shared_content": "shared"};
+    generator.config = {"content_dir": "contents", "shared_content": "shared"};
 
     spyOn(generator, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(generator, "fetchTemplate"); 
     spyOn(generator, "fetchSharedContent"); 
     spyOn(generator, "fetchPartials"); 
 
-    generator.fetchAndRender("templates/sub/simple.mustache", config);
+    generator.fetchAndRender("templates/sub/simple.mustache");
 
     expect(generator.fetchSharedContent.mostRecentCall.args[0]).toEqual("contents/shared");
 
   });
 
   it("fetches content for the template", function(){
-    var config = {"content_dir": "contents", "shared_content": "shared"};
+    generator.config = {"content_dir": "contents", "shared_content": "shared"};
 
     spyOn(generator, "rendererFor").andCallFake(function(){ return {"afterRender": null, "setContent": function(){} }}); 
     spyOn(generator, "fetchTemplate"); 
@@ -346,28 +372,44 @@ describe("rendering content", function(){
     spyOn(generator, "fetchContent"); 
     spyOn(generator, "fetchPartials"); 
 
-    generator.fetchAndRender("templates/sub/simple.html.mustache", config);
+    generator.fetchAndRender("templates/sub/simple.html.mustache");
 
     expect(generator.fetchContent.mostRecentCall.args[0]).toEqual("contents/sub/simple");
   });
 
   it("fetches partials for the template", function(){
-    var config = {"template_dir": "templates"};
+    generator.config = {"template_dir": "templates"};
 
     spyOn(generator, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
     spyOn(generator, "fetchTemplate"); 
     spyOn(generator, "fetchSharedContent"); 
     spyOn(generator, "fetchPartials"); 
 
-    generator.fetchAndRender("templates/sub/simple.mustache", config);
+    generator.fetchAndRender("templates/sub/simple.mustache");
 
     expect(generator.fetchPartials.mostRecentCall.args[0]).toEqual("templates/sub");
 
   });
 
+  it("increments the running actions", function(){
+    generator.config = {"template_dir": "templates"};
+
+    spyOn(generator, "rendererFor").andCallFake(function(){ return {"afterRender": null }}); 
+    spyOn(generator, "fetchTemplate"); 
+    spyOn(generator, "fetchSharedContent"); 
+    spyOn(generator, "fetchPartials"); 
+
+    spyOn(generator, "incrementRunningActions");
+
+    generator.fetchAndRender("templates/sub/simple.mustache");
+
+    expect(generator.incrementRunningActions).toHaveBeenCalled();
+
+  });
+
   it("saves the output after render", function(){
 
-    var config = {"output_dir": "public", "output_extension": "html"};
+    generator.config = {"output_dir": "public", "output_extension": "html"};
 
     var fake_renderer = {
       afterRender: null    
@@ -387,7 +429,7 @@ describe("rendering content", function(){
     });
     spyOn(fs, "writeFile");
 
-    generator.fetchAndRender("templates/sub/simple.mustache", config);
+    generator.fetchAndRender("templates/sub/simple.mustache");
 
     fake_renderer.afterRender("sample output");
 
@@ -396,7 +438,7 @@ describe("rendering content", function(){
 
   it("will not set the extension if rendered file already got an extension", function(){
 
-    var config = {"output_dir": "public", "output_extension": "html"};
+    generator.config = {"output_dir": "public", "output_extension": "html"};
 
     var fake_renderer = {
       afterRender: null    
@@ -416,11 +458,46 @@ describe("rendering content", function(){
     });
     spyOn(fs, "writeFile");
 
-    generator.fetchAndRender("templates/sub/simple.css.mustache", config);
+    generator.fetchAndRender("templates/sub/simple.css.mustache");
 
     fake_renderer.afterRender("sample output");
 
     expect(fs.writeFile.mostRecentCall.args.slice(0, 2)).toEqual(["public/sub/simple.css", "sample output"]);
+  });
+
+  it("decrements the running actions after render", function(){
+  
+    generator.config = {"output_dir": "public", "output_extension": "html"};
+
+    var fake_renderer = {
+      afterRender: null    
+    };
+
+    spyOn(generator, "rendererFor").andCallFake(function(){
+      return fake_renderer;
+    });  
+
+    spyOn(generator, "fetchTemplate"); 
+    spyOn(generator, "fetchSharedContent"); 
+    spyOn(generator, "fetchPartials"); 
+
+    spyOn(fs, "stat").andCallFake(function(path, callback){
+      var fake_stats = {isDirectory: function(){ return true; }};  
+      callback(null, fake_stats);
+    });
+
+    spyOn(fs, "writeFile").andCallFake(function(output_file, output, cbk){
+      cbk(null); 
+    });
+
+    spyOn(generator, "decrementAndCompleteRunningActions");
+
+    generator.fetchAndRender("templates/sub/simple.css.mustache");
+
+    fake_renderer.afterRender("sample output");
+
+    expect(generator.decrementAndCompleteRunningActions).toHaveBeenCalled();
+
   });
 
 });

@@ -49,6 +49,11 @@ else if(args[0] == "server") {
       supplied_config["server_port"] = parseInt(args[1]);
     }
 
+    supplied_config.on_start = function(callback){
+      console.log("Generating the site...");
+      callback();
+    }
+
     // start server 
     server.startServer(supplied_config);
 
@@ -65,13 +70,13 @@ else if(args[0] == "server") {
       var supplied_config = JSON.parse(data);  
     } 
 
-    var on_start = function(callback){
-      console.log("Generating site...");
+    supplied_config.on_start = function(callback){
+      console.log("Generating the site...");
       callback();
     }
 
     // call generate with loaded config
-    generator.generate(supplied_config, on_start);
+    generator.generate(supplied_config);
 
   });
 }
