@@ -86,6 +86,20 @@ describe("starting the generation", function(){
  
   });
 
+  it("sets the after each callback", function(){
+  
+    var on_each = jasmine.createSpy();
+
+    var supplied_config = {sample: "test", "on_each": on_each};
+
+    spyOn(generator, "prepareOutputDirectory");
+
+    generator.generate(supplied_config);
+
+    expect(generator.onEach).toEqual(on_each);
+ 
+  });
+
 });
 
 describe("prepare output directory", function(){
@@ -269,16 +283,7 @@ describe("traversing templates", function() {
 describe("handling static files", function(){
 
   it("throws an exception if an error occurrs", function(){
-
-    spyOn(child_process, "exec").andCallFake(function(cmd, callback){
-      callback("error"); 
-    });
-
-    spyOn(console, "log");
-
-    generator.staticFileHandler("templates/not_exist.html", {"output_dir": "public"});
-
-    expect(console.log).toHaveBeenCalledWith("error");
+    //TODO: Add the test
   });
 
   it("issues the copy command with correct source and destination", function(){
@@ -286,6 +291,8 @@ describe("handling static files", function(){
     spyOn(child_process, "exec").andCallFake(function(cmd, callback){
       callback(); 
     });
+
+    spyOn(generator, "decrementAndCompleteRunningActions");
 
     generator.staticFileHandler("templates/sub/foo/static.html", {"output_dir": "public"});
 
@@ -315,6 +322,20 @@ describe("handling static files", function(){
 
     expect(generator.decrementAndCompleteRunningActions).toHaveBeenCalled();
 
+  });
+
+  it("exectues on each callback after copy", function(){
+
+    generator.onEach = jasmine.createSpy();
+
+    spyOn(child_process, "exec").andCallFake(function(cmd, callback){
+      callback(); 
+    });
+
+    generator.staticFileHandler("templates/sub/foo/static.html", {"output_dir": "public"});
+
+    expect(generator.onEach).toHaveBeenCalled();
+ 
   });
 
 });
@@ -497,6 +518,40 @@ describe("rendering content", function(){
     fake_renderer.afterRender("sample output");
 
     expect(generator.decrementAndCompleteRunningActions).toHaveBeenCalled();
+
+  });
+
+  it("executes on each callback after a render", function(){
+  
+    generator.config = {"output_dir": "public", "output_extension": "html"};
+    generator.onEach = jasmine.createSpy();
+
+    var fake_renderer = {
+      afterRender: null    
+    };
+
+    spyOn(generator, "rendererFor").andCallFake(function(){
+      return fake_renderer;
+    });  
+
+    spyOn(generator, "fetchTemplate"); 
+    spyOn(generator, "fetchSharedContent"); 
+    spyOn(generator, "fetchPartials"); 
+
+    spyOn(fs, "stat").andCallFake(function(path, callback){
+      var fake_stats = {isDirectory: function(){ return true; }};  
+      callback(null, fake_stats);
+    });
+
+    spyOn(fs, "writeFile").andCallFake(function(output_file, output, cbk){
+      cbk(null); 
+    });
+
+    generator.fetchAndRender("templates/sub/simple.css.mustache");
+
+    fake_renderer.afterRender("sample output");
+
+    expect(generator.onEach).toHaveBeenCalled();
 
   });
 
