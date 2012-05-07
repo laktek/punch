@@ -46,7 +46,7 @@ else if(args[0] == "server") {
     } 
 
     if(parseInt(args[1]) > 0){
-      supplied_config["server_port"] = parseInt(args[1]);
+      supplied_config["server"]["port"] = parseInt(args[1]);
     }
 
     supplied_config.on_start = function(callback){

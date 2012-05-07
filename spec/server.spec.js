@@ -116,9 +116,27 @@ describe("serve files", function(){
 
 describe("handle requests", function(){
 
+  it("will not generate the site if serving_only flag is set", function(){
+    var dummy_request = { "url": "sample.html" };
+
+    server.servingOnly = true;
+    server.requestQueue = [];
+    server.generating = false;
+    server.lastGenerate = null;
+
+    spyOn(generator, "generate");
+    spyOn(server, "serveFile");
+     
+    server.handleRequest(dummy_request, {});
+   
+    expect(generator.generate).not.toHaveBeenCalled(); 
+
+  });
+
   it("queues the requests if site is already generating", function(){
     var dummy_request = { "url": "sample.html" };
 
+    server.servingOnly = false;
     server.requestQueue = [];
     server.generating = true;
      
@@ -130,6 +148,7 @@ describe("handle requests", function(){
   it("generates the site if interval from last generation is above the specified value", function(){
     var dummy_request = { "url": "sample.html" };
 
+    server.servingOnly = false;
     server.requestQueue = [];
     server.generating = false;
     server.lastGenerate = null;
@@ -144,6 +163,7 @@ describe("handle requests", function(){
   it("sets the generating flag to true when generation begins", function(){
     var dummy_request = { "url": "sample.html" };
 
+    server.servingOnly = false;
     server.requestQueue = [];
     server.generating = false;
     server.lastGenerate = null;
@@ -159,6 +179,7 @@ describe("handle requests", function(){
   it("pushes the current request to the queue when generation begins", function(){
     var dummy_request = { "url": "sample.html" };
 
+    server.servingOnly = false;
     server.requestQueue = [];
     server.generating = false;
     server.lastGenerate = null;
@@ -166,13 +187,15 @@ describe("handle requests", function(){
     spyOn(generator, "generate");
 
     server.handleRequest(dummy_request, {});
- 
+
     expect(server.requestQueue.length).toEqual(1); 
+
   });
 
   it("will serve directly if the site is already generated within the specified interval", function(){
     var dummy_request = { "url": "sample.html" };
 
+    server.servingOnly = false;
     server.requestQueue = [];
     server.generating = false;
     server.lastGenerate = (new Date()).getTime();
@@ -190,6 +213,7 @@ describe("handle requests", function(){
     var dummy_response = {};
 
     server.config = {"output_dir": "public"}
+    server.servingOnly = false;
     server.requestQueue = [];
     server.generating = false;
     server.lastGenerate = (new Date()).getTime();
@@ -207,14 +231,36 @@ describe("handle requests", function(){
 describe("start server", function(){
 
   it("should extend the default config with supplied config", function(){
-    var supplied_config = {server_port: 4000};
+    var supplied_config = { server: { port: 4000 } };
 
     spyOn(http, "createServer").andReturn({"listen": function(){}});
 
     server.startServer(supplied_config);
 
-    expect(server.config.server_port).toEqual(4000);
+    expect(server.config.server.port).toEqual(4000);
   }); 
+
+  it("should set the servingOnly flag", function(){
+    var supplied_config = {server: { port: 4000, serving_only: true }};
+
+    spyOn(http, "createServer").andReturn({"listen": function(){}});
+
+    server.startServer(supplied_config);
+
+    expect(server.servingOnly).toEqual(true);
+
+  });
+
+  it("should set the generation interval", function(){
+    var supplied_config = {server: { port: 4000, serving_only: true, generate_interval: 1000 }};
+
+    spyOn(http, "createServer").andReturn({"listen": function(){}});
+
+    server.startServer(supplied_config);
+
+    expect(server.generateInterval).toEqual(1000);
+
+  });
 
   it("should start the server on default port if no config provided", function(){
     var supplied_config = {};
