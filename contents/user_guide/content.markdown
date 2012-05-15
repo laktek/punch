@@ -60,13 +60,11 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 
 * We also have a lengthy company overview written in markdwon format. Instead of adding it to the `about.json` file, we'll be keeping it seperately. For that we create a new directory named `about` inside the `contents` directory and save the markdown file there as `overview.markdown`.
 
-* Now we can generate the site, for that go back to the top-most directory (`cd ../`) and run the command `punch`.
+* To generate and view the site, go back to the top-most directory (`cd ../`) and run the command `punch server`.
 
-* Punch will output the generated pages in a directory named `public`.
+* This will start the Punch dev server on port `9009` and store the generated pages in a directory named `public`.
 
-* To view the generated site you can run the command `python -m SimpleHTTPServer` inside the `public` directory. 
-
-* Then point your browser to `http://localhost:8000/about.html` to see the generated about page.
+* Finally, point your browser to `http://localhost:9009/about.html` to see the generated about page.
 
 ### Additional Features
 

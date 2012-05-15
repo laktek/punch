@@ -11,7 +11,7 @@
 <meta charset="utf-8">
 
 <title>Punch - User Guide</title>
-<meta name="description" content="Punch is a simple tool to generate (static) websites from Mustache templates and content stored in JSON &amp; Markdown format.">
+<meta name="description" content="Punch is a simple tool to generate HTML documents from Mustache templates and content stored in JSON &amp; Markdown format.">
 <meta name="author" content="Lakshan Perera (http://laktek.com)">
 
 <!-- http://t.co/dKP3o1e -->
@@ -121,13 +121,11 @@
 </li>
 <li><p>We also have a lengthy company overview written in markdwon format. Instead of adding it to the <code>about.json</code> file, we&#39;ll be keeping it seperately. For that we create a new directory named <code>about</code> inside the <code>contents</code> directory and save the markdown file there as <code>overview.markdown</code>.</p>
 </li>
-<li><p>Now we can generate the site, for that go back to the top-most directory (<code>cd ../</code>) and run the command <code>punch</code>.</p>
+<li><p>To generate and view the site, go back to the top-most directory (<code>cd ../</code>) and run the command <code>punch server</code>.</p>
 </li>
-<li><p>Punch will output the generated pages in a directory named <code>public</code>.</p>
+<li><p>This will start the Punch dev server on port <code>9009</code> and store the generated pages in a directory named <code>public</code>.</p>
 </li>
-<li><p>To view the generated site you can run the command <code>python -m SimpleHTTPServer</code> inside the <code>public</code> directory. </p>
-</li>
-<li><p>Then point your browser to <code>http://localhost:8000/about.html</code> to see the generated about page.</p>
+<li><p>Finally, point your browser to <code>http://localhost:9009/about.html</code> to see the generated about page.</p>
 </li>
 </ul>
 <h3>Additional Features</h3>
