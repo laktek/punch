@@ -5,7 +5,7 @@
   , "version": "0.1.7"
   , "homepage": "https://github.com/laktek/punch"
   , "author": "Lakshan Perera <lakshan@web2media.net> (http://laktek.com)"
-  , "licenses"      : "MIT"
+  , "licenses": "MIT"
   , "repository": {
       "type": "git"
     , "url": "https://github.com/laktek/punch.git"
