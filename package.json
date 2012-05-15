@@ -1,6 +1,6 @@
 {
     "name": "punch"
-  , "description": "A Fun and easy way to build little websites"
+  , "description": "A Fun and easy way to build modern websites"
   , "keywords": ["static", "sites", "mustache", "json", "markdown"]
   , "version": "0.1.6"
   , "homepage": "https://github.com/laktek/punch"
