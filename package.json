@@ -2,7 +2,7 @@
     "name": "punch"
   , "description": "A Fun and easy way to build modern websites"
   , "keywords": ["static", "sites", "mustache", "json", "markdown"]
-  , "version": "0.1.6"
+  , "version": "0.1.7"
   , "homepage": "https://github.com/laktek/punch"
   , "author": "Lakshan Perera <lakshan@web2media.net> (http://laktek.com)"
   , "licenses"      : "MIT"
