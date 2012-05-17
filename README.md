@@ -57,7 +57,8 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 		  "port": 9009
 		 }, 
 		 "layout": "layout1.mustache"
-	}```
+	}
+	```
 	
 * create `layout.mustache` inside `templates` directory which will be used as layout for all the generated pages
 
