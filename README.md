@@ -66,28 +66,30 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 
 * Here's how our `about.mustache` template will look like.
 
-      ```mustache
-	 <!doctype html>
+```mustache
+<!doctype html>
 
-	 <head>
-	 <meta charset="utf-8">
+<head>
+<meta charset="utf-8">
 
-	 <title>{{title}}</title>
-	 </head>
-	 <body>
-	
-        <h1>{{title}}</h1>
+<title>{{title}}</title>
+</head>
 
-       <p>{{{overview}}}</p> 
-        
-        <ul>
-          {{#team}}
-            <li><strong>{{name}}</strong> - {{bio}}</li>
-          {{/team}}
-        </ul>
- 	</body>
- 	</html>
-      ```
+<body>
+
+  <h1>{{title}}</h1>
+
+ <p>{{{overview}}}</p> 
+  
+  <ul>
+    {{#team}}
+      <li><strong>{{name}}</strong> - {{bio}}</li>
+    {{/team}}
+  </ul>
+</body>
+</html>
+```
+
 
 * Now inside `contents` directory let's create a file called `about.json` to hold the corresponding content.
 
