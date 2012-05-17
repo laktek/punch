@@ -138,7 +138,7 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 	"template_dir": "templates",
 	"content_dir": "contents",
 	"output_dir": "public",
-	"layout": "layout.mustache",
+	"layout": null,
 	"server": {
 	  "port": 9009
 	 }
@@ -147,8 +147,7 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 
 * Create a file named `layout.mustache` inside `templates` directory
 
-* Here's how `layout.mustache` template will look like.
-
+* Here's how `layout.mustache``` template will look like.
      ```mustache
       <!doctype html>
 
