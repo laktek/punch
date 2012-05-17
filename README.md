@@ -44,35 +44,52 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 
 * This will create two directories to hold `templates` and `contents`. Also, it will add a `config.json` file which contains the default configuration for Punch.
 
+* Edit `config.json` and add layout details
+
+* after editing `config.json` here is how it will look like.
+
+	  ```json
+	{
+		"template_dir": "templates",
+		"content_dir": "contents",
+		"output_dir": "public",
+		"layout": null,
+		"server": {
+		  "port": 9009
+		 }
+	}
+	```
+
 * Say we want to have a page called `about.html`, to give an overview of the company and details of the team members.
 
-* First we must create a corresponding template for the page inside `templates` directory.
+* Then we must create a corresponding template for the page inside `templates` directory.
 
 * Here's how our `about.mustache` template will look like.
 
-      ```mustache
-      <!doctype html>
+```mustache
+<!doctype html>
 
-      <head>
-      <meta charset="utf-8">
+<head>
+<meta charset="utf-8">
 
-      <title>{{title}}</title>
-      </head>
+<title>{{title}}</title>
+</head>
 
-      <body>
+<body>
 
-        <h1>{{title}}</h1>
+  <h1>{{title}}</h1>
 
-       <p>{{{overview}}}</p> 
-        
-        <ul>
-          {{#team}}
-            <li><strong>{{name}}</strong> - {{bio}}</li>
-          {{/team}}
-        </ul>
-      </body>
-      </html>
-      ```
+ <p>{{{overview}}}</p> 
+  
+  <ul>
+    {{#team}}
+      <li><strong>{{name}}</strong> - {{bio}}</li>
+    {{/team}}
+  </ul>
+</body>
+</html>
+```
+
 
 * Now inside `contents` directory let's create a file called `about.json` to hold the corresponding content.
 
@@ -109,6 +126,56 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 * Finally, point your browser to `http://localhost:9009/about.html` to see the generated about page.
 
 ## Additional Features
+
+**Layout Support**
+
+* You can create a template which will act as skeleton of all the pages. To enable the layout edit the `config.json` and add the name of the layout say `layout.mustache`
+
+* After adding the layout `config.json` should look like this
+
+  ```json
+{
+	"template_dir": "templates",
+	"content_dir": "contents",
+	"output_dir": "public",
+	"layout": "layout.mustache",
+	"server": {
+	  "port": 9009
+	 }
+}
+```
+
+* Create a file named `layout.mustache` inside `templates` directory
+
+* Here's how `layout.mustache` template will look like.
+
+     ```mustache
+      <!doctype html>
+
+      <head>
+      <meta charset="utf-8">
+
+      <title>{{template.title}}</title>
+      </head>
+
+      <body>
+		{{{content}}}
+      </body>
+      </html>
+      ```
+* Update `about.mustache` file in `templates` to make use of the layout. The updated file will look like this
+
+  ```mustache
+    <h1>{{title}}</h1>
+
+   <p>{{{overview}}}</p> 
+    
+    <ul>
+      {{#team}}
+        <li><strong>{{name}}</strong> - {{bio}}</li>
+      {{/team}}
+    </ul>
+  ```
 
 **Partial templates**
 
