@@ -44,6 +44,40 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 
 * This will create two directories to hold `templates` and `contents`. Also, it will add a `config.json` file which contains the default configuration for Punch.
 
+* Edit `config.json` and add layout details
+
+* `config.json` should look like this
+
+	  ```json
+	{
+		"template_dir": "templates",
+		"content_dir": "contents",
+		"output_dir": "public",
+		"server": {
+		  "port": 9009
+		 }, 
+		 "layout": "layout1.mustache"
+	}```
+	
+* create `layout.mustache` inside `templates` directory which will be used as layout for all the generated pages
+
+* Here's how `layout.mustache``` template will look like.
+     ```mustache
+      <!doctype html>
+
+      <head>
+      <meta charset="utf-8">
+
+      <title>About us</title>
+      </head>
+
+      <body>
+		{{content}}
+      </body>
+      </html>
+      ```
+
+
 * Say we want to have a page called `about.html`, to give an overview of the company and details of the team members.
 
 * First we must create a corresponding template for the page inside `templates` directory.
@@ -51,16 +85,6 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
 * Here's how our `about.mustache` template will look like.
 
       ```mustache
-      <!doctype html>
-
-      <head>
-      <meta charset="utf-8">
-
-      <title>{{title}}</title>
-      </head>
-
-      <body>
-
         <h1>{{title}}</h1>
 
        <p>{{{overview}}}</p> 
@@ -70,8 +94,6 @@ Here's a step by step guide on how to create a simple HTML site using Punch.
             <li><strong>{{name}}</strong> - {{bio}}</li>
           {{/team}}
         </ul>
-      </body>
-      </html>
       ```
 
 * Now inside `contents` directory let's create a file called `about.json` to hold the corresponding content.
