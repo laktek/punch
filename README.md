@@ -172,11 +172,32 @@ There's a sample available in `/sample`, which will help you to understand the d
 
 ## Contributing
 
-You are encouraged to contribute and be part of Punch:
+Follow this flow to fix bugs, implement new features for Punch:
 
-* Report any bugs or feature requests - http://github.com/laktek/punch/issues/
-* Help with improving the documentation, site and screencasts.
-* Fork, Refactor and send pull requests.
+1. Fork [Punch on GitHub](http://github.com/laktek/punch):
+2. Clone the forked repository:  
+    `git clone git@github.com:YOUR_USER/punch.git && cd punch`
+3. Verify that existing tests pass:  
+    `jasmine-node spec`
+4. Create a topic branch:  
+    `git checkout -b feature`
+5. **Make your changes.** (It helps a lot if you write tests first.)
+6. Verify that tests still pass:  
+    `jasmine-node spec`
+7. Push to your fork:  
+    `git push -u YOUR_USER feature`
+8. Send a [pull request](https://github.com/laktek/punch/pulls) describing your changes. 
+
+To make updates to site or user guides, follow this flow:
+
+1. Fork [Punch on GitHub](http://github.com/laktek/punch):
+2. Clone the forked repository:  
+    `git clone git@github.com:YOUR_USER/punch.git && cd punch`
+3. Switch to `gh-pages` branch.
+4. **Make your changes.** 
+5. Push to your fork:  
+    `git push -u YOUR_USER feature`
+6. Send a [pull request](https://github.com/laktek/punch/pulls) describing your changes. 
+
+* Report any bugs or feature requests to: http://github.com/laktek/punch/issues/
 * If you have big ideas for Punch, please feel free to contact me (Lakshan - http://laktek.com/about). Let's have a chat.
-
-
