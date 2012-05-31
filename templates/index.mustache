@@ -1,45 +1,60 @@
 {{> header }}
 
-<header role="banner">
-  <h1>{{title}}</h1>
-  <h2>{{tagline}}</h2>
-</header>
-
-<div class="content clearfix">
-
-<div role="main">
-  <div id="description">{{{description_html}}}</div>
-
-  <h3>Watch a quick Screencast</h3>
-  <div>{{{screencast_html}}}</div>
-
-  <h3>Why Punch?</h3>
-  
-  <ul>
-    {{#why_punch}}
-    <li>{{{.}}}</li>
-    {{/why_punch}}
-  </ul>
-
-  <h3>Install</h3>
-  <ul>
-    {{#install_steps}}
-    <li>{{{.}}}</li>
-    {{/install_steps}}
-  </ul>
-
-  <menu role="actions">
-    <li><a href="user_guide.html">Quick User Guide</a></li>
-    <li><a href="http://laktek.com/2012/04/19/punch-a-fun-and-easy-way-to-build-modern-websites/">Introductory Blog Post</a></li>
-    <li><a href="{{github_url}}">Source Code</a></li>
-  </menu>
-
-  <h3>Watchers</h3>
-  <div id="github_followers"></div>
-  <p><a href="{{github_url}}">Watch Punch on GitHub</a></p>
-
-</div>
-
-</div>
+		<div class="l-content" role="main">
+			<div class="section" id="introduction">
+				<div class="l-wrapper">
+					
+					<div class="intro centered">
+						<p>{{{description_html}}}</p>
+					</div>
+					
+				</div>
+			</div>
+			<div class="section" id="screencast">
+				<div class="l-wrapper">
+					
+					<h2 class="section-title">Watch a quick Screencast</h2>
+					<div class="embedded-media video">{{{screencast_html}}}</div>
+				
+				</div>
+			</div>
+			<div class="section" id="about">
+				<div class="l-wrapper l-readable">
+					
+					<h2 class="section-title">Why Punch?</h2>
+					<ul>
+						{{#why_punch}}
+						<li>{{{.}}}</li>
+						{{/why_punch}}
+					</ul>
+					<h2 class="section-title">Install</h2>
+					<ul>
+						{{#install_steps}}
+						<li>{{{.}}}</li>
+						{{/install_steps}}
+					</ul>
+					
+				</div>
+			</div>
+			<div class="section" id="more">
+				<div class="l-wrapper">
+					
+					<ul class="hlist centered" role="actions">
+						<li class="hlist-item"><a href="user-guide">Quick User Guide</a></li>
+						<li class="hlist-item"><a href="http://laktek.com/2012/04/19/punch-a-fun-and-easy-way-to-build-modern-websites/">Introductory Blog Post</a></li>
+						<li class="hlist-item"><a href="{{github_url}}">Source Code</a></li>
+					</ul>
+					
+				</div>
+			</div>
+			<div class="section" id="testimonials">
+				<div class="l-wrapper">
+					
+					<h2 class="section-title">Testimonials</h2>
+					<!-- #testimonials -->
+					
+				</div>
+			</div>
+		</div>
 
 {{> footer }}

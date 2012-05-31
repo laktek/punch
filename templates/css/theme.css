@@ -1,0 +1,76 @@
+/*
+
+	Theme
+	
+	theme styling
+
+*/
+
+/* Colors */
+html {
+	background-color: white;
+}
+
+body {
+	background-color: #fff7e1;
+	color: #e13738;
+}
+
+a,
+a:visited {
+	color: black;
+}
+
+/* Type */
+body {
+	font-family: 'Lora', serif;
+	font-weight: 400;
+}
+
+a {
+	font-weight: 700;
+}
+
+/* Headings and Titles */
+.site-title,
+.site-tagline,
+.section-title {
+	text-align: center;
+}
+
+/* Spacing */
+body {
+	margin: 1.5em;
+}
+
+/* Hiding */
+.site-title {
+	height: 0;
+	overflow: hidden;
+	position: absolute;
+	width: 0;
+}
+
+/* Header */
+body > header {
+	text-align: center;
+}
+
+.logo {
+	border: none;
+}
+
+/* Content */
+.intro:after,
+.intro:before {
+	border-top: 2px solid;
+	content: ' ';
+	display: block;
+	margin: auto;
+	width: 50%;
+}
+
+/* Footer */
+body > footer {
+	text-align: center;
+}

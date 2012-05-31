@@ -1,0 +1,420 @@
+/* 
+
+
+	Base
+	
+
+*/
+
+@media screen {
+	/* Party like it's 2001 - setting the box model to behhave like IE6 in quirks mode: http://paulirish.com/2012/box-sizing-border-box-ftw/ */
+	* {
+		-webkit-box-sizing: border-box;
+		   -moz-box-sizing: border-box;
+		        box-sizing: border-box;
+		vertical-align: middle;
+	}
+	/* Include if IE6&7 Support is needed: https://github.com/Schepp/box-sizing-polyfill */
+/*	.ie6 *,
+	.ie7 * {
+		behavior: url(../scripts/polyfill/boxsizing.htc);
+	}*/
+	
+	
+	/*
+	
+		HTML5 Elements
+	
+	*/
+	article, aside, canvas, details, embed, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+		display: block;
+	}
+	
+	command, datalist, keygen, mark, meter, progress, rp, rt, ruby, time, wbr {
+		display: inline;
+	}
+
+	/*
+	
+		Page
+	
+	*/	
+	html {
+		font-size: 100%; /* 16px */
+		padding: 0;
+	}
+
+	body {
+		background: rgb(255, 255, 255);
+		color: rgb(51, 51, 51);
+		font-family: 'Helmet', 'Freesans', sans-serif;
+		line-height: 1.5;
+		margin: auto;
+		min-height: 100%;
+		-webkit-tap-highlight-color: rgb(255, 255, 158);
+	}
+
+	/*
+	
+		Headings
+	
+	*/
+	h1, h2, h3, h4, h5, h6 {
+		margin: 0;
+		font-weight: normal;
+		font-style: normal;
+	}
+
+	h1, h2, h3 {
+		font-variant-ligatures: common-ligatures;
+	}
+
+	h1 {
+		font-size: 300%;
+		line-height: 1;
+		margin: .5em 0;
+	}
+
+	h2 {
+		font-size: 150%;
+		line-height: 1;
+		margin: 1em 0;
+	}
+
+	h3 {
+		font-size: 112.5%;
+		line-height: 1.333333333;
+		margin: 1.333333333em 0;
+	}
+
+	h4, h5, h6 {
+		font-size: 1em;
+		margin: 1.5em 0;
+	}
+	
+	header h1,
+	header h1:first-of-type {
+		margin-top: 1.5em;
+	}
+
+	/*
+	
+		Paragraphs
+	
+	*/
+	p {
+		/* Hyphenation: */
+		/* -webkit-hyphens: auto;
+		   -moz-hyphens: auto;
+		        hyphens: auto;*/
+		margin: 1.5em 0;
+	}
+
+	/* Inline paragraphs with ornament seperator */
+/*	p {
+		display: inline;
+		margin: 0;
+	}
+
+	p + p:before { 
+		content: "\2761"; 
+		padding-right: 0.1em;
+		padding-left: 0.4em;
+	}*/
+
+	/*
+	
+		Lists
+	
+	*/
+	dl {
+		margin: 1.5em 0;
+	}
+
+	dt {
+		margin: 0;
+		font-weight: bold;
+	}
+
+	dd {
+		margin: 0 0 0 1.5em;
+	}
+	
+	ol,
+	ul {
+		margin: 1.5em 0;
+		padding: 0;
+	}
+	
+	/*
+	
+		Forms
+	
+	*/
+	fieldset {
+		background-color: rgba(0, 0, 0, 0.025);
+		border: none;
+		margin: 1.5em 0 0;
+		padding: 1.5em;
+		position: relative;
+	}
+
+		fieldset + fieldset {
+			border-top: 1px solid rgba(0, 0, 0, 0.0625);
+			margin-top: -1px;
+		}
+
+		legend {
+			font-size: 1em;
+			position: absolute;
+			top: 1.5em;
+		}
+
+			input,
+			textarea,
+			select {
+				display: inline-block;
+				font-size: 100%;
+			}
+
+			input,
+			textarea {
+				-webkit-transition: border 0.5s, box-shadow 0.5s;
+				   -moz-transition: border 0.5s, box-shadow 0.5s;
+				     -o-transition: border 0.5s, box-shadow 0.5s;
+				        transition: border 0.5s, box-shadow 0.5s;
+			}
+
+			input[type="text"],
+			input[type="search"],
+			input[type="tel"],
+			input[type="url"],
+			input[type="email"],
+			input[type="password"],
+			input[type="datetime"],
+			input[type="date"],
+			input[type="month"],
+			input[type="week"],
+			input[type="time"],
+			input[type="datetime-local"],
+			input[type="number"],
+			input[type="color"],
+			textarea {
+				border: 1px solid;
+				border-color: rgba(0, 0, 0, 0.35) rgba(0, 0, 0, 0.25) rgba(0, 0, 0, 0.125);
+				-webkit-border-radius: 1px;
+				   -moz-border-radius: 1px;
+				        border-radius: 1px;
+				-webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+				   -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+				     -o-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+				        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+/*				padding: 0.25em;*/
+			}
+
+			input[type="text"]:focus,
+			input[type="search"]:focus,
+			input[type="tel"]:focus,
+			input[type="url"]:focus,
+			input[type="email"]:focus,
+			input[type="password"]:focus,
+			input[type="datetime"]:focus,
+			input[type="date"]:focus,
+			input[type="month"]:focus,
+			input[type="week"]:focus,
+			input[type="time"]:focus,
+			input[type="datetime-local"]:focus,
+			input[type="number"]:focus,
+			input[type="color"]:focus,
+			textarea:focus {
+				background-color: rgba(0, 0, 0, 0.025);
+				border-color: rgba(0, 0, 238, 0.8);
+				-webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(0, 0, 238, 0.6);
+				   -moz-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(0, 0, 238, 0.6);
+				     -o-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(0, 0, 238, 0.6);
+				        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2), 0 0 4px rgba(0, 0, 238, 0.6);
+				outline: 0;
+			}
+
+			input[disabled],
+			select[disabled],
+			textarea[disabled] {
+				cursor: not-allowed;
+				opacity: 0.5;
+			}
+
+			textarea {
+				min-height: 100%;
+				min-width: 1em;
+				width: auto;
+			}
+	
+	:invalid {
+		border: 1px solid rgb(255, 0, 0);
+	}
+
+	/*
+	
+		Links
+	
+	*/
+	a {
+		border-bottom: 1px solid;
+		text-decoration: none;
+	}
+
+	a:active {
+		outline: none;
+	}
+
+	a img {
+		border: none;
+	}
+	
+	/*
+		
+		Media
+	
+	*/
+	img {
+		border: none;
+		max-width: 100%;
+		-ms-interpolation-mode: bicubic;
+	}
+	
+	/*
+	
+		Text Level Semantics
+	
+	*/
+	address {
+		margin: 0.75em 0;
+		font-style: normal;
+	}
+	
+	abbr[title] {
+		border-bottom: 1px dotted;
+		cursor: help;
+	}
+	
+	code {
+		line-height: 1;
+	}
+	
+	em {
+		font-style: italic;
+	}
+
+	strong {
+		font-weight: bold;
+	}
+
+	sub,
+	sup {
+	    font-size: 75%;
+	    line-height: 0;
+	    position: relative;
+	    vertical-align: baseline;
+	}
+
+	sup {
+	    top: -0.5em;
+	}
+
+	sub {
+	    bottom: -0.25em;
+	}
+	
+	kbd {
+		background: rgb(252, 252, 252);
+			background: -moz-linear-gradient(top, rgba(254,254,254,1) 0%, rgba(252,252,252,1) 100%);
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(254,254,254,1)), color-stop(100%,rgba(252,252,252,1)));
+			background: -webkit-linear-gradient(top, rgba(254,254,254,1) 0%,rgba(252,252,252,1) 100%);
+			background: -o-linear-gradient(top, rgba(254,254,254,1) 0%,rgba(252,252,252,1) 100%);
+			background: -ms-linear-gradient(top, rgba(254,254,254,1) 0%,rgba(252,252,252,1) 100%);
+			background: linear-gradient(top, rgba(254,254,254,1) 0%,rgba(252,252,252,1) 100%);
+		border: 1px solid rgb(230, 230, 230);
+		border-bottom: 0.25em solid rgb(224, 224, 224);
+		border-image: initial;
+		border-radius: 0.25em;
+		font-weight: normal;
+		line-height: 90%;
+		margin: 0 0.25em;
+		padding: 0.3333em 0.6667em;
+	}
+
+	/*
+		
+		Quotations
+	
+	*/
+	blockquote {
+		font-style: italic;
+		margin: 1.5em;
+		padding: 0;
+	}
+
+	q,
+	cite {
+		font-style: italic;
+	}
+
+	q cite,
+	q q {
+		font-style: normal
+	}
+
+	blockquote p:first-of-type {
+		margin-top: 0;
+	}
+
+	blockquote p:last-of-type {
+		margin-bottom: 0;
+	}
+
+	/*
+	
+		Tables
+	
+	*/
+	table {
+		margin: 0;
+		border-collapse: collapse;
+		border-spacing: 0;
+		line-height: 1.5;
+		width: 100%;
+	}
+
+	td,
+	th {
+		padding: 0;
+		vertical-align: middle;
+	}
+	
+	th {
+		font-weight: bold;
+		text-align: left;
+	}
+	
+	/*
+	
+		Interaction
+	
+	*/
+	::selection {
+		background: rgb(255,255,158);
+	}
+	
+	::-moz-selection {
+		background: rgb(255,255,158);
+	}
+	
+	img::selection {
+		background: transparent;
+	}
+
+	img::-moz-selection	{
+		background: transparent;
+	}
+	
+}
