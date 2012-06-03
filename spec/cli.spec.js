@@ -4,29 +4,29 @@ var publisher = require("../lib/publisher.js");
 
 describe("publishing a site", function(){
 
-	it("use the strategy given in arguments", function(){
+	it("overrides the default config file with the config file given explicitly", function(){
+		spyOn(fs, "readFile");		
 
-		spyOn(publisher, "publish");
+		cli.publish(["custom_config.json"]);
 
-		cli.publish(["sftp"]);
-
-    expect(publisher.publish).toHaveBeenCalledWith("sftp");
-  });
-
-  it("if no strategy given, use the first publishing strategy available in the config", function(){
-
-    spyOn(fs, "readFile").andCallFake(function(config_file, callback){
-			callback(null, '{"publishers": [ "s3", "sftp" ]}')
-    });
-
-		spyOn(publisher, "publish");
-
-		cli.publish([]);
-
-    expect(publisher.publish).toHaveBeenCalledWith("s3");
-  }); 
-
+		expect(fs.readFile.mostRecentCall.args[0]).toEqual("custom_config.json");
 	
+	});
+
+	it("passes the selected publishing strategy", function(){
+
+		spyOn(fs, "readFile").andCallFake(function(config_file, callback){
+			callback(null, "{}")	
+		});
+
+		spyOn(publisher, "publish");
+
+		cli.publish(["s3"]);
+
+		expect(publisher.publish).toHaveBeenCalledWith({}, "s3");
+
+	});
+
 });
 
 
