@@ -106,10 +106,12 @@ describe("delegate publish", function(){
 		
 			var publishCallback = jasmine.createSpy();
 			var strategy_obj = { "publish": publishCallback };
+			var sample_config = { "foo": "bar" };
 
+			publisher.config = sample_config;
 			publisher.delegatedPublish(strategy_obj);		
 
-			expect(publishCallback).toHaveBeenCalled();
+			expect(publishCallback).toHaveBeenCalledWith(sample_config);
 
 		});
 
