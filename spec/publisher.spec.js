@@ -17,7 +17,7 @@ describe("calling publish", function(){
 
 		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return {"publish": function(){} } });
 
-		spyOn(publisher, "delegatePublish").andCallFake(function(strategy_obj){ });
+		spyOn(publisher, "delegatedPublish").andCallFake(function(strategy_obj){ });
 
 		publisher.publish(supplied_config, "s3");	
 	
@@ -30,7 +30,7 @@ describe("calling publish", function(){
 
 		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return {"publish": function(){} } });
 
-		spyOn(publisher, "delegatePublish").andCallFake(function(strategy_obj){ });
+		spyOn(publisher, "delegatedPublish").andCallFake(function(strategy_obj){ });
 
 		publisher.publish(supplied_config, null);	
 	
@@ -53,11 +53,11 @@ describe("calling publish", function(){
 
 		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
 
-		spyOn(publisher, "delegatePublish").andCallFake(function(strategy_obj){ });
+		spyOn(publisher, "delegatedPublish").andCallFake(function(strategy_obj){ });
 
 		publisher.publish(supplied_config, "s3");	
 	
-		expect(publisher.delegatePublish).toHaveBeenCalledWith(strategy_obj);
+		expect(publisher.delegatedPublish).toHaveBeenCalledWith(strategy_obj);
 
 	});
 
@@ -89,7 +89,7 @@ describe("delegate publish", function(){
 			var strategy_obj = { };
 			var error = "Publish not defined or not a function.";
 
-			expect(function() { publisher.delegatePublish(strategy_obj) }).toThrow(error);
+			expect(function() { publisher.delegatedPublish(strategy_obj) }).toThrow(error);
 
 		});
 
@@ -98,7 +98,7 @@ describe("delegate publish", function(){
 			var strategy_obj = { "publish": null };
 			var error = "Publish not defined or not a function.";
 
-			expect(function() { publisher.delegatePublish(strategy_obj) }).toThrow(error);
+			expect(function() { publisher.delegatedPublish(strategy_obj) }).toThrow(error);
 
 		});
 
@@ -107,7 +107,7 @@ describe("delegate publish", function(){
 			var publishCallback = jasmine.createSpy();
 			var strategy_obj = { "publish": publishCallback };
 
-			publisher.delegatePublish(strategy_obj);		
+			publisher.delegatedPublish(strategy_obj);		
 
 			expect(publishCallback).toHaveBeenCalled();
 
