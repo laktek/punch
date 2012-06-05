@@ -30,6 +30,8 @@ Punch is a simple tool to generate HTML outputs from [Mustache](http://mustache.
 
 * Finally, run `npm install -g punch`
 
+**Note**: If you experience any issues in installing Punch on Windows, please [read this guide](https://github.com/laktek/punch/wiki/Windows).
+
 ## How to Use 
 
 **Watch the Screencast** - http://vimeo.com/40645795 
