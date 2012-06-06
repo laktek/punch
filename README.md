@@ -176,8 +176,8 @@ To publish directly to S3, add the following settings to `config.json`.
 
 	```json
 		"publish"       : {
-			"s3" 					: {
-				"key"       : "<api-key>"
+      "s3" 					: {
+			  "key"       : "<api-key>"
 			, "secret"    : "<secret-key>"
 			, "bucket"    : "<bucket-name>"
 			}	
