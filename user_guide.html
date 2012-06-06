@@ -176,6 +176,24 @@ renderer.setPartials({});</code></pre>
     &quot;markdown&quot;: &quot;./parsers/markdown&quot; 
   }
 };</code></pre>
+<h3>Publish</h3>
+<p>You can use <code>punch publish</code> command to publish the generated site to a hosting facility you prefer. Publish to <a href="http://aws.typepad.com/aws/2011/02/host-your-static-website-on-amazon-s3.html">Amazon S3</a> is supported out of the box (a plugin API will be introduced for other publishing options).
+
+</p>
+<p>To publish directly to S3, add the following settings to <code>config.json</code>.
+
+</p>
+<pre><code>    &quot;publish&quot;       : {
+        &quot;s3&quot;                     : {
+            &quot;key&quot;       : &quot;&lt;api-key&gt;&quot;
+        , &quot;secret&quot;    : &quot;&lt;secret-key&gt;&quot;
+        , &quot;bucket&quot;    : &quot;&lt;bucket-name&gt;&quot;
+        }    
+    }</code></pre>
+<p>Then from the root directory of your site, run <code>punch publish s3</code> (or <code>punch p</code> shortcut).
+
+
+</p>
 </div>
 </div>
 
