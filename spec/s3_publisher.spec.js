@@ -33,6 +33,22 @@ describe("calling publish", function(){
 
  });
 
+ it("should set the running jobs to 0", function(){
+		var supplied_config = {};
+		var s3_config = { "key": "somekey", "secret": "somesecret", "bucket": "somebucket" };
+
+		s3_publisher.runningJobs = 4;
+
+		spyOn(s3_publisher, "s3Config").andReturn(s3_config);	
+		spyOn(s3_publisher, "forEachFileIn");	
+		spyOn(knox, "createClient"); 
+
+		s3_publisher.publish(supplied_config);
+		
+		expect(s3_publisher.runningJobs).toEqual(0);
+
+ });
+
 	it("should call the file iteration function with output directory", function(){
 
 		var supplied_config = {"output_dir": "path/output_dir"};
@@ -109,7 +125,7 @@ describe("iterate over the files in a directory", function(){
 		});
 
 		spyOn(fs, "stat").andCallFake(function(file, callback){
-			callback({ "isDirectory": function(){ return false } });	
+			callback(null, { "isDirectory": function(){ return false } });	
 		});
 
 		var dummy_callback = jasmine.createSpy();
@@ -130,7 +146,7 @@ describe("iterate over the files in a directory", function(){
 		});
 
 		spyOn(fs, "stat").andCallFake(function(file, callback){
-			callback({ "isDirectory": function(){ return true } });	
+			callback(null, { "isDirectory": function(){ return true } });	
 		});
 
 		var dummy_callback = jasmine.createSpy();
@@ -143,3 +159,33 @@ describe("iterate over the files in a directory", function(){
 
 });
 
+describe("copy a file to s3 bucket", function(){
+	it("reads the given file", function(){
+
+		spyOn(fs, "readFile");
+		
+		s3_publisher.copyFile("output_dir/file.html");	
+
+		expect(fs.readFile.mostRecentCall.args[0]).toEqual("output_dir/file.html");
+
+	});
+
+	it("calls put on client with the correct path", function(){
+
+		spyOn(fs, "readFile").andCallFake(function(path, callback){
+			callback(null, new Buffer("sample"));	
+		});
+
+		var dummy_req_obj = {"on": function(){}, "end": function(){} }
+
+		s3_publisher.client = {"put": function(){}};
+
+		spyOn(s3_publisher.client, "put").andReturn(dummy_req_obj);
+		
+		s3_publisher.copyFile("output_dir/sub/file.html");	
+
+		expect(s3_publisher.client.put.mostRecentCall.args[0]).toEqual("sub/file.html");
+	
+	});
+
+});
