@@ -117,3 +117,21 @@ Since Punch's renderer is asynchronous, you can call `setTemplate`, `setContent`
         "markdown": "./parsers/markdown" 
       }
     };
+
+### Publish
+
+You can use `punch publish` command to publish the generated site to a hosting facility you prefer. Publish to [Amazon S3](http://aws.typepad.com/aws/2011/02/host-your-static-website-on-amazon-s3.html) is supported out of the box (a plugin API will be introduced for other publishing options).
+
+To publish directly to S3, add the following settings to `config.json`.
+
+		"publish"       : {
+			"s3" 					: {
+				"key"       : "<api-key>"
+			, "secret"    : "<secret-key>"
+			, "bucket"    : "<bucket-name>"
+			}	
+		}
+
+Then from the root directory of your site, run `punch publish s3` (or `punch p` shortcut).
+
+
