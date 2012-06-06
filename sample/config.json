@@ -2,4 +2,12 @@
         "template_dir"  : "templates"
       , "content_dir"   : "data"
       , "output_dir"    : "output"
+
+			, "publish"       : {
+					"s3" 					: {
+						"key"       : "api-key"
+					, "secret"    : "secret-key"
+					, "bucket"    : "bucket-name"
+					}	
+			}
 }
