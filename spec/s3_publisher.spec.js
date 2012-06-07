@@ -8,13 +8,13 @@ describe("calling publish", function(){
 
 		var supplied_config = {};
 
-		spyOn(s3_publisher, "s3Config");	
+		spyOn(s3_publisher, "retrieveOptions");	
 		spyOn(s3_publisher, "forEachFileIn");	
 		spyOn(knox, "createClient"); 
 
 		s3_publisher.publish(supplied_config);
 		
-		expect(s3_publisher.s3Config).toHaveBeenCalledWith(supplied_config);
+		expect(s3_publisher.retrieveOptions).toHaveBeenCalledWith(supplied_config);
 
 	});
 
@@ -22,7 +22,7 @@ describe("calling publish", function(){
 		var supplied_config = {};
 		var s3_config = { "key": "somekey", "secret": "somesecret", "bucket": "somebucket" };
 
-		spyOn(s3_publisher, "s3Config").andReturn(s3_config);	
+		spyOn(s3_publisher, "retrieveOptions").andReturn(s3_config);	
 		spyOn(s3_publisher, "forEachFileIn");	
 
 		spyOn(knox, "createClient"); 
@@ -33,27 +33,11 @@ describe("calling publish", function(){
 
  });
 
- it("should set the running jobs to 0", function(){
-		var supplied_config = {};
-		var s3_config = { "key": "somekey", "secret": "somesecret", "bucket": "somebucket" };
-
-		s3_publisher.runningJobs = 4;
-
-		spyOn(s3_publisher, "s3Config").andReturn(s3_config);	
-		spyOn(s3_publisher, "forEachFileIn");	
-		spyOn(knox, "createClient"); 
-
-		s3_publisher.publish(supplied_config);
-		
-		expect(s3_publisher.runningJobs).toEqual(0);
-
- });
-
 	it("should call the file iteration function with output directory", function(){
 
 		var supplied_config = {"output_dir": "path/output_dir"};
 
-		spyOn(s3_publisher, "s3Config");	
+		spyOn(s3_publisher, "retrieveOptions");	
 		spyOn(s3_publisher, "forEachFileIn");	
 		spyOn(knox, "createClient"); 
 
@@ -65,23 +49,23 @@ describe("calling publish", function(){
 
 });
 
-describe("getting s3 settings from the config", function(){
+describe("retrieve the s3 options from the config", function(){
 
-	it("returns the s3 settings defined in publish section of config", function(){
+	it("returns the s3 options defined in publish section of config", function(){
 
 		var s3_config = { "key": "somekey", "secret": "somesecret", "bucket": "somebucket" };
 		var supplied_config = {"publish": { "s3": s3_config }};
 
-		expect(s3_publisher.s3Config(supplied_config)).toEqual(s3_config);
+		expect(s3_publisher.retrieveOptions(supplied_config)).toEqual(s3_config);
 
 	});
 
-	it("throws an error if config doesn't contain s3 settings", function(){
+	it("throws an error if config doesn't contain options for s3", function(){
 
 		var supplied_config = {"publish": { }};
 		var error = "Cannot find s3 settings in config";
 
-		expect(function(){ s3_publisher.s3Config(supplied_config) }).toThrow(error);
+		expect(function(){ s3_publisher.retrieveOptions(supplied_config) }).toThrow(error);
 
 	});
 
@@ -90,7 +74,7 @@ describe("getting s3 settings from the config", function(){
 		var supplied_config = {};
 		var error = "Cannot find s3 settings in config";
 
-		expect(function(){ s3_publisher.s3Config(supplied_config) }).toThrow(error);
+		expect(function(){ s3_publisher.retrieveOptions(supplied_config) }).toThrow(error);
 		
 	});
 
