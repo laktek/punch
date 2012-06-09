@@ -28,4 +28,8 @@
 	body {
 		font-size: 112.5%;
 	}
+	
+	.intro {
+		padding: 1.5em 3em;
+	}
 }

@@ -5,16 +5,22 @@
 				<div class="l-wrapper">
 					
 					<div class="intro centered">
+						<h1 class="site-title">{{title}}</h1>
+						<h2 class="section-title site-tagline">{{tagline}}</h2>
 						<p>{{{description_html}}}</p>
 					</div>
 					
 				</div>
 			</div>
-			<div class="section" id="screencast">
+			<div class="section divider" id="screencast">
 				<div class="l-wrapper">
 					
 					<h2 class="section-title">Watch a quick Screencast</h2>
-					<div class="embedded-media video">{{{screencast_html}}}</div>
+					<div class="embedded-media">
+						<div class="media video">
+							{{{screencast_html}}}
+						</div>
+					</div>
 				
 				</div>
 			</div>
@@ -51,8 +57,12 @@
 				<div class="l-wrapper">
 					
 					<h2 class="section-title">Testimonials</h2>
-					<!-- #testimonials -->
-					
+					{{#testimonials}}
+					<aside class="testimonial">
+						<p class="quote">{{quote}}</p>
+						<footer class="quote-meta"><a href="{{link}}">{{author}}</a></footer>
+					</aside>
+					{{/testimonials}}
 				</div>
 			</div>
 		</div>

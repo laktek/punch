@@ -63,7 +63,7 @@ body > footer,
 	color: #e13738;
 }
 
-.section:nth-child(2) {
+.section.divider {
 	background: -moz-linear-gradient(top, #fff7e1 0%, #fff7e1 50%, #e13738 50%, #e13738 100%);
 	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fff7e1), color-stop(50%,#fff7e1), color-stop(50%,#e13738), color-stop(100%,#e13738));
 	background: -webkit-linear-gradient(top, #fff7e1 0%,#fff7e1 50%,#e13738 50%,#e13738 100%);
@@ -73,24 +73,15 @@ body > footer,
 	color: #e13738;
 }
 
-.action-list a {
-	color: #fff7e1;
-	text-shadow: -2px 0 2px rgb(0, 0, 0);
-}
-
-
 /* Type */
 body {
 	font-family: 'Lora', serif;
 	font-weight: 400;
 }
 
-h1 {
+h1,
+h2 {
 	font-family: 'CubanoRegular';
-}
-
-h2, h3 {
-	font-family: 'LeagueGothicRegular';
 	text-transform: uppercase;
 }
 
@@ -112,6 +103,17 @@ a {
 	text-align: center;
 }
 
+.site-tagline {
+	font-size: 1.166666667em;
+	line-height: 1.285714286;
+	margin: 1.285714286em 0 0;
+}
+
+/*.section-title {
+	font-size: 3em;
+	margin: .5em 0;
+}*/
+
 /* Spacing */
 body {
 	margin: 1.5em;
@@ -122,9 +124,6 @@ body > footer,
 	padding: 1.5em;
 }
 
-.action-list {
-	border: 2px solid #fff7e1;
-}
 
 /* Hiding */
 .site-title {
@@ -136,6 +135,7 @@ body > footer,
 
 /* Header */
 body > header {
+	padding-top: 1.5em;
 	text-align: center;
 }
 
@@ -146,12 +146,47 @@ body > header {
 /* Content */
 .intro:after,
 .intro:before {
-	border-top: 2px solid;
+	border-top: 1px solid;
 	content: ' ';
 	display: block;
 	margin: auto;
 	width: 50%;
 }
+
+/* Media */
+.embedded-media {
+	background-color: white;
+	border: 1px solid #e13738;
+	-webkit-border-radius: 4px;
+	   -moz-border-radius: 4px;
+	        border-radius: 4px;
+	-webkit-box-shadow: -3px -3px 0 #e13738;
+	   -moz-box-shadow: -3px -3px 0 #e13738;
+	     -o-box-shadow: -3px -3px 0 #e13738;
+	        box-shadow: -3px -3px 0 #e13738;
+	margin: .25em .75em;
+	padding: .5em;
+}
+
+/* Actions */
+.action-list {
+	border: 1px solid;
+	border-radius: 4px;
+	-webkit-box-shadow: -3px -3px 0 #fff7e1;
+	   -moz-box-shadow: -3px -3px 0 #fff7e1;
+	     -o-box-shadow: -3px -3px 0 #fff7e1;
+	        box-shadow: -3px -3px 0 #fff7e1;
+}
+
+	.action-list a {
+		border: none;
+		color: #fff7e1;
+		display: inline-block;
+		margin-left: 0.25em;
+		margin-right: 0.25em;
+		text-shadow: -0.06em -0.06em 0 black;
+	}
+	
 
 /* Footer */
 body > footer {

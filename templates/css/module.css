@@ -48,7 +48,7 @@
 .embedded-media {}
 
 /* Responsive embedded video */
-.embedded-media.video {
+.media.video {
 	position: relative;
 	padding-bottom: 54%;
 	padding-top: 1.5em;
@@ -56,9 +56,9 @@
 	overflow: hidden;
 }
 
-	.embedded-media.video iframe,  
-	.embedded-media.video object,  
-	.embedded-media.video embed {
+	.media.video iframe,  
+	.media.video object,  
+	.media.video embed {
 		position: absolute;
 		top: 0;
 		left: 0;
