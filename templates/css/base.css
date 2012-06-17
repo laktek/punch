@@ -302,6 +302,10 @@
 		white-space: nowrap;
 	}
 	
+	pre code {
+		white-space: pre;
+	}
+	
 	em {
 		font-style: italic;
 	}

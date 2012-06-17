@@ -41,11 +41,17 @@
 		
 		<header class="l-header" role="banner">
 			<div class="l-wrapper">
-				<a class="logo" href="./">
-					<img src="img/punch.png" alt="Punch">
-				</a>
-				<a href="{{github_url}}"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
-				
+				<div class="section header">
+					<a class="logo" href="./">
+						<img src="img/punch.png" alt="Punch">
+					</a>
+					<a href="{{github_url}}"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png" alt="Fork me on GitHub"></a>
+					<div class="intro centered">
+						<h1 class="site-title">{{title}}</h1>
+						<h2 class="section-title site-tagline">{{tagline}}</h2>
+						<p>{{{description_html}}}</p>
+					</div>
+				</div>
 			</div>
 		</header>
 

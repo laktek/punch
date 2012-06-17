@@ -11,5 +11,9 @@
 }
 
 	.l-wrapper.l-readable {
+		max-width: 36em;
+	}
+	
+	.l-wrapper.l-contrained {
 		max-width: 18em;
 	}

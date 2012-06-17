@@ -50,8 +50,7 @@ body {
 }
 
 body,
-body > footer,
-.section:first-child {
+body > footer {
 	background: #fff7e1 url(../img/t-paper.jpg) repeat;
 	color: #e13738;
 	color: rgba(225, 55, 56, 0.9);
@@ -67,7 +66,7 @@ h1, h2 {
 /*	color: white;*/
 }
 
-.section {
+.content {
 	background: #e13738 url(../img/t-red.jpg) repeat;
 	color: #fff7e1;
 	color: rgba(255, 247, 225, 0.9);
@@ -120,7 +119,7 @@ a {
 
 /* Spacing */
 body {
-/*	margin: .75em;*/
+	margin-top: .75em;
 }
 
 body > footer,
@@ -217,3 +216,12 @@ body > footer {
 	text-align: center;
 }
 
+/* Code */
+pre {
+	background-color: rgba(0, 0, 0, 0.8);
+	-webkit-border-radius: 3px;
+	   -moz-border-radius: 3px;
+	        border-radius: 3px;
+	overflow: auto;
+	padding: 0.5em;
+}
