@@ -26,7 +26,6 @@
 			</div>
 			<div class="section" id="about">
 				<div class="l-wrapper l-readable">
-					
 					<h2 class="section-title">Why Punch?</h2>
 					<ul>
 						{{#why_punch}}
@@ -39,7 +38,6 @@
 						<li>{{{.}}}</li>
 						{{/install_steps}}
 					</ul>
-					
 				</div>
 			</div>
 			<div class="section" id="more">
@@ -58,10 +56,12 @@
 					
 					<h2 class="section-title">Testimonials</h2>
 					{{#testimonials}}
-					<aside class="testimonial">
-						<p class="quote">{{quote}}</p>
-						<footer class="quote-meta"><a href="{{link}}">{{author}}</a></footer>
-					</aside>
+					<div class="two-col">
+						<aside class="testimonial">
+							<p class="quote">{{quote}}</p>
+							<footer class="quote-meta"><a class="quote-cite" href="{{link}}">{{author}}</a></footer>
+						</aside>
+					</div>
 					{{/testimonials}}
 				</div>
 			</div>

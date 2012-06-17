@@ -72,29 +72,24 @@
 	h1 {
 		font-size: 300%;
 		line-height: 1;
-		margin: .5em 0;
+		margin: 0 0 .5em;
 	}
 
 	h2 {
 		font-size: 188.8888889%;
 		line-height: .794117647;
-		margin: .794117647em 0;
+		margin: 0 0 .794117647em;
 	}
 
 	h3 {
 		font-size: 112.5%;
 		line-height: 1.333333333;
-		margin: 1.333333333em 0;
+		margin: 0 0 1.333333333em ;
 	}
 
 	h4, h5, h6 {
 		font-size: 1em;
-		margin: 1.5em 0;
-	}
-	
-	header h1,
-	header h1:first-of-type {
-		margin-top: 1.5em;
+		margin: 0 0 1.5em;
 	}
 
 	/*
@@ -107,7 +102,7 @@
 		/* -webkit-hyphens: auto;
 		   -moz-hyphens: auto;
 		        hyphens: auto;*/
-		margin: 1.5em 0;
+		margin: 0 0 1.5em;
 	}
 
 	/* Inline paragraphs with ornament seperator */
@@ -128,7 +123,7 @@
 	
 	*/
 	dl {
-		margin: 1.5em 0;
+		margin: 0 0 1.5em;
 	}
 
 	dt {
@@ -142,7 +137,7 @@
 	
 	ol,
 	ul {
-		margin: 1.5em 0;
+		margin: 0 0 1.5em;
 		padding: 0;
 	}
 	
@@ -154,7 +149,7 @@
 	fieldset {
 		background-color: rgba(0, 0, 0, 0.025);
 		border: none;
-		margin: 1.5em 0 0;
+		margin: 0 0 1.5em;
 		padding: 1.5em;
 		position: relative;
 	}
@@ -288,7 +283,7 @@
 	
 	*/
 	address {
-		margin: 0.75em 0;
+		margin: 0 0 0.75em;
 		font-style: normal;
 	}
 	
@@ -298,7 +293,13 @@
 	}
 	
 	code {
+		padding: 0 0.5em;
+		background-color: rgba(0, 0, 0, 0.2);
+		-webkit-border-radius: 3px;
+		   -moz-border-radius: 3px;
+		        border-radius: 3px;
 		line-height: 1;
+		white-space: nowrap;
 	}
 	
 	em {
@@ -350,7 +351,7 @@
 	*/
 	blockquote {
 		font-style: italic;
-		margin: 1.5em;
+		margin: 0 1.5em 1.5em;
 		padding: 0;
 	}
 

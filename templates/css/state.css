@@ -30,6 +30,18 @@
 	}
 	
 	.intro {
-		padding: 1.5em 3em;
+		width: 60%;
+	}
+	
+	.two-col {
+		display: inline-block;
+		margin-left: -4px;
+		margin-right: -4px;
+		vertical-align: top;
+		width: 50%;
+	}
+	
+	.testimonial {
+		text-align: left;
 	}
 }
