@@ -1,15 +1,16 @@
 var fs = require("fs");
 var knox = require("knox");
 var s3_publisher = require("../lib/publishers/s3.js");
+var fileutils = require("../lib/helpers/fileutils");
 
 describe("calling publish", function(){
 
-	it("should get the details of the s3 bucket", function(){
+	it("gets the details of the s3 bucket", function(){
 
 		var supplied_config = {};
 
 		spyOn(s3_publisher, "retrieveOptions");	
-		spyOn(s3_publisher, "forEachFileIn");	
+		spyOn(fileutils, "forEachFileIn");	
 		spyOn(knox, "createClient"); 
 
 		s3_publisher.publish(supplied_config);
@@ -18,12 +19,12 @@ describe("calling publish", function(){
 
 	});
 
- it("should create a s3 client", function(){
+ it("creates a s3 client", function(){
 		var supplied_config = {};
 		var s3_config = { "key": "somekey", "secret": "somesecret", "bucket": "somebucket" };
 
 		spyOn(s3_publisher, "retrieveOptions").andReturn(s3_config);	
-		spyOn(s3_publisher, "forEachFileIn");	
+		spyOn(fileutils, "forEachFileIn");	
 
 		spyOn(knox, "createClient"); 
 
@@ -33,17 +34,17 @@ describe("calling publish", function(){
 
  });
 
-	it("should call the file iteration function with output directory", function(){
+	it("calls the file iteration function with output directory", function(){
 
 		var supplied_config = {"output_dir": "path/output_dir"};
 
 		spyOn(s3_publisher, "retrieveOptions");	
-		spyOn(s3_publisher, "forEachFileIn");	
+		spyOn(fileutils, "forEachFileIn");	
 		spyOn(knox, "createClient"); 
 
 		s3_publisher.publish(supplied_config);
 		
-		expect(s3_publisher.forEachFileIn.mostRecentCall.args[0]).toEqual("path/output_dir");
+		expect(fileutils.forEachFileIn.mostRecentCall.args[0]).toEqual("path/output_dir");
 
 	});
 
@@ -76,69 +77,6 @@ describe("retrieve the s3 options from the config", function(){
 
 		expect(function(){ s3_publisher.retrieveOptions(supplied_config) }).toThrow(error);
 		
-	});
-
-});
-
-describe("iterate over the files in a directory", function(){
-
-	it("should read directory and get the list of files", function(){
-
-		spyOn(fs, "readdir");
-
-		s3_publisher.forEachFileIn("output_dir_path");
-
-		expect(fs.readdir.mostRecentCall.args[0]).toEqual("output_dir_path");
-		
-	});
-
-	it("should throw an error if the directory doesn't exist", function(){
-
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			callback("path doesn't exist", null);	
-		});
-
-		expect(function(){ s3_publisher.forEachFileIn(undefined) }).toThrow();
-	
-	});
-
-	it("should execute the callback on each file found", function(){
-
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			callback(null, ["file1", "file2"]);	
-		});
-
-		spyOn(fs, "stat").andCallFake(function(file, callback){
-			callback(null, { "isDirectory": function(){ return false } });	
-		});
-
-		var dummy_callback = jasmine.createSpy();
-
-		s3_publisher.forEachFileIn("path/dir", dummy_callback);
-
-		expect(dummy_callback.callCount).toEqual(2);
-
-	});
-
-	it("recursively fetches files in sub-directories", function(){
-	
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			if(fs.readdir.callCount === 1)
-				callback(null, ["dir1"]);	
-			else
-				callback(null, []);	
-		});
-
-		spyOn(fs, "stat").andCallFake(function(file, callback){
-			callback(null, { "isDirectory": function(){ return true } });	
-		});
-
-		var dummy_callback = jasmine.createSpy();
-
-		s3_publisher.forEachFileIn("output_dir", dummy_callback);
-
-		expect(fs.readdir.mostRecentCall.args[0]).toEqual("output_dir/dir1");
-
 	});
 
 });
