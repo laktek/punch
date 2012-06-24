@@ -1,7 +1,7 @@
 var fs = require("fs");
 var knox = require("knox");
 var s3_publisher = require("../lib/publishers/s3.js");
-var fileutils = require("../lib/helpers/fileutils");
+var fileutils = require("../lib/utils/fileutils");
 
 describe("calling publish", function(){
 
