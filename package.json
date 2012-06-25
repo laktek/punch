@@ -17,6 +17,7 @@
 											 , "knox"       : ">= 0.0.9"
                        , "marked"     : ">= 0.2.3"
                        , "mime"       : ">= 1.2.5"
+											 , "fstream" 		: ">= 0.1.18"
                        , "mustache"   : "git://github.com/janl/mustache.js"
 											 , "sftp"  			: "git://github.com/ajaxorg/node-sftp.git"
                       }
