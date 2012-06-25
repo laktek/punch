@@ -1,5 +1,5 @@
 var fs = require("fs");
-var fileutils = require("../lib/utils/fileutils")
+var fileutils = require("../../lib/utils/fileutils")
 
 describe("iterating over each file in a directory", function(){
 
