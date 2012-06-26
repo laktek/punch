@@ -8,6 +8,14 @@
 						"key"       : "api-key"
 					, "secret"    : "secret-key"
 					, "bucket"    : "bucket-name"
+					},
+
+					"sftp" 				: {
+						"host" 			: "hostname"
+					,	"username"	: "username"
+					, "port"      : "22"
+					, "private_key": "~/.ssh/id_rsa"
+					, "upload_path": "remote_path/to/upload"
 					}
 			}
 }
