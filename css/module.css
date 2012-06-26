@@ -1,0 +1,67 @@
+/*
+
+	Module
+	
+	Generic and reusable modules
+
+*/
+
+/*
+
+	.centered
+
+*/
+.centered {
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+
+/*
+
+	.hlist
+
+	a basic horizontally aligned list
+
+*/
+.hlist {
+	list-style: none;
+	margin-left: 0;
+}
+
+	.hlist-item,
+	.hlist-item a {
+		display: inline-block;
+	}
+	
+/*	.hlist-item {
+		margin-left: -0.25em;
+		margin-right: -0.25em;
+	}*/
+
+
+/*
+
+	.embedded-media
+
+*/
+.embedded-media {}
+
+/* Responsive embedded video */
+.media.video {
+	position: relative;
+	padding-bottom: 54%;
+	padding-top: 1.5em;
+	height: 0;
+	overflow: hidden;
+}
+
+	.media.video iframe,  
+	.media.video object,  
+	.media.video embed {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+	}
