@@ -19,6 +19,6 @@
                        , "mime"       : ">= 1.2.5"
 											 , "fstream" 		: ">= 0.1.18"
                        , "mustache"   : "git://github.com/janl/mustache.js"
-											 , "sftp"  			: "git://github.com/ajaxorg/node-sftp.git"
+											 , "sftp"  			: "git://github.com/laktek/node-sftp.git"
                       }
 }

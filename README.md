@@ -5,10 +5,10 @@ Punch is a simple tool to generate HTML outputs from [Mustache](http://mustache.
 
 ### Why Punch is awesome?
 
-* Simple templating.
-* Flexible content structure.
+* Clear seperation between templates (structure) and content.
+* Live previews for the development mode.
+* Easy to publish (using S3, SFTP or Git)
 * Supports _client-side rendering_.
-* Can be used with your favorite editor, <abbr title='Source Code Management Software'>SCM</abbr> or host.
 
 ### Punch is great for:
 
@@ -170,7 +170,7 @@ Since Punch's renderer is asynchronous, you can call `setTemplate`, `setContent`
 
 **Publish**
 
-You can use `punch publish` command to publish the generated site to a hosting facility you prefer. Publish to [Amazon S3](http://aws.typepad.com/aws/2011/02/host-your-static-website-on-amazon-s3.html) is supported out of the box (a plugin API will be introduced for other publishing options).
+You can use `punch publish` command to publish the generated site to a hosting facility you prefer. [Amazon S3](http://aws.typepad.com/aws/2011/02/host-your-static-website-on-amazon-s3.html) and SFTP publishing to your own server are supported out of the box (a plugin API will be introduced for other publishing options).
 
 To publish directly to S3, add the following settings to `config.json`.
 
