@@ -110,7 +110,8 @@ a {
 .site-tagline {
 	font-size: 1.166666667em;
 	line-height: 1.285714286;
-	margin: 0;
+	margin: 0 auto;
+	letter-spacing: 1px;
 }
 
 /*.section-title {
@@ -178,8 +179,8 @@ body > header {
 		border: none;
 		color: white;
 		display: inline-block;
-		margin-left: 0.25em;
-		margin-right: 0.25em;
+		margin-left: 0.50em;
+		margin-right: 0.50em;
 		text-shadow: -0.06em -0.06em 0 black;
 	}
 
