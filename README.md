@@ -5,7 +5,7 @@ Punch is a simple tool to generate HTML outputs from [Mustache](http://mustache.
 
 ### Why Punch?
 
-* Clear seperation between templates (structure) and content.
+* Clear seperation between content and templates (structure).
 * Live previews for the development mode.
 * Easy to publish (using S3, SFTP or Git)
 * Supports _client-side rendering_.
