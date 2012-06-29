@@ -175,12 +175,16 @@ body > header {
 	        box-shadow: -3px -3px 0 rgba(255, 247, 225, 0.9);
 }
 
+	.action-list li:before {
+		content: "★";	
+	}
+
 	.action-list a {
 		border: none;
 		color: white;
 		display: inline-block;
-		margin-left: 0.50em;
-		margin-right: 0.50em;
+		margin-left: 0.75em;
+		margin-right: 0.75em;
 		text-shadow: -0.06em -0.06em 0 black;
 	}
 

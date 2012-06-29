@@ -5,7 +5,7 @@
 
     "why_punch": [
 			"Clear seperation between content and templates (structure)",
-      "Live previews for the development mode.",
+      "Instant previews for development",
 			"Easy to publish (using S3, SFTP or Git)",
       "Supports <em>client-side rendering</em>."
     ],
@@ -13,6 +13,6 @@
     "install_steps": [
       "<a href=\"http://nodejs.org/#download\">Download</a> and Install Node.js.",
       "Install npm - <code>curl http://npmjs.org/install.sh | sh</code>",
-      "Finally, run <code>npm install punch</code>"
+      "Finally, run <code>npm install -g punch</code>"
     ]
 }
