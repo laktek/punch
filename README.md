@@ -1,7 +1,7 @@
 # Punch 
 ## A Fun and easy way to build modern websites  
 
-Punch is a simple tool to generate HTML outputs from [Mustache](http://mustache.github.com/) templates and content stored in either [JSON](http://json.org) or [Markdown](daringfireball.net/projects/markdown/) format.
+Punch is a simple tool to generate HTML outputs from [Mustache](http://mustache.github.com/) templates and content stored in either [JSON](http://json.org) or [Markdown](http://daringfireball.net/projects/markdown/) format.
 
 ### Why Punch?
 
@@ -32,5 +32,5 @@ For complete documentation on usage, check [Punch's Wiki](https://github.com/lak
 
 ### Licence
 
-Check [LICENSE](https://github.com/laktek/punch/blob/master/LICENSE)
+[MIT LICENSE](https://github.com/laktek/punch/blob/master/LICENSE)
 
