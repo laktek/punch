@@ -1,17 +1,16 @@
 var fs = require("fs");
 var knox = require("knox");
 var s3_publisher = require("../../lib/publishers/s3.js");
-var fileutils = require("../../lib/utils/fileutils");
 
 describe("calling publish", function(){
 
 	it("gets the details of the s3 bucket", function(){
 
-		var supplied_config = {};
+		var supplied_config = { "output_dir": "public/" };
 
 		spyOn(s3_publisher, "retrieveOptions");	
-		spyOn(fileutils, "forEachFileIn");	
 		spyOn(knox, "createClient"); 
+		spyOn(s3_publisher, "fetchAndCopyFiles");	
 
 		s3_publisher.publish(supplied_config);
 		
@@ -20,33 +19,18 @@ describe("calling publish", function(){
 	});
 
  it("creates a s3 client", function(){
-		var supplied_config = {};
+		var supplied_config = { "output_dir": "public/" };
 		var s3_config = { "key": "somekey", "secret": "somesecret", "bucket": "somebucket" };
 
 		spyOn(s3_publisher, "retrieveOptions").andReturn(s3_config);	
-		spyOn(fileutils, "forEachFileIn");	
-
 		spyOn(knox, "createClient"); 
+		spyOn(s3_publisher, "fetchAndCopyFiles");	
 
 		s3_publisher.publish(supplied_config);
 		
 		expect(knox.createClient).toHaveBeenCalledWith(s3_config);
 
  });
-
-	it("calls the file iteration function with output directory", function(){
-
-		var supplied_config = {"output_dir": "path/output_dir"};
-
-		spyOn(s3_publisher, "retrieveOptions");	
-		spyOn(fileutils, "forEachFileIn");	
-		spyOn(knox, "createClient"); 
-
-		s3_publisher.publish(supplied_config);
-		
-		expect(fileutils.forEachFileIn.mostRecentCall.args[0]).toEqual("path/output_dir");
-
-	});
 
 });
 
@@ -82,17 +66,22 @@ describe("retrieve the s3 options from the config", function(){
 });
 
 describe("copy a file to s3 bucket", function(){
+
 	it("reads the given file", function(){
+
+		var spy_callback = jasmine.createSpy();
 
 		spyOn(fs, "readFile");
 		
-		s3_publisher.copyFile("output_dir/file.html");	
+		s3_publisher.copyFile("output_dir/file.html", spy_callback);	
 
 		expect(fs.readFile.mostRecentCall.args[0]).toEqual("output_dir/file.html");
 
 	});
 
 	it("calls put on client with the correct path", function(){
+
+		var spy_callback = jasmine.createSpy();
 
 		spyOn(fs, "readFile").andCallFake(function(path, callback){
 			callback(null, new Buffer("sample"));	
@@ -104,7 +93,7 @@ describe("copy a file to s3 bucket", function(){
 
 		spyOn(s3_publisher.client, "put").andReturn(dummy_req_obj);
 		
-		s3_publisher.copyFile("output_dir/sub/file.html");	
+		s3_publisher.copyFile("output_dir/sub/file.html", spy_callback);	
 
 		expect(s3_publisher.client.put.mostRecentCall.args[0]).toEqual("sub/file.html");
 	
