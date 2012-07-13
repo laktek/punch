@@ -20,14 +20,57 @@ var renderer = require("../lib/renderer.js");
 
 describe("handle rendering request", function(){
 
-  it("check if there is a registered renderer for given content type", function(){
+	it("serve the static file if it exists", function(){
+
+		var spyCallback = jasmine.createSpy();
 		
-		spyOn(renderer, "canRender");
+		spyOn(renderer, "resourceExist").andCallFake(function(path, last_modified, callback){
+			return callback(null, "static output");	
+		});
 
-		renderer.render("test", "magic", null, {});
+		renderer.render("path/test.html", "html", null, spyCallback, {});	
 
-		expect(renderer.canRender).toHaveBeenCalledWith("magic");
-  }); 
+		expect(spyCallback).toHaveBeenCalledWith("static output");
+	});
+
+	it("compiles the template in given path for the given content type", function(){
+
+		var spyCallback = jasmine.createSpy();
+		
+		spyOn(renderer, "resourceExist").andCallFake(function(path, last_modified, callback){
+			return callback("error", null);	
+		});
+
+		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback){
+			return callback(null, "compiled output"); 	
+		});
+
+		renderer.render("path/test.css", "css", null, spyCallback, {});	
+		
+		expect(spyCallback).toHaveBeenCalledWith("compiled output");
+	});
+
+	it("renders the content matching the given path", function(){
+	
+		var spyCallback = jasmine.createSpy();
+		
+		spyOn(renderer, "resourceExist").andCallFake(function(path, last_modified, callback){
+			return callback("error", null);	
+		});
+
+		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback){
+			return callback("error", null); 	
+		});
+
+		spyOn(renderer, "renderContent").andCallFake(function(path, content_type, last_modified, callback){
+			return callback(null, "rendered output" ); 	
+		});
+
+		renderer.render("path/test.css", "css", null, spyCallback, {});	
+		
+		expect(spyCallback).toHaveBeenCalledWith("rendered output");
+
+	});
 
 });
 
