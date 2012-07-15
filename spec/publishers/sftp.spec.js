@@ -1,6 +1,5 @@
 var fs = require("fs");
 var sftp_publisher = require("../../lib/publishers/sftp.js");
-var fileutils = require("../../lib/utils/fileutils");
 
 describe("calling publish", function(){
 

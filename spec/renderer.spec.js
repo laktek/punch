@@ -1,21 +1,3 @@
-/*
-* Should load registered renderers (mustache) and pre-processors (coffeeScript, SASS)
-
-* Should receive name, content-type, last modified date, options object
-* Proceed according to the content-type of the request.
-	- if it a static file serve it from templates
-	- if it is a pre-processor type, file process using the its pre-processor.
-	- else:
-		-- look for available content.
-		-- look for a template file with the same name as content file.
-		-- if not, look for a layout in the same path.
-		-- if not, go one level up until it finds a layout 
-		-- if no layout found throw an exception.
-		-- finally, render the content with the correct template
-	Note: on each case renderer should check the last modified date, if the contents hasn't change it should just say "not modified"
-
-*/
-
 var renderer = require("../lib/renderer.js");
 
 describe("handle rendering request", function(){
@@ -28,7 +10,7 @@ describe("handle rendering request", function(){
 			return callback(null, "static output");	
 		});
 
-		renderer.render("path/test.html", "html", null, spyCallback, {});	
+		renderer.render("path/test.html", "html", null, {}, spyCallback);	
 
 		expect(spyCallback).toHaveBeenCalledWith("static output");
 	});
@@ -45,7 +27,7 @@ describe("handle rendering request", function(){
 			return callback(null, "compiled output"); 	
 		});
 
-		renderer.render("path/test.css", "css", null, spyCallback, {});	
+		renderer.render("path/test.css", "css", null, {}, spyCallback);	
 		
 		expect(spyCallback).toHaveBeenCalledWith("compiled output");
 	});
@@ -66,7 +48,7 @@ describe("handle rendering request", function(){
 			return callback(null, "rendered output" ); 	
 		});
 
-		renderer.render("path/test.css", "css", null, spyCallback, {});	
+		renderer.render("path/test.css", "css", null, {}, spyCallback);	
 		
 		expect(spyCallback).toHaveBeenCalledWith("rendered output");
 
@@ -378,6 +360,112 @@ describe("compile template", function(){
 		renderer.compileTo("path/test.js", "js", null, spyCallback);	
 
 		expect(spyCallback).toHaveBeenCalledWith("template read error", null);
+
+	});
+
+});
+
+/*
+	-- look for available content.
+	-- look for a template file with the same name as content file.
+	-- if not, look for a layout in the same path.
+	-- if not, go one level up until it finds a layout 
+	-- if no layout found throw an exception.
+	-- finally, render the content with the correct template
+*/
+
+describe("render content", function(){
+
+	it("get the content for the given path", function(){
+		var spyEventListener = jasmine.createSpy();
+
+	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEventListener}	
+		});	
+
+		var spyGetContent = jasmine.createSpy();
+		renderer.contents = {
+			"getContent": spyGetContent	
+		};
+
+		var spyNegotiateTemplate = jasmine.createSpy();
+		renderer.templates = {
+			"negotiateTemplate": spyNegotiateTemplate
+		};
+
+		renderer.renderContent("path/test.html", "html", null, {}, function(){});
+
+		expect(spyGetContent.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", "html", {}]);
+
+	});
+
+	it("get the matching template for the given path", function(){
+
+		var spyEventListener = jasmine.createSpy();
+
+	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEventListener, "extension": ".mustache"}	
+		});	
+
+		var spyGetContent = jasmine.createSpy();
+		renderer.contents = {
+			"getContent": spyGetContent	
+		};
+
+		var spyNegotiateTemplate = jasmine.createSpy();
+		renderer.templates = {
+			"negotiateTemplate": spyNegotiateTemplate
+		};
+
+		renderer.renderContent("path/test.html", "html", null, {}, function(){});
+
+		expect(spyNegotiateTemplate.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", ".mustache", {}]);
+
+	});
+
+	it("listen to afterRender of template engine", function(){
+
+		var spyEventListener = jasmine.createSpy();
+
+	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEventListener}	
+		});	
+
+		var spyGetContent = jasmine.createSpy();
+		renderer.contents = {
+			"getContent": spyGetContent	
+		};
+
+		var spyNegotiateTemplate = jasmine.createSpy();
+		renderer.templates = {
+			"negotiateTemplate": spyNegotiateTemplate
+		};
+
+		renderer.renderContent("path/test.html", "html", null, {}, function(){});
+
+		expect(spyEventListener.argsForCall[0][0]).toEqual("afterRender");
+	});
+
+	it("listen to error event of template engine", function(){
+		
+		var spyEventListener = jasmine.createSpy();
+
+		spyOn(renderer, "templateEngine").andCallFake(function(){
+			this.on = spyEventListener;	
+		});
+
+		var spyGetContent = jasmine.createSpy();
+		renderer.contents = {
+			"getContent": spyGetContent	
+		};
+
+		var spyNegotiateTemplate = jasmine.createSpy();
+		renderer.templates = {
+			"negotiateTemplate": spyNegotiateTemplate
+		};
+		renderer.renderContent("path/test.html", "html", null, {}, function(){});
+
+		expect(spyEventListener.argsForCall[1][0]).toEqual("error");
 
 	});
 
