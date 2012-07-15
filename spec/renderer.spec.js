@@ -165,15 +165,15 @@ describe("compile template", function(){
 			"getCompilerForOutputExt": spyGetCompilerForOutputExt
 		};
 
-		var spyGetTemplatesByBasePath = jasmine.createSpy();
+		var spyGetTemplates = jasmine.createSpy();
 
 		renderer.templates = {
-			"getTemplatesByBasePath": spyGetTemplatesByBasePath	
+			"getTemplates": spyGetTemplates	
 		}
 		
 		renderer.compileTo("path/test.js", "js", null, function(){});	
 
-		expect(spyGetTemplatesByBasePath.mostRecentCall.args[0]).toEqual("path/test");
+		expect(spyGetTemplates.mostRecentCall.args[0]).toEqual("path/test");
 
 	});
 
@@ -187,8 +187,8 @@ describe("compile template", function(){
 			"getCompilerForOutputExt": spyGetCompilerForOutputExt
 		};
 
-		var spyGetTemplatesByBasePath = jasmine.createSpy();
-		spyGetTemplatesByBasePath.andCallFake(function(basepath, callback){
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(basepath, callback){
 			callback(null, [{"full_path": "path/test.html", "last_modified": new Date(2012, 6, 13) },
 											{"full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 13) } 
 										 ]);	
@@ -197,7 +197,7 @@ describe("compile template", function(){
 		var spyReadTemplate = jasmine.createSpy();
 
 		renderer.templates = {
-			"getTemplatesByBasePath": spyGetTemplatesByBasePath,	
+			"getTemplates": spyGetTemplates,	
 			"readTemplate": spyReadTemplate
 		};
 		
@@ -220,8 +220,8 @@ describe("compile template", function(){
 			"getCompilerForOutputExt": spyGetCompilerForOutputExt
 		};
 
-		var spyGetTemplatesByBasePath = jasmine.createSpy();
-		spyGetTemplatesByBasePath.andCallFake(function(basepath, callback){
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(basepath, callback){
 			callback(null, [{"full_path": "path/test.html", "last_modified": new Date(2012, 6, 13) },
 											{"full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 13) } 
 										 ]);	
@@ -233,7 +233,7 @@ describe("compile template", function(){
 		});
 
 		renderer.templates = {
-			"getTemplatesByBasePath": spyGetTemplatesByBasePath,
+			"getTemplates": spyGetTemplates,
 			"readTemplate": spyReadTemplate
 		};
 		
@@ -256,8 +256,8 @@ describe("compile template", function(){
 			"getCompilerForOutputExt": spyGetCompilerForOutputExt
 		};
 
-		var spyGetTemplatesByBasePath = jasmine.createSpy();
-		spyGetTemplatesByBasePath.andCallFake(function(basepath, callback){
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(basepath, callback){
 			callback(null, [{"full_path": "path/test.html", "last_modified": new Date(2012, 6, 10) },
 											{"full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 10) } 
 										 ]);	
@@ -269,7 +269,7 @@ describe("compile template", function(){
 		});
 
 		renderer.templates = {
-			"getTemplatesByBasePath": spyGetTemplatesByBasePath,
+			"getTemplates": spyGetTemplates,
 			"readTemplate": spyReadTemplate
 		};
 		
@@ -311,13 +311,13 @@ describe("compile template", function(){
 			"getCompilerForOutputExt": spyGetCompilerForOutputExt
 		};
 
-		var spyGetTemplatesByBasePath = jasmine.createSpy();
-		spyGetTemplatesByBasePath.andCallFake(function(basepath, callback){
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(basepath, callback){
 			callback("template not found", null);	
 		});
 
 		renderer.templates = {
-			"getTemplatesByBasePath": spyGetTemplatesByBasePath	
+			"getTemplates": spyGetTemplates	
 		};
 		
 		var spyCallback = jasmine.createSpy();
@@ -339,8 +339,8 @@ describe("compile template", function(){
 			"getCompilerForOutputExt": spyGetCompilerForOutputExt
 		};
 
-		var spyGetTemplatesByBasePath = jasmine.createSpy();
-		spyGetTemplatesByBasePath.andCallFake(function(basepath, callback){
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(basepath, callback){
 			callback(null, [{"full_path": "path/test.html", "last_modified": new Date(2012, 6, 10) },
 											{"full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 10) } 
 										 ]);	
@@ -352,7 +352,7 @@ describe("compile template", function(){
 		});
 
 		renderer.templates = {
-			"getTemplatesByBasePath": spyGetTemplatesByBasePath,	
+			"getTemplates": spyGetTemplates,	
 			"readTemplate": spyReadTemplate
 		};
 		
@@ -364,15 +364,6 @@ describe("compile template", function(){
 	});
 
 });
-
-/*
-	-- look for available content.
-	-- look for a template file with the same name as content file.
-	-- if not, look for a layout in the same path.
-	-- if not, go one level up until it finds a layout 
-	-- if no layout found throw an exception.
-	-- finally, render the content with the correct template
-*/
 
 describe("render content", function(){
 
@@ -389,8 +380,11 @@ describe("render content", function(){
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
 		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate
+			"negotiateTemplate": spyNegotiateTemplate,
+			"getPartials": spyGetPartials
 		};
 
 		renderer.renderContent("path/test.html", "html", null, {}, function(){});
@@ -413,13 +407,43 @@ describe("render content", function(){
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
 		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate
+			"negotiateTemplate": spyNegotiateTemplate,
+			"getPartials": spyGetPartials
 		};
 
 		renderer.renderContent("path/test.html", "html", null, {}, function(){});
 
 		expect(spyNegotiateTemplate.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", ".mustache", {}]);
+
+	});
+
+	it("get the matching partials for the given path", function(){
+	
+		var spyEventListener = jasmine.createSpy();
+
+	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEventListener, "extension": ".mustache"}	
+		});	
+
+		var spyGetContent = jasmine.createSpy();
+		renderer.contents = {
+			"getContent": spyGetContent	
+		};
+
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		renderer.templates = {
+			"negotiateTemplate": spyNegotiateTemplate,
+			"getPartials": spyGetPartials
+		};
+
+		renderer.renderContent("path/test.html", "html", null, {}, function(){});
+
+		expect(spyGetPartials.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", ".mustache", {}]);
 
 	});
 
@@ -437,8 +461,11 @@ describe("render content", function(){
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
 		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate
+			"negotiateTemplate": spyNegotiateTemplate,
+			"getPartials": spyGetPartials
 		};
 
 		renderer.renderContent("path/test.html", "html", null, {}, function(){});
@@ -460,9 +487,13 @@ describe("render content", function(){
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
 		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate
+			"negotiateTemplate": spyNegotiateTemplate,
+			"getPartials": spyGetPartials
 		};
+
 		renderer.renderContent("path/test.html", "html", null, {}, function(){});
 
 		expect(spyEventListener.argsForCall[1][0]).toEqual("error");
