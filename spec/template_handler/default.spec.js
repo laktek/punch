@@ -60,9 +60,9 @@ describe("get templates", function(){
 		expect(fs.readdir.mostRecentCall.args[0]).toEqual("template_dir/path/sub_dir");
 	});
 
-	it("get all files in the given directory path", function(){
+	it("get all files (excluding hidden files) in the given directory path", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			callback(null, ["test.html", "test1.html"]);	
+			callback(null, ["test.html", "somedir", ".git"]);	
 		});
 
 		spyOn(fs, "statSync").andCallFake(function(path){
@@ -75,7 +75,7 @@ describe("get templates", function(){
 		default_handler.getTemplates("path/sub_dir", spyCallback);
 		
 		expect(spyCallback).toHaveBeenCalledWith(null, [ {"full_path": "path/sub_dir/test.html", "last_modified": new Date(2012, 6, 16)},
-																										 {"full_path": "path/sub_dir/test1.html", "last_modified": new Date(2012, 6, 16)}
+																										 {"full_path": "path/sub_dir/somedir", "last_modified": new Date(2012, 6, 16)}
 		 																						   ]);
 
 	});

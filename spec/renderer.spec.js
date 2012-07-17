@@ -367,16 +367,16 @@ describe("compile template", function(){
 
 describe("render content", function(){
 
-	it("get the content for the given path", function(){
+	it("get the matching content for the given path", function(){
 		var spyEventListener = jasmine.createSpy();
 
 	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
 			return {"on": spyEventListener}	
 		});	
 
-		var spyGetContent = jasmine.createSpy();
+		var spyNegotiateContent = jasmine.createSpy();
 		renderer.contents = {
-			"getContent": spyGetContent	
+			"negotiateContent": spyNegotiateContent	
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
@@ -389,7 +389,7 @@ describe("render content", function(){
 
 		renderer.renderContent("path/test.html", "html", null, {}, function(){});
 
-		expect(spyGetContent.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", "html", {}]);
+		expect(spyNegotiateContent.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", "html", {}]);
 
 	});
 
@@ -401,9 +401,9 @@ describe("render content", function(){
 			return {"on": spyEventListener, "extension": ".mustache"}	
 		});	
 
-		var spyGetContent = jasmine.createSpy();
+		var spyNegotiateContent = jasmine.createSpy();
 		renderer.contents = {
-			"getContent": spyGetContent	
+			"negotiateContent": spyNegotiateContent	
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
@@ -428,9 +428,9 @@ describe("render content", function(){
 			return {"on": spyEventListener, "extension": ".mustache"}	
 		});	
 
-		var spyGetContent = jasmine.createSpy();
+		var spyNegotiateContent = jasmine.createSpy();
 		renderer.contents = {
-			"getContent": spyGetContent	
+			"negotiateContent": spyNegotiateContent	
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
@@ -455,9 +455,9 @@ describe("render content", function(){
 			return {"on": spyEventListener}	
 		});	
 
-		var spyGetContent = jasmine.createSpy();
+		var spyNegotiateContent = jasmine.createSpy();
 		renderer.contents = {
-			"getContent": spyGetContent	
+			"negotiateContent": spyNegotiateContent	
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
@@ -481,9 +481,9 @@ describe("render content", function(){
 			this.on = spyEventListener;	
 		});
 
-		var spyGetContent = jasmine.createSpy();
+		var spyNegotiateContent = jasmine.createSpy();
 		renderer.contents = {
-			"getContent": spyGetContent	
+			"negotiateContent": spyNegotiateContent	
 		};
 
 		var spyNegotiateTemplate = jasmine.createSpy();
