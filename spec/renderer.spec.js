@@ -367,136 +367,202 @@ describe("compile template", function(){
 
 describe("render content", function(){
 
-	it("get the matching content for the given path", function(){
-		var spyEventListener = jasmine.createSpy();
+	it("creates a new template engine instance", function(){
 
-	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEventListener}	
-		});	
+		var spyEvenListener = jasmine.createSpy();
 
-		var spyNegotiateContent = jasmine.createSpy();
-		renderer.contents = {
-			"negotiateContent": spyNegotiateContent	
-		};
-
-		var spyNegotiateTemplate = jasmine.createSpy();
-		var spyGetPartials = jasmine.createSpy();
-
-		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate,
-			"getPartials": spyGetPartials
-		};
-
-		renderer.renderContent("path/test.html", "html", null, {}, function(){});
-
-		expect(spyNegotiateContent.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", "html", {}]);
-
-	});
-
-	it("get the matching template for the given path", function(){
-
-		var spyEventListener = jasmine.createSpy();
-
-	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEventListener, "extension": ".mustache"}	
-		});	
-
-		var spyNegotiateContent = jasmine.createSpy();
-		renderer.contents = {
-			"negotiateContent": spyNegotiateContent	
-		};
-
-		var spyNegotiateTemplate = jasmine.createSpy();
-		var spyGetPartials = jasmine.createSpy();
-
-		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate,
-			"getPartials": spyGetPartials
-		};
-
-		renderer.renderContent("path/test.html", "html", null, {}, function(){});
-
-		expect(spyNegotiateTemplate.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", ".mustache", {}]);
-
-	});
-
-	it("get the matching partials for the given path", function(){
-	
-		var spyEventListener = jasmine.createSpy();
-
-	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEventListener, "extension": ".mustache"}	
-		});	
-
-		var spyNegotiateContent = jasmine.createSpy();
-		renderer.contents = {
-			"negotiateContent": spyNegotiateContent	
-		};
-
-		var spyNegotiateTemplate = jasmine.createSpy();
-		var spyGetPartials = jasmine.createSpy();
-
-		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate,
-			"getPartials": spyGetPartials
-		};
-
-		renderer.renderContent("path/test.html", "html", null, {}, function(){});
-
-		expect(spyGetPartials.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", ".mustache", {}]);
-
-	});
-
-	it("listen to afterRender of template engine", function(){
-
-		var spyEventListener = jasmine.createSpy();
-
-	  spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEventListener}	
-		});	
-
-		var spyNegotiateContent = jasmine.createSpy();
-		renderer.contents = {
-			"negotiateContent": spyNegotiateContent	
-		};
-
-		var spyNegotiateTemplate = jasmine.createSpy();
-		var spyGetPartials = jasmine.createSpy();
-
-		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate,
-			"getPartials": spyGetPartials
-		};
-
-		renderer.renderContent("path/test.html", "html", null, {}, function(){});
-
-		expect(spyEventListener.argsForCall[0][0]).toEqual("afterRender");
-	});
-
-	it("listen to error event of template engine", function(){
-		
-		var spyEventListener = jasmine.createSpy();
-
-		spyOn(renderer, "templateEngine").andCallFake(function(){
-			this.on = spyEventListener;	
+		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEvenListener};
 		});
 
 		var spyNegotiateContent = jasmine.createSpy();
-		renderer.contents = {
-			"negotiateContent": spyNegotiateContent	
-		};
-
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		renderer.templates = {
-			"negotiateTemplate": spyNegotiateTemplate,
-			"getPartials": spyGetPartials
-		};
+		renderer.contents = {"negotiateContent": spyNegotiateContent};
+		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+	
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
-		renderer.renderContent("path/test.html", "html", null, {}, function(){});
+		expect(renderer.createTemplateEngine).toHaveBeenCalledWith({"last_render": new Date(2012, 6, 18)});
+	});
 
-		expect(spyEventListener.argsForCall[1][0]).toEqual("error");
+	it("listen to render complete event", function(){
+		var spyEvenListener = jasmine.createSpy();
+
+		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEvenListener};
+		});
+
+		var spyNegotiateContent = jasmine.createSpy();
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		renderer.contents = {"negotiateContent": spyNegotiateContent};
+		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+	
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
+
+		expect(spyEvenListener.argsForCall[0][0]).toEqual("renderComplete");
+
+	});
+
+	it("listen to render canceled event", function(){
+	
+		var spyEvenListener = jasmine.createSpy();
+
+		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEvenListener};
+		});
+
+		var spyNegotiateContent = jasmine.createSpy();
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		renderer.contents = {"negotiateContent": spyNegotiateContent};
+		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+	
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
+
+		expect(spyEvenListener.argsForCall[1][0]).toEqual("renderCanceled");
+
+	});
+
+	it("fetch and set contents for the given path", function(){
+		
+		var spyEvenListener = jasmine.createSpy();	
+		var spySetContent = jasmine.createSpy();
+
+		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEvenListener, "setContent": spySetContent};
+		});
+
+		var spyNegotiateContent = jasmine.createSpy();
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		spyNegotiateContent.andCallFake(function(path, content_type, options, callback){
+			return callback(null, {"key": "value"}, new Date(2012, 6, 17), {});
+		});
+
+		renderer.contents = {"negotiateContent": spyNegotiateContent};
+		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+	
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
+
+		expect(spySetContent).toHaveBeenCalledWith({"key": "value"}, new Date(2012, 6, 17));
+
+	});
+
+	it("cancel rendering if there's an error fetching content for the given path", function(){
+		
+		var spyEvenListener = jasmine.createSpy();	
+		var spyCancelRender = jasmine.createSpy();
+
+		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEvenListener, "cancelRender": spyCancelRender};
+		});
+
+		var spyNegotiateContent = jasmine.createSpy();
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		spyNegotiateContent.andCallFake(function(path, content_type, options, callback){
+			return callback("content error", null, {});
+		});
+
+		renderer.contents = {"negotiateContent": spyNegotiateContent};
+		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+	
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
+
+		expect(spyCancelRender).toHaveBeenCalledWith("content error");
+
+	});
+
+	it("fetch and set templates for the given path", function(){
+	
+		var spyEvenListener = jasmine.createSpy();	
+		var spySetTemplate = jasmine.createSpy();
+
+		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEvenListener, "setTemplate": spySetTemplate};
+		});
+
+		var spyNegotiateContent = jasmine.createSpy();
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		spyNegotiateTemplate.andCallFake(function(path, content_type, options, callback){
+			return callback(null, "template output", new Date(2012, 6, 17), {});
+		});
+
+		renderer.contents = {"negotiateContent": spyNegotiateContent};
+		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+	
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
+
+		expect(spySetTemplate).toHaveBeenCalledWith("template output", new Date(2012, 6, 17));
+
+	});
+
+	it("cancel rendering if there's an error fetching templates for the given path", function(){
+			
+		var spyEvenListener = jasmine.createSpy();	
+		var spyCancelRender = jasmine.createSpy();
+
+		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEvenListener, "cancelRender": spyCancelRender};
+		});
+
+		var spyNegotiateContent = jasmine.createSpy();
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		spyNegotiateTemplate.andCallFake(function(path, content_type, options, callback){
+			return callback("template error", null, {});
+		});
+
+		renderer.contents = {"negotiateContent": spyNegotiateContent};
+		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+	
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
+
+		expect(spyCancelRender).toHaveBeenCalledWith("template error");
+
+	});
+
+	it("fetch and set partials for the given path", function(){
+		
+		var spyEvenListener = jasmine.createSpy();	
+		var spySetPartials = jasmine.createSpy();
+
+		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+			return {"on": spyEvenListener, "setPartials": spySetPartials};
+		});
+
+		var spyNegotiateContent = jasmine.createSpy();
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		spyGetPartials.andCallFake(function(path, extension, options, callback){
+			return callback(null, {"partial": "partial output"}, new Date(2012, 6, 17), {});
+		});
+
+		renderer.contents = {"negotiateContent": spyNegotiateContent};
+		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+	
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
+
+		expect(spySetPartials).toHaveBeenCalledWith({"partial": "partial output"}, new Date(2012, 6, 17));
 
 	});
 
