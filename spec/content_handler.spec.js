@@ -2,6 +2,36 @@ var default_handler = require("../lib/content_handler.js");
 
 var fs = require("fs");
 
+describe("check for top level paths", function(){
+
+	it("return true if the given path is a directory", function(){
+		spyOn(fs, "statSync").andCallFake(function(path){
+			return {"isDirectory": function(){ return true } };	
+		});
+
+		expect(default_handler.isTopLevelPath("path/sub_dir")).toBeTruthy();	
+	});
+
+	it("return false if the directory is a hidden directory", function(){
+		spyOn(fs, "statSync").andCallFake(function(path){
+			return {"isDirectory": function(){ return true } };	
+		});
+
+		expect(default_handler.isTopLevelPath("path/.hidden/sub_dir")).not.toBeTruthy();	
+
+	});
+
+	it("return false if the directory is a special directory", function(){
+		spyOn(fs, "statSync").andCallFake(function(path){
+			return {"isDirectory": function(){ return true } };	
+		});
+
+		expect(default_handler.isTopLevelPath("path/_page/sub_dir")).not.toBeTruthy();	
+
+	});
+
+});
+
 describe("get content", function(){
 
 	it("read the JSON file in the given path", function(){
