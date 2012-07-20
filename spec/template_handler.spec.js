@@ -1,4 +1,4 @@
-var default_handler = require("../../lib/template_handler/default.js");
+var default_handler = require("../lib/template_handler.js");
 
 var fs = require("fs");
 
@@ -18,7 +18,7 @@ describe("get template", function(){
 
 	it("call the callback with last modified date and full path", function(){
 		spyOn(fs, "stat").andCallFake(function(path, callback){
-			return callback(null, {"mtime": new Date(2012, 6, 15) });
+			return callback(null, {"mtime": new Date(2012, 6, 15), "isFile": function(){ return true } });
 		});
 
 		default_handler.templateDir = "template_dir";
@@ -43,6 +43,23 @@ describe("get template", function(){
 		expect(spyCallback).toHaveBeenCalledWith("error", null);
 
 	});
+
+	it("call the callback with an error if the given path is not a file", function(){
+		spyOn(fs, "stat").andCallFake(function(path, callback){
+			return callback(null, {"mtime": new Date(2012, 6, 15), "isFile": function(){ return false } });
+		});
+
+		default_handler.templateDir = "template_dir";
+		
+		spyCallback = jasmine.createSpy();
+		default_handler.getTemplate("path/sub_dir", spyCallback);	
+
+		expect(spyCallback).toHaveBeenCalledWith("given path is not a file", null);
+
+
+	});
+
+
 
 });
 
@@ -134,8 +151,8 @@ describe("read template", function(){
 	});
 
 	it("calls the callback with the template content", function(){
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
-			return callback(null, "template output");	
+		spyOn(fs, "readFile").andCallFake(function(path, content_type, callback){
+			return callback(null, new Buffer("template output"));	
 		});
 
 		default_handler.templateDir = "template_dir";
@@ -148,7 +165,7 @@ describe("read template", function(){
 	});
 
 	it("calls the callback with the error if an error occurs", function(){
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
+		spyOn(fs, "readFile").andCallFake(function(path, content_type, callback){
 			return callback("error", null);	
 		});
 

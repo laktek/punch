@@ -1,4 +1,4 @@
-var markdown_parser = require("../lib/parsers/markdown.js");
+var markdown_parser = require("../../lib/parsers/markdown.js");
 
 describe("parsing given content", function() {
 

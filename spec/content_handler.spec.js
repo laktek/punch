@@ -1,4 +1,4 @@
-var default_handler = require("../../lib/content_handler/default.js");
+var default_handler = require("../lib/content_handler.js");
 
 var fs = require("fs");
 
@@ -63,6 +63,20 @@ describe("get content", function(){
 });
 
 describe("parse extended content", function(){
+
+	it("calls the relavant directory for the path", function(){
+		
+		spyOn(fs, "readdir");
+
+		default_handler.contentDir = "content_dir";
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.parseExtendedContent("path/sub_dir/test", spyCallback);	
+
+		expect(fs.readdir.mostRecentCall.args[0]).toEqual("content_dir/path/sub_dir/_test");
+
+	});
+
 	it("parse all files in the directory", function(){
 
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
@@ -81,7 +95,7 @@ describe("parse extended content", function(){
 		spyParse.andCallFake(function(content, callback){
 			return callback(null, content);	
 		});
-		default_handler.parsers = [{ "supportedExtensions": [".markdown", ".md"], "parse": spyParse }];
+		default_handler.parsers = { ".markdown": {"parse": spyParse} };
 
 		var spyCallback = jasmine.createSpy();
 		default_handler.parseExtendedContent("path/test", spyCallback);	
@@ -91,6 +105,7 @@ describe("parse extended content", function(){
 	});
 
 	it("will not parse files without supported parser", function(){
+
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
 			return callback(null, ["test1.markdown", "test2.markdown"]);	
 		});
@@ -104,7 +119,7 @@ describe("parse extended content", function(){
 			return callback(null, new Buffer(JSON.stringify(sample_json)));	
 		});
 
-		default_handler.parsers = [];
+		default_handler.parsers = {".textile": {"parse": {}} };
 
 		var spyCallback = jasmine.createSpy();
 		default_handler.parseExtendedContent("path/test", spyCallback);	
@@ -114,6 +129,7 @@ describe("parse extended content", function(){
 	});
 
 	it("parses JSON files by default", function(){
+
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
 			return callback(null, ["test1.json", "test2.markdown"]);	
 		});
@@ -127,7 +143,7 @@ describe("parse extended content", function(){
 			return callback(null, new Buffer(JSON.stringify(sample_json)));	
 		});
 
-		default_handler.parsers = [];
+		default_handler.parsers = {};
 
 		var spyCallback = jasmine.createSpy();
 		default_handler.parseExtendedContent("path/test", spyCallback);	
@@ -136,6 +152,20 @@ describe("parse extended content", function(){
 		expect(spyCallback).toHaveBeenCalledWith(null, parsed_contents, new Date(2012, 6, 17));
 
 	});
+
+	it("calls the callback with an error if directory doesn't exist", function(){
+	
+		spyOn(fs, "readdir").andCallFake(function(path, callback){
+			return callback("error", null);	
+		});
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.parseExtendedContent("path/test", spyCallback);	
+
+		expect(spyCallback).toHaveBeenCalledWith("error", null, null);
+
+	});
+
 });
 
 describe("get shared content", function(){
@@ -190,7 +220,7 @@ describe("negotiate content", function(){
 	it("get the content for the path", function(){
 		spyOn(default_handler, "getContent");
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", "html", {}, spyCallback);	
+		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
 		expect(default_handler.getContent.mostRecentCall.args[0]).toEqual("path/test");
 	});
@@ -204,7 +234,7 @@ describe("negotiate content", function(){
 		spyOn(default_handler, "getHelperContent");
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", "html", {}, spyCallback);	
+		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
 		expect(default_handler.getSharedContent).toHaveBeenCalled();
 
@@ -220,9 +250,9 @@ describe("negotiate content", function(){
 		spyOn(default_handler, "getHelperContent");
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", "html", {}, spyCallback);	
+		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
-		expect(default_handler.getHelperContent.mostRecentCall.args.splice(0,3)).toEqual(["path/test", "html", {}]);
+		expect(default_handler.getHelperContent.mostRecentCall.args.splice(0,3)).toEqual(["path/test", ".html", {}]);
 
 	});
 
@@ -240,7 +270,7 @@ describe("negotiate content", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", "html", {}, spyCallback);	
+		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
 		expect(spyCallback).toHaveBeenCalledWith(null, {"content_key": "content_value", "shared_key": "shared_value", "helper_key": "helper_value"}, new Date(2012, 6, 18), {});
 
@@ -252,9 +282,9 @@ describe("negotiate content", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", "html", {}, spyCallback);	
+		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith("content not found", null, null, {"header": {"status": 404}});
+		expect(spyCallback).toHaveBeenCalledWith("content not found", null, null, {});
 
 	});
 

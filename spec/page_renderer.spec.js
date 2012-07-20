@@ -1,56 +1,99 @@
-var renderer = require("../lib/renderer.js");
+var renderer = require("../lib/page_renderer.js");
 
 describe("handle rendering request", function(){
+
+	it("point the top level request path to index files", function(){
+		spyOn(renderer, "serveStatic");
+
+		renderer.templates = {"isValidPath": function(){ return true } };
+		renderer.contents = {"isValidPath": function(){ return true } };
+
+		var spyCallback = jasmine.createSpy();
+		renderer.render("path/test", ".html", null, {}, spyCallback);	
+
+		expect(renderer.serveStatic.mostRecentCall.args[0]).toEqual("path/test/index.html");
+
+	});
 
 	it("serve the static file if it exists", function(){
 
 		var spyCallback = jasmine.createSpy();
+
+		renderer.templates = {"isValidPath": function(){ return false } };
+		renderer.contents = {"isValidPath": function(){ return false } };
 		
 		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
-			return callback(null, "static output");	
+			return callback(null, {"body": "static output", "modified": true});	
 		});
 
-		renderer.render("path/test.html", "html", null, {}, spyCallback);	
+		renderer.render("path/test.html", ".html", null, {}, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith("static output");
+		expect(spyCallback).toHaveBeenCalledWith({"body": "static output", "modified": true});
 	});
 
 	it("compiles the template in given path for the given content type", function(){
 
 		var spyCallback = jasmine.createSpy();
+
+		renderer.templates = {"isValidPath": function(){ return false } };
+		renderer.contents = {"isValidPath": function(){ return false } };
 		
 		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
-			return callback("error", null);	
+			return callback({"ignore": true, "message": "error"}, null);	
 		});
 
 		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback){
-			return callback(null, "compiled output"); 	
+			return callback(null, {"body": "compiled output", "modified": true}); 	
 		});
 
-		renderer.render("path/test.css", "css", null, {}, spyCallback);	
+		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith("compiled output");
+		expect(spyCallback).toHaveBeenCalledWith({"body": "compiled output", "modified": true});
+	});
+
+	it("passes the error if compiling a template fails", function(){
+		
+		var spyCallback = jasmine.createSpy();
+
+		renderer.templates = {"isValidPath": function(){ return false } };
+		renderer.contents = {"isValidPath": function(){ return false } };
+		
+		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
+			return callback({"ignore": true, "message": "error"}, null);	
+		});
+
+		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback){
+			return callback({"ignore": false, "message": "compile error"}, null);	
+		});
+
+		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
+		
+		expect(spyCallback).toHaveBeenCalledWith({"body": null, "modified": false, "options": {"header": {"status": 500 }, "log": {"error": "compile error"} }});
+
 	});
 
 	it("renders the content matching the given path", function(){
 	
 		var spyCallback = jasmine.createSpy();
-		
+	
+		renderer.templates = {"isValidPath": function(){ return false } };
+		renderer.contents = {"isValidPath": function(){ return false } };
+			
 		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
-			return callback("error", null);	
+			return callback({"ignore": true, "message": "error"}, null);	
 		});
 
 		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback){
-			return callback("error", null); 	
+			return callback({"ignore": true, "message": "error"}, null);	
 		});
 
 		spyOn(renderer, "renderContent").andCallFake(function(path, content_type, last_modified, callback){
-			return callback(null, "rendered output" ); 	
+			return callback(null, {"body": "rendered output", "modified": true}); 	
 		});
 
-		renderer.render("path/test.css", "css", null, {}, spyCallback);	
+		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith("rendered output");
+		expect(spyCallback).toHaveBeenCalledWith({"body": "rendered output", "modified": true});
 
 	});
 
@@ -134,7 +177,7 @@ describe("serving static file", function(){
 		var old_date = new Date(2012, 6, 15);
 		renderer.serveStatic("path/test.jpg", old_date, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith("error", null);
+		expect(spyCallback).toHaveBeenCalledWith({"ignore": true, "message": "error"}, null);
 	
 	});
 
@@ -142,27 +185,11 @@ describe("serving static file", function(){
 
 describe("compile template", function(){
 
-	it("get the compiler that can output to given content type", function(){
-
-		var spyGetCompilerForOutputExt = jasmine.createSpy();
-
-		renderer.compilers = {
-			"getCompilerForOutputExt": spyGetCompilerForOutputExt
-		};
-		
-		renderer.compileTo("path/test.js", "js", null, function(){});	
-
-		expect(spyGetCompilerForOutputExt.mostRecentCall.args[0]).toEqual("js");
-	});
-
 	it("get the matching templates by base path", function(){
-		var spyGetCompilerForOutputExt = jasmine.createSpy();
-		spyGetCompilerForOutputExt.andCallFake(function(content_type, callback){
-			callback(null, {});	
-		});
+		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
-			"getCompilerForOutputExt": spyGetCompilerForOutputExt
+			".js": { "compile": spyCompile }
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
@@ -171,20 +198,17 @@ describe("compile template", function(){
 			"getTemplates": spyGetTemplates	
 		}
 		
-		renderer.compileTo("path/test.js", "js", null, function(){});	
+		renderer.compileTo("path/test.js", ".js", null, function(){});	
 
 		expect(spyGetTemplates.mostRecentCall.args[0]).toEqual("path/test");
 
 	});
 
 	it("read the template if its modified", function(){
-		var spyGetCompilerForOutputExt = jasmine.createSpy();
-		spyGetCompilerForOutputExt.andCallFake(function(content_type, callback){
-			callback(null, {"input_extensions": [".coffee"]});	
-		});
+		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
-			"getCompilerForOutputExt": spyGetCompilerForOutputExt
+			".js": { "compile": spyCompile, "input_extensions": [".coffee"] }
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
@@ -201,8 +225,7 @@ describe("compile template", function(){
 			"readTemplate": spyReadTemplate
 		};
 		
-		console.log("template modified");
-		renderer.compileTo("path/test.js", "js", null, function(){});	
+		renderer.compileTo("path/test.js", ".js", null, function(){});	
 
 		expect(spyReadTemplate.mostRecentCall.args[0]).toEqual("path/test.coffee");
 	
@@ -211,13 +234,8 @@ describe("compile template", function(){
 	it("call compile with template output and callback", function(){
 		var spyCompile = jasmine.createSpy();
 
-		var spyGetCompilerForOutputExt = jasmine.createSpy();
-		spyGetCompilerForOutputExt.andCallFake(function(content_type, callback){
-			callback(null, {"input_extensions": [".coffee"], "compile": spyCompile});	
-		});
-
 		renderer.compilers = {
-			"getCompilerForOutputExt": spyGetCompilerForOutputExt
+			".js": { "compile": spyCompile, "input_extensions": [".coffee"] }
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
@@ -238,7 +256,7 @@ describe("compile template", function(){
 		};
 		
 		var spyCallback = jasmine.createSpy();
-		renderer.compileTo("path/test.js", "js", null, spyCallback);	
+		renderer.compileTo("path/test.js", ".js", null, spyCallback);	
 
 		expect(spyCompile).toHaveBeenCalledWith("template output", spyCallback);
 
@@ -247,13 +265,8 @@ describe("compile template", function(){
 	it("call the callback without an output if template is not modified", function(){
 		var spyCompile = jasmine.createSpy();
 
-		var spyGetCompilerForOutputExt = jasmine.createSpy();
-		spyGetCompilerForOutputExt.andCallFake(function(content_type, callback){
-			callback(null, {"input_extensions": [".coffee"], "compile": spyCompile});	
-		});
-
 		renderer.compilers = {
-			"getCompilerForOutputExt": spyGetCompilerForOutputExt
+			".js": { "compile": spyCompile, "input_extensions": [".coffee"] }
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
@@ -274,7 +287,7 @@ describe("compile template", function(){
 		};
 		
 		var spyCallback = jasmine.createSpy();
-		renderer.compileTo("path/test.js", "js", new Date(2012, 6, 13), spyCallback);	
+		renderer.compileTo("path/test.js", ".js", new Date(2012, 6, 13), spyCallback);	
 
 		expect(spyCallback).toHaveBeenCalledWith(null, {"body": null, "modified": false });
 
@@ -283,32 +296,22 @@ describe("compile template", function(){
 	it("call the callback with an error if no compiler found for the given content type", function(){
 		var spyCompile = jasmine.createSpy();
 
-		var spyGetCompilerForOutputExt = jasmine.createSpy();
-		spyGetCompilerForOutputExt.andCallFake(function(content_type, callback){
-			callback("error", null);	
-		});
-
 		renderer.compilers = {
-			"getCompilerForOutputExt": spyGetCompilerForOutputExt
+			".css": { "compile": spyCompile, "input_extensions": [".less"] }
 		};
 				
 		var spyCallback = jasmine.createSpy();
-		renderer.compileTo("path/test.js", "js", new Date(2012, 6, 13), spyCallback);	
+		renderer.compileTo("path/test.js", ".js", new Date(2012, 6, 13), spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith("error", null);
+		expect(spyCallback).toHaveBeenCalledWith({"ignore": true, "message": "no compiler found"}, null);
 
 	});
 
 	it("call the callback with an error if no matching template is found", function(){
 		var spyCompile = jasmine.createSpy();
 
-		var spyGetCompilerForOutputExt = jasmine.createSpy();
-		spyGetCompilerForOutputExt.andCallFake(function(content_type, callback){
-			callback(null, {"input_extensions": [".coffee"], "compile": spyCompile});	
-		});
-
 		renderer.compilers = {
-			"getCompilerForOutputExt": spyGetCompilerForOutputExt
+			".js": { "compile": spyCompile, "input_extensions": [".coffee"] }
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
@@ -321,22 +324,17 @@ describe("compile template", function(){
 		};
 		
 		var spyCallback = jasmine.createSpy();
-		renderer.compileTo("path/test.js", "js", new Date(2012, 6, 13), spyCallback);	
+		renderer.compileTo("path/test.js", ".js", new Date(2012, 6, 13), spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith("template not found", null);
+		expect(spyCallback).toHaveBeenCalledWith({ "ignore": true, "message": "template not found"}, null);
 
 	});
 
 	it("call the callback with an error if it fails to read the template", function(){
 		var spyCompile = jasmine.createSpy();
 
-		var spyGetCompilerForOutputExt = jasmine.createSpy();
-		spyGetCompilerForOutputExt.andCallFake(function(content_type, callback){
-			callback(null, {"input_extensions": [".coffee"], "compile": spyCompile});	
-		});
-
 		renderer.compilers = {
-			"getCompilerForOutputExt": spyGetCompilerForOutputExt
+			".js": { "compile": spyCompile, "input_extensions": [".coffee"] }
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
@@ -357,9 +355,9 @@ describe("compile template", function(){
 		};
 		
 		var spyCallback = jasmine.createSpy();
-		renderer.compileTo("path/test.js", "js", null, spyCallback);	
+		renderer.compileTo("path/test.js", ".js", null, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith("template read error", null);
+		expect(spyCallback).toHaveBeenCalledWith({ "ignore": false, "message": "template read error"}, null);
 
 	});
 
