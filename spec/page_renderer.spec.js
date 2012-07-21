@@ -31,7 +31,7 @@ describe("handle rendering request", function(){
 		expect(spyCallback).toHaveBeenCalledWith({"body": "static output", "modified": true});
 	});
 
-	it("compiles the template in given path for the given content type", function(){
+	it("compile the template in given path for the given content type", function(){
 
 		var spyCallback = jasmine.createSpy();
 
@@ -51,7 +51,7 @@ describe("handle rendering request", function(){
 		expect(spyCallback).toHaveBeenCalledWith({"body": "compiled output", "modified": true});
 	});
 
-	it("passes the error if compiling a template fails", function(){
+	it("pass the error if compiling a template fails", function(){
 		
 		var spyCallback = jasmine.createSpy();
 
@@ -68,11 +68,11 @@ describe("handle rendering request", function(){
 
 		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith({"body": null, "modified": false, "options": {"header": {"status": 500 }, "log": {"error": "compile error"} }});
+		expect(spyCallback).toHaveBeenCalledWith({"body": null, "modified": true, "options": {"header": {"status": 500 }, "log": {"error": "compile error"} }});
 
 	});
 
-	it("renders the content matching the given path", function(){
+	it("render the content matching the given path", function(){
 	
 		var spyCallback = jasmine.createSpy();
 	
@@ -94,6 +94,23 @@ describe("handle rendering request", function(){
 		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
 		expect(spyCallback).toHaveBeenCalledWith({"body": "rendered output", "modified": true});
+
+	});
+
+	it("pass an error if output object is invalid", function(){
+		
+		var spyCallback = jasmine.createSpy();
+
+		renderer.templates = {"isTopLevelPath": function(){ return false } };
+		renderer.contents = {"isTopLevelPath": function(){ return false } };
+		
+		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
+			return callback(null, {});	
+		});
+
+		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
+		
+		expect(spyCallback).toHaveBeenCalledWith({"body": null, "modified": true, "options": {"header": {"status": 500 }, "log": {"error": "invalid response"} }});
 
 	});
 
