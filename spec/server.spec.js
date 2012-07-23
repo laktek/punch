@@ -12,6 +12,8 @@ describe("start server", function(){
 			return {"use": function(){}, "listen": function(){} }	
 		});
 
+		spyOn(pageServer, "setup");
+
     server.startServer(supplied_config);
     expect(server.config.server.port).toEqual(4000);
   }); 
@@ -20,6 +22,7 @@ describe("start server", function(){
 		spyOn(connect, "call").andCallFake(function(){
 			return {"use": function(middleware){}, "listen": function(){} }	
 		});
+
 		spyOn(pageServer, "setup");
 
     server.startServer(default_config);

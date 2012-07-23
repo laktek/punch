@@ -1,6 +1,57 @@
 var default_handler = require("../lib/content_handler.js");
+var module_utils = require("../lib/utils/module_utils.js");
 
 var fs = require("fs");
+
+describe("setup", function(){
+	var sample_config = {
+		content_dir: "content_dir",
+
+		plugins: {
+			parsers: {
+				".markdown": "sample_markdown_parser",	
+				".yml": "sample_yml_parser"	
+			},
+			helpers: [
+				"sample_number_helper",
+				"sample_image_helper"	
+			]
+		}
+	};
+
+	it("set the content directory", function(){
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		default_handler.setup(sample_config);
+		expect(default_handler.contentDir).toEqual("content_dir");
+	});
+
+	it("setup each parser", function(){
+		default_handler.parsers = {};
+
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		default_handler.setup(sample_config);
+		expect(default_handler.parsers).toEqual({".markdown": {"id": "sample_markdown_parser"}, ".yml": {"id": "sample_yml_parser"}});
+
+	});
+
+	it("setup each helper", function(){
+		default_handler.helpers = [];
+
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		default_handler.setup(sample_config);
+		expect(default_handler.helpers).toEqual([{"id": "sample_number_helper"}, {"id": "sample_image_helper"}]);
+
+	});
+});
 
 describe("check for top level paths", function(){
 
@@ -28,6 +79,14 @@ describe("check for top level paths", function(){
 
 		expect(default_handler.isTopLevelPath("path/_page/sub_dir")).not.toBeTruthy();	
 
+	});
+
+	it("return false if the path doesn't exist", function(){
+		spyOn(fs, "statSync").andCallFake(function(path){
+			throw "error"
+		});
+
+		expect(default_handler.isTopLevelPath("path/_page/sub_dir")).not.toBeTruthy();	
 	});
 
 });

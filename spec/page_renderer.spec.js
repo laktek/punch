@@ -1,4 +1,56 @@
 var renderer = require("../lib/page_renderer.js");
+var module_utils = require("../lib/utils/module_utils.js");
+
+describe("setup", function(){
+	var sample_config = {
+		plugins: {
+			template_handler: "sample_template_handler",
+			content_handler: "sample_content_handler",
+			template_engine: "sample_template_engine",
+			compilers: {
+				".js": "sample_js_compiler",	
+				".css": "sample_css_compiler"	
+			}
+		}
+	}
+
+	it("setup the templates handler", function(){
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		renderer.setup(sample_config);
+		expect(renderer.templates.id).toEqual("sample_template_handler");
+	});
+
+	it("setup the contents handler", function(){
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		renderer.setup(sample_config);
+		expect(renderer.contents.id).toEqual("sample_content_handler");
+	});
+
+	it("setup the template engine", function(){
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		renderer.setup(sample_config);
+		expect(renderer.templateEngine.id).toEqual("sample_template_engine");
+	});
+
+	it("setup each compiler", function(){
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		renderer.setup(sample_config);
+		expect(renderer.compilers).toEqual({".js": {"id": "sample_js_compiler"}, ".css": {"id": "sample_css_compiler"}});
+
+	});
+});
 
 describe("handle rendering request", function(){
 

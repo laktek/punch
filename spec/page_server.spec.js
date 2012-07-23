@@ -1,17 +1,44 @@
 var page_server = require("../lib/page_server.js");
 var page_renderer = require("../lib/page_renderer.js");
+var module_utils = require("../lib/utils/module_utils.js");
 
-describe("setup", function(){
+describe("setup the page server", function(){
 
 	it("setup the renderer", function(){
+		var sample_config = {"plugins": {"cache_store": "./sample_cache_store" }};
+
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return 	{}
+		});
+
 		spyOn(page_renderer, "setup");	
 
-		page_server.setup({});
-		expect(page_renderer.setup).toHaveBeenCalledWith({});
+		page_server.setup(sample_config);
+		expect(page_renderer.setup).toHaveBeenCalledWith(sample_config);
 	});
 
-	it("returns the handler function", function(){
-		expect(typeof page_server.setup({})).toEqual("function");
+	it("setup the cache store", function(){
+		var sample_config = {"plugins": {"cache_store": "./sample_cache_store" }};
+
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return 	{}
+		});
+
+		spyOn(page_renderer, "setup");	
+			
+		page_server.setup(sample_config);
+		expect(page_server.cacheStore).toEqual({});
+	});
+
+	it("return a handler function", function(){
+		var sample_config = {"plugins": {"cache_store": "./sample_cache_store" }};
+
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return 	{}
+		});
+
+		spyOn(page_renderer, "setup");	
+		expect(typeof page_server.setup(sample_config)).toEqual("function");
 	});
 
 });

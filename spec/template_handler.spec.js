@@ -2,6 +2,13 @@ var default_handler = require("../lib/template_handler.js");
 
 var fs = require("fs");
 
+describe("setup", function(){
+	it("set the template directory", function(){
+		default_handler.setup({"template_dir": "template_dir"});
+		expect(default_handler.templateDir).toEqual("template_dir");
+	});
+});
+
 describe("check for top level paths", function(){
 
 	it("return true if the given path is a directory", function(){
@@ -19,6 +26,14 @@ describe("check for top level paths", function(){
 
 		expect(default_handler.isTopLevelPath("path/.hidden/sub_dir")).not.toBeTruthy();	
 
+	});
+
+	it("return false if the path doesn't exist", function(){
+		spyOn(fs, "statSync").andCallFake(function(path){
+			throw "error"
+		});
+
+		expect(default_handler.isTopLevelPath("path/_page/sub_dir")).not.toBeTruthy();	
 	});
 
 });

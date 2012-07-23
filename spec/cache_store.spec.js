@@ -1,6 +1,13 @@
 var fs = require("fs");
 var cache_store = require("../lib/cache_store.js");
 
+describe("setup", function(){
+	it("set the output directory", function(){
+		cache_store.setup({"output_dir": "output_dir"});
+		expect(cache_store.outputDir).toEqual("output_dir");
+	});
+});
+
 describe("last updated for a file", function(){
 
 	it("calls the callback with the file's modified time", function(){
