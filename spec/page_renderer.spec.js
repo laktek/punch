@@ -258,7 +258,7 @@ describe("compile template", function(){
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
-			".js": { "compile": spyCompile }
+			".min.js": { "compile": spyCompile }
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
@@ -267,7 +267,7 @@ describe("compile template", function(){
 			"getTemplates": spyGetTemplates	
 		}
 		
-		renderer.compileTo("path/test.js", ".js", null, function(){});	
+		renderer.compileTo("path/test.min.js", ".js", null, function(){});	
 
 		expect(spyGetTemplates.mostRecentCall.args[0]).toEqual("path/test");
 
