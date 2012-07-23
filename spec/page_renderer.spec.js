@@ -139,7 +139,7 @@ describe("handle rendering request", function(){
 			return callback({"ignore": true, "message": "error"}, null);	
 		});
 
-		spyOn(renderer, "renderContent").andCallFake(function(path, content_type, last_modified, callback){
+		spyOn(renderer, "renderContent").andCallFake(function(path, content_type, last_modified, options, callback){
 			return callback(null, {"body": "rendered output", "modified": true}); 	
 		});
 
@@ -300,7 +300,7 @@ describe("compile template", function(){
 	
 	});
 
-	it("call compile with template output and callback", function(){
+	it("call compile with the template output", function(){
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
@@ -327,7 +327,7 @@ describe("compile template", function(){
 		var spyCallback = jasmine.createSpy();
 		renderer.compileTo("path/test.js", ".js", null, spyCallback);	
 
-		expect(spyCompile).toHaveBeenCalledWith("template output", spyCallback);
+		expect(spyCompile.mostRecentCall.args[0]).toEqual("template output");
 
 	});
 

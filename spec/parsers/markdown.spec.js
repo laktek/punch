@@ -1,20 +1,33 @@
 var markdown_parser = require("../../lib/parsers/markdown.js");
+var marked = require("marked");
 
 describe("parsing given content", function() {
 
-  it("calls the callback with desired output", function() {
-    var output = null;
+  it("calls the callback with the result", function() {
+		spyOn(marked, "setOptions");
 
-    var markdown_instance = new markdown_parser(); 
-    markdown_instance.parse("*sample text*", function(parsed_content){
-      output = parsed_content; 
-    });
+		spyOn(marked, "call").andCallFake(function(input){
+			return "parsed file";	
+		});
 
-    waits(100);
+		var spyCallback = jasmine.createSpy();
+		markdown_parser.parse("test", spyCallback);
 
-    runs(function(){
-      expect(output).toEqual("<p><em>sample text</em></p>\n");
-    });
+		expect(spyCallback).toHaveBeenCalledWith(undefined, "parsed file");
+
+  });
+
+  it("calls the callback with the result", function() {
+		spyOn(marked, "setOptions");
+
+		spyOn(marked, "call").andCallFake(function(input){
+			throw "error"
+		});
+
+		var spyCallback = jasmine.createSpy();
+		markdown_parser.parse("test", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("error", undefined);
 
   });
 

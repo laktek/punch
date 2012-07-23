@@ -78,8 +78,7 @@ describe("get a file", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.get("path/test", ".html", {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith("error", null);
-
+		expect(spyCallback).toHaveBeenCalledWith("error", {"body": null, "updated_at": new Date(2012, 6, 21), "options": {"header": {"Content-Length": 0 }}});
 
 	});
 });
