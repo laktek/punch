@@ -84,7 +84,30 @@ describe("get a file", function(){
 });
 
 describe("update a file", function(){
+	it("create missing directories", function(){
+		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
+			return callback(null, {"isDirectory": function(){ return false }});
+		});
+
+		spyOn(fs, "mkdir").andCallFake(function(dirpath, callback){
+			return callback(null);	
+		});
+
+		spyOn(fs, "writeFile");
+
+		cache_store.outputDir = "output_dir";
+	
+		var spyCallback = jasmine.createSpy();
+		cache_store.update("path/subdir/test", ".html", "test", spyCallback);
+
+		expect(fs.mkdir.callCount).toEqual(3);
+
+	});
+
 	it("write file to the correct path", function(){
+		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
+			return callback(null, {"isDirectory": function(){ return true }});
+		});
 
 		spyOn(fs, "writeFile");
 	
@@ -96,6 +119,10 @@ describe("update a file", function(){
 	});
 
 	it("calls the callback with the error if there's an error in writing the file", function(){
+
+		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
+			return callback(null, {"isDirectory": function(){ return true }});
+		});
 
 		spyOn(fs, "writeFile").andCallFake(function(file_path, body, encoding, callback){
 			return callback("error");	

@@ -6,7 +6,7 @@ describe("parsing given content", function() {
   it("calls the callback with the result", function() {
 		spyOn(marked, "setOptions");
 
-		spyOn(marked, "call").andCallFake(function(input){
+		spyOn(marked, "parse").andCallFake(function(input){
 			return "parsed file";	
 		});
 
@@ -20,7 +20,7 @@ describe("parsing given content", function() {
   it("calls the callback with the result", function() {
 		spyOn(marked, "setOptions");
 
-		spyOn(marked, "call").andCallFake(function(input){
+		spyOn(marked, "parse").andCallFake(function(input){
 			throw "error"
 		});
 
