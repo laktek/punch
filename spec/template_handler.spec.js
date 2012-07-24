@@ -95,8 +95,6 @@ describe("get template", function(){
 
 	});
 
-
-
 });
 
 describe("get templates", function(){
@@ -113,13 +111,18 @@ describe("get templates", function(){
 		expect(fs.readdir.mostRecentCall.args[0]).toEqual("template_dir/path/sub_dir");
 	});
 
-	it("get all files (excluding hidden files) in the given directory path", function(){
+	it("get all files (excluding hidden files and subdirs) in the given directory path", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
 			callback(null, ["test.html", "somedir", ".git"]);	
 		});
 
 		spyOn(fs, "statSync").andCallFake(function(path){
-			return {"mtime": new Date(2012, 6, 16) }	
+			return {"mtime": new Date(2012, 6, 16), "isDirectory": function(){ 
+				if(path.indexOf(".") > -1){
+					return false 
+				}
+				return true 
+			}}	
 		});
 
 		default_handler.templateDir = "template_dir";
@@ -127,9 +130,7 @@ describe("get templates", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getTemplates("path/sub_dir", spyCallback);
 		
-		expect(spyCallback).toHaveBeenCalledWith(null, [ {"full_path": "path/sub_dir/test.html", "last_modified": new Date(2012, 6, 16)},
-																										 {"full_path": "path/sub_dir/somedir", "last_modified": new Date(2012, 6, 16)}
-		 																						   ]);
+		expect(spyCallback).toHaveBeenCalledWith(null, [ {"full_path": "path/sub_dir/test.html", "last_modified": new Date(2012, 6, 16)} ]);
 
 	});
 
@@ -143,7 +144,12 @@ describe("get templates", function(){
 		});
 
 		spyOn(fs, "statSync").andCallFake(function(path){
-			return {"mtime": new Date(2012, 6, 16) };
+			return {"mtime": new Date(2012, 6, 16), "isDirectory": function(){ 
+				if(path.indexOf(".") > -1){
+					return false 
+				}
+				return true 
+			}}	
 		});
 
 		default_handler.templateDir = "template_dir";
