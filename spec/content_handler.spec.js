@@ -53,14 +53,14 @@ describe("setup", function(){
 	});
 });
 
-describe("check for top level paths", function(){
+describe("check for sections", function(){
 
 	it("return true if the given path is a directory", function(){
 		spyOn(fs, "statSync").andCallFake(function(path){
 			return {"isDirectory": function(){ return true } };	
 		});
 
-		expect(default_handler.isTopLevelPath("path/sub_dir")).toBeTruthy();	
+		expect(default_handler.isSection("path/sub_dir")).toBeTruthy();	
 	});
 
 	it("return false if the directory is a hidden directory", function(){
@@ -68,7 +68,7 @@ describe("check for top level paths", function(){
 			return {"isDirectory": function(){ return true } };	
 		});
 
-		expect(default_handler.isTopLevelPath("path/.hidden/sub_dir")).not.toBeTruthy();	
+		expect(default_handler.isSection("path/.hidden/sub_dir")).not.toBeTruthy();	
 
 	});
 
@@ -77,7 +77,7 @@ describe("check for top level paths", function(){
 			return {"isDirectory": function(){ return true } };	
 		});
 
-		expect(default_handler.isTopLevelPath("path/_page/sub_dir")).not.toBeTruthy();	
+		expect(default_handler.isSection("path/_page/sub_dir")).not.toBeTruthy();	
 
 	});
 
@@ -86,7 +86,7 @@ describe("check for top level paths", function(){
 			throw "error"
 		});
 
-		expect(default_handler.isTopLevelPath("path/_page/sub_dir")).not.toBeTruthy();	
+		expect(default_handler.isSection("path/_page/sub_dir")).not.toBeTruthy();	
 	});
 
 });
@@ -379,3 +379,62 @@ describe("negotiate content", function(){
 
 });
 
+describe("get sections", function(){
+
+	it("traverse and collect all directories", function(){
+		spyOn(fs, "readdir").andCallFake(function(dirpath, callback){
+			if(dirpath === "content_dir"){
+				return callback(null, ["sub1", "sub2", ".git", "index.json", "_page", "page.json"]);	
+			} else if(dirpath.indexOf("subsub") < 0){
+				return callback(null, ["subsub", "page1.json", "_page1"]);	
+			}	else {
+				return callback(null, []);	
+			}
+		});	
+
+		spyOn(fs, "stat").andCallFake(function(p, callback){
+			if(p.indexOf(".") > 0){
+				return callback(null, {"isDirectory": function(){ return false }});	
+			}	else {
+				return callback(null, {"isDirectory": function(){ return true }});	
+			}
+		});
+
+		default_handler.contentDir = "content_dir";
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.getSections("", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(["sub1", "sub2", "sub1/subsub", "sub2/subsub"]);
+		
+	});
+
+	it("start traversing from the giving path", function(){
+		spyOn(fs, "readdir").andCallFake(function(dirpath, callback){
+			if(dirpath === "content_dir"){
+				return callback(null, ["sub1", "sub2", "index.html"]);	
+			} else if(dirpath.indexOf("subsub") < 0){
+				return callback(null, ["subsub", "page.html"]);	
+			}	else {
+				return callback(null, []);	
+			}
+		});	
+
+		spyOn(fs, "stat").andCallFake(function(p, callback){
+			if(p.indexOf(".") > -1){
+				return callback(null, {"isDirectory": function(){ return false }});	
+			}	else {
+				return callback(null, {"isDirectory": function(){ return true }});	
+			}
+		});
+
+		default_handler.contentDir = "content_dir";
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.getSections("sub1", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(["sub1/subsub"]);
+		
+	});
+
+});

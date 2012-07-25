@@ -57,8 +57,8 @@ describe("handle rendering request", function(){
 	it("point the top level request path to index files", function(){
 		spyOn(renderer, "serveStatic");
 
-		renderer.templates = {"isTopLevelPath": function(){ return true } };
-		renderer.contents = {"isTopLevelPath": function(){ return true } };
+		renderer.templates = {"isSection": function(){ return true } };
+		renderer.contents = {"isSection": function(){ return true } };
 
 		var spyCallback = jasmine.createSpy();
 		renderer.render("path/test", ".html", null, {}, spyCallback);	
@@ -71,8 +71,8 @@ describe("handle rendering request", function(){
 
 		var spyCallback = jasmine.createSpy();
 
-		renderer.templates = {"isTopLevelPath": function(){ return false } };
-		renderer.contents = {"isTopLevelPath": function(){ return false } };
+		renderer.templates = {"isSection": function(){ return false } };
+		renderer.contents = {"isSection": function(){ return false } };
 		
 		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
 			return callback(null, {"body": "static output", "modified": true});	
@@ -87,8 +87,8 @@ describe("handle rendering request", function(){
 
 		var spyCallback = jasmine.createSpy();
 
-		renderer.templates = {"isTopLevelPath": function(){ return false } };
-		renderer.contents = {"isTopLevelPath": function(){ return false } };
+		renderer.templates = {"isSection": function(){ return false } };
+		renderer.contents = {"isSection": function(){ return false } };
 		
 		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
 			return callback({"ignore": true, "message": "error"}, null);	
@@ -107,8 +107,8 @@ describe("handle rendering request", function(){
 		
 		var spyCallback = jasmine.createSpy();
 
-		renderer.templates = {"isTopLevelPath": function(){ return false } };
-		renderer.contents = {"isTopLevelPath": function(){ return false } };
+		renderer.templates = {"isSection": function(){ return false } };
+		renderer.contents = {"isSection": function(){ return false } };
 		
 		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
 			return callback({"ignore": true, "message": "error"}, null);	
@@ -128,8 +128,8 @@ describe("handle rendering request", function(){
 	
 		var spyCallback = jasmine.createSpy();
 	
-		renderer.templates = {"isTopLevelPath": function(){ return false } };
-		renderer.contents = {"isTopLevelPath": function(){ return false } };
+		renderer.templates = {"isSection": function(){ return false } };
+		renderer.contents = {"isSection": function(){ return false } };
 			
 		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
 			return callback({"ignore": true, "message": "error"}, null);	
@@ -153,8 +153,8 @@ describe("handle rendering request", function(){
 		
 		var spyCallback = jasmine.createSpy();
 
-		renderer.templates = {"isTopLevelPath": function(){ return false } };
-		renderer.contents = {"isTopLevelPath": function(){ return false } };
+		renderer.templates = {"isSection": function(){ return false } };
+		renderer.contents = {"isSection": function(){ return false } };
 		
 		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
 			return callback(null, {});	
