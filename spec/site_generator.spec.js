@@ -93,6 +93,33 @@ describe("collect sections", function(){
 
 describe("get static and compilable templates", function(){
 
+	it("get the templates for the given section", function(){
+		var spyGetTemplates = jasmine.createSpy();
+		site_generator.templates = {"getTemplates": spyGetTemplates};
+
+		var spyCallback = jasmine.createSpy();
+		site_generator.getStaticAndCompilableTemplates("path/test", spyCallback);
+
+		expect(spyGetTemplates).toHaveBeenCalled();
+	});
+
+	it("filter only the static and compilable templates", function(){
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(path, calback){
+			return callback([null, {"full_path": "path/sub_dir/test.html", "last_modified": new Date(2012, 6, 16)},
+												  	 {"full_path": "path/sub_dir/test.mustache", "last_modified": new Date(2012, 6, 16)}
+												  	 {"full_path": "path/sub_dir/_layout.mustache", "last_modified": new Date(2012, 6, 16)}
+												  	 {"full_path": "path/sub_dir/_header.mustache", "last_modified": new Date(2012, 6, 16)}
+												  	 {"full_path": "path/sub_dir/image.png", "last_modified": new Date(2012, 6, 16)}
+											]);	
+		});
+		site_generator.templates = {"getTemplates": spyGetTemplates};
+
+		var spyCallback = jasmine.createSpy();
+		site_generator.getStaticAndCompilableTemplates("path/sub_dir", spyCallback);
+
+		expect(getStaticAndCompilableTemplates).toHaveBeenCalledWith(null, ["path/sub_dir/test.html", "path/sub_dir/image.png"]);
+	});
 });
 
 
