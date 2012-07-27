@@ -51,6 +51,7 @@ describe("setup", function(){
 		expect(default_handler.helpers).toEqual([{"id": "sample_number_helper"}, {"id": "sample_image_helper"}]);
 
 	});
+
 });
 
 describe("check for sections", function(){
@@ -265,6 +266,7 @@ describe("get shared content", function(){
 		default_handler.getSharedContent(spyCallback);
 		expect(default_handler.getContent).toHaveBeenCalledWith("shared", spyCallback);
 	});
+
 });
 
 describe("get helper content", function(){
@@ -300,7 +302,6 @@ describe("get helper content", function(){
 		expect(spyCallback).toHaveBeenCalledWith(null, {"key1": "value1", "key2": "value2"});
 
 	});
-
 
 });
 
@@ -437,4 +438,41 @@ describe("get sections", function(){
 		
 	});
 
+});
+
+describe("get contents", function(){
+
+	it("collect all content files", function(){
+		spyOn(fs, "readdir").andCallFake(function(path, callback){
+			return callback(null, ["index.json", "page1.json", "page2.json"]);	
+		});	
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.getContents("path/test", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/page1", "path/test/page2"]);
+	});
+
+	it("collect the extended directories", function(){
+		spyOn(fs, "readdir").andCallFake(function(path, callback){
+			return callback(null, ["index.json", "subdir", "_index", "_another_page", "another_subdir"]);	
+		});	
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.getContents("path/test", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/another_page"]);
+
+	});
+
+	it("calls the callback with an error if directory not found", function(){
+		spyOn(fs, "readdir").andCallFake(function(path, callback){
+			return callback("error", null);	
+		});	
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.getContents("path/not_exist", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("error", null);
+	});
 });

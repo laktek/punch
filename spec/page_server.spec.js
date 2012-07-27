@@ -1,6 +1,7 @@
 var page_server = require("../lib/page_server.js");
 var page_renderer = require("../lib/page_renderer.js");
 var module_utils = require("../lib/utils/module_utils.js");
+var path_utils = require("../lib/utils/path_utils.js");
 
 describe("setup the page server", function(){
 
@@ -43,26 +44,6 @@ describe("setup the page server", function(){
 
 });
 
-describe("get the extension", function(){
-
-	it("get directly from the path", function(){
-		expect(page_server.getExtension("path/test.html", {})).toEqual(".html");
-	});
-
-	it("get from the accept type", function(){
-		expect(page_server.getExtension("path/test", [{"mediarange": "text/html"}, {"mediarange": "application/xhtml+xml"}, {"mediarange": "*/*"}])).toEqual(".html");
-	});
-
-	it("set html if it accept any type", function(){
-		expect(page_server.getExtension("path/test", [{"mediarange": "*/*"}])).toEqual(".html");
-	});
-
-	it("set html if no accept type given", function(){
-		expect(page_server.getExtension("path/test", [])).toEqual(".html");
-	});
-
-});
-
 describe("handle request", function(){
 
 	it("check when the cache was last updated for the given path", function(){
@@ -71,7 +52,7 @@ describe("handle request", function(){
 		var spyCacheLastUpdated = jasmine.createSpy();	
 		page_server.cacheStore = {"lastUpdated": spyCacheLastUpdated};
 
-		spyOn(page_server, "getExtension").andReturn(".html");
+		spyOn(path_utils, "getExtension").andReturn(".html");
 
 		page_server.handle(dummy_request, {}, function(){ });
 		expect(spyCacheLastUpdated.mostRecentCall.args[0]).toEqual("path/test");
@@ -87,7 +68,7 @@ describe("handle request", function(){
 		});
 		page_server.cacheStore = {"lastUpdated": spyCacheLastUpdated};
 
-		spyOn(page_server, "getExtension").andReturn(".html");
+		spyOn(path_utils, "getExtension").andReturn(".html");
 
 		spyOn(page_renderer, "render");
 	
