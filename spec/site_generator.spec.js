@@ -57,11 +57,34 @@ describe("setup", function(){
 		expect(site_generator.cacheStore).toEqual({});
 	});
 
+	it("setup the renderer", function(){
+		var sample_config = {"plugins": {"cache_store": "./sample_cache_store" }};
+
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return 	{}
+		});
+
+		spyOn(site_generator, "setup");	
+
+		site_generator.setup(sample_config);
+		expect(site_generator.setup).toHaveBeenCalledWith(sample_config);
+	});
+
+	it("setup each compiler", function(){
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		site_generator.setup(sample_config);
+		expect(site_generator.compilers).toEqual({".js": {"id": "sample_js_compiler"}, ".css": {"id": "sample_css_compiler"}});
+
+	});
+
 });
 
 describe("generate site", function(){
 	
-	it("collect the sections", function(){
+	it("collect sections", function(){
 		spyOn(site_generator, "collectSections");
 
 		var spyCallback = jasmine.createSpy();
@@ -72,8 +95,8 @@ describe("generate site", function(){
 
 	it("collect paths for each section", function(){
 
-		spyOn(site_generator, "collectSections").andCallFake(function(path, callback){
-			return callback(["path/test", "path/test2"]);	
+		spyOn(site_generator, "collectSections").andCallFake(function(callback){
+			return callback(null, ["path/test", "path/test2"]);	
 		});
 
 		spyOn(site_generator, "collectPaths").andCallFake(function(section, callback){
@@ -89,8 +112,8 @@ describe("generate site", function(){
 
 	it("calls render for each path", function(){
 	
-		spyOn(site_generator, "collectSections").andCallFake(function(path, callback){
-			return callback(["path/test", "path/test2"]);	
+		spyOn(site_generator, "collectSections").andCallFake(function(callback){
+			return callback(null, ["path/test", "path/test2"]);	
 		});
 
 		spyOn(site_generator, "collectPaths").andCallFake(function(section, callback){
@@ -123,7 +146,7 @@ describe("collect sections", function(){
 
 	it("collect the sections from the contents", function(){
 		var spyTemplates = jasmine.createSpy();
-		spyTemplates.andCallFake(function(path, callback){
+		spyTemplates.andCallFake(function(callback){
 			return callback([]);	
 		});
 		site_generator.templates = {"getSections": spyTemplates};
@@ -139,13 +162,13 @@ describe("collect sections", function(){
 
 	it("call the callback with the union of both template and content sections", function(){
 		var spyTemplates = jasmine.createSpy();
-		spyTemplates.andCallFake(function(path, callback){
+		spyTemplates.andCallFake(function(callback){
 			return callback(["about", "assets", "contact"]);	
 		});
 		site_generator.templates = {"getSections": spyTemplates};
 
 		var spyContents = jasmine.createSpy();
-		spyContents.andCallFake(function(path, callback){
+		spyContents.andCallFake(function(callback){
 			return callback(["about", "contact", "blog", "other"]);	
 		});
 		site_generator.contents = {"getSections": spyContents};
@@ -187,6 +210,31 @@ describe("get static and compilable templates", function(){
 		site_generator.getStaticAndCompilableTemplates("path/sub_dir", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, ["path/sub_dir/test.html", "path/sub_dir/image.png"]);
+	});
+
+	it("change the extension name of compilable templates", function(){
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(path, callback){
+			return callback(null, [{"full_path": "path/sub_dir/test.html", "last_modified": new Date(2012, 6, 16)},
+												  	 {"full_path": "path/sub_dir/test.mustache", "last_modified": new Date(2012, 6, 16)},
+												  	 {"full_path": "path/sub_dir/_layout.mustache", "last_modified": new Date(2012, 6, 16)},
+												  	 {"full_path": "path/sub_dir/script.coffee", "last_modified": new Date(2012, 6, 16)},
+												  	 {"full_path": "path/sub_dir/styles.less", "last_modified": new Date(2012, 6, 16)}
+											]);	
+		});
+		site_generator.templates = {"getTemplates": spyGetTemplates};
+		site_generator.templateEngine = {"extension": ".mustache"};
+
+		site_generator.compilers = {
+																".js": {"input_extensions": [".coffee"]},
+																".css": {"input_extensions": [".less"]}
+															 };
+
+		var spyCallback = jasmine.createSpy();
+		site_generator.getStaticAndCompilableTemplates("path/sub_dir", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, ["path/sub_dir/test.html", "path/sub_dir/script.js", "path/sub_dir/styles.css"]);
+
 	});
 
 });

@@ -401,37 +401,9 @@ describe("get sections", function(){
 		default_handler.templateDir = "template_dir";
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getSections("", spyCallback);
+		default_handler.getSections(spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(["sub1", "sub2", "sub1/subsub", "sub2/subsub"]);
-		
-	});
-
-	it("start traversing from the giving path", function(){
-		spyOn(fs, "readdir").andCallFake(function(dirpath, callback){
-			if(dirpath === "template_dir"){
-				return callback(null, ["sub1", "sub2", "index.html"]);	
-			} else if(dirpath.indexOf("subsub") < 0){
-				return callback(null, ["subsub", "page.html"]);	
-			}	else {
-				return callback(null, []);	
-			}
-		});	
-
-		spyOn(fs, "stat").andCallFake(function(p, callback){
-			if(p.indexOf(".") > -1){
-				return callback(null, {"isDirectory": function(){ return false }});	
-			}	else {
-				return callback(null, {"isDirectory": function(){ return true }});	
-			}
-		});
-
-		default_handler.templateDir = "template_dir";
-
-		var spyCallback = jasmine.createSpy();
-		default_handler.getSections("sub1", spyCallback);
-
-		expect(spyCallback).toHaveBeenCalledWith(["sub1/subsub"]);
+		expect(spyCallback).toHaveBeenCalledWith(["/", "/sub1", "/sub2", "/sub1/subsub", "/sub2/subsub"]);
 		
 	});
 
