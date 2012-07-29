@@ -452,7 +452,7 @@ describe("render content", function(){
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
-		expect(renderer.createTemplateEngine).toHaveBeenCalledWith({"last_render": new Date(2012, 6, 18)});
+		expect(renderer.createTemplateEngine).toHaveBeenCalledWith({"lastRender": new Date(2012, 6, 18)});
 	});
 
 	it("listen to render complete event", function(){
