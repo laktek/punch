@@ -1,4 +1,5 @@
 var publisher = require("../lib/publisher.js");
+var site_generator = require("../lib/site_generator.js");
 
 describe("calling publish", function(){
 
@@ -6,6 +7,9 @@ describe("calling publish", function(){
 		var supplied_config = { "foo": "bar" };
 
 		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return {"publish": function(){} } });
+
+		spyOn(site_generator, "setup");
+		spyOn(site_generator, "generate");
 
 		publisher.publish(supplied_config, "dummy");	
 
@@ -15,9 +19,10 @@ describe("calling publish", function(){
 	it("requires the selected strategy", function(){
 		var supplied_config = { "foo": "bar" };
 
-		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return {"publish": function(){} } });
+		spyOn(publisher, "requireStrategy");
 
-		spyOn(publisher, "delegatedPublish").andCallFake(function(strategy_obj){ });
+		spyOn(site_generator, "setup");
+		spyOn(site_generator, "generate");
 
 		publisher.publish(supplied_config, "s3");	
 	
@@ -28,9 +33,10 @@ describe("calling publish", function(){
 	it("requires the first strategy available in config, if theres no selected strategy", function(){
 		var supplied_config = { "publish": {"sftp": {} } };
 
-		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return {"publish": function(){} } });
+		spyOn(publisher, "requireStrategy");
 
-		spyOn(publisher, "delegatedPublish").andCallFake(function(strategy_obj){ });
+		spyOn(site_generator, "setup");
+		spyOn(site_generator, "generate");
 
 		publisher.publish(supplied_config, null);	
 	
@@ -46,6 +52,22 @@ describe("calling publish", function(){
 
 	});
 
+	it("generates the site before publishing", function(){
+	
+		var supplied_config = { "foo": "bar" };
+		var strategy_obj = { "publish": function(){} };
+
+		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
+
+		spyOn(site_generator, "setup");
+		spyOn(site_generator, "generate");
+
+		publisher.publish(supplied_config, "s3");	
+
+		expect(site_generator.generate).toHaveBeenCalled();
+
+	});
+
 	it("passes the strategy object to deleagated publish method", function(){
 
 		var supplied_config = { "foo": "bar" };
@@ -54,6 +76,11 @@ describe("calling publish", function(){
 		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
 
 		spyOn(publisher, "delegatedPublish").andCallFake(function(strategy_obj){ });
+
+		spyOn(site_generator, "setup");
+		spyOn(site_generator, "generate").andCallFake(function(callback){
+			return callback();	
+		});
 
 		publisher.publish(supplied_config, "s3");	
 	

@@ -5,9 +5,9 @@
 
 			, "publish"       : {
 					"s3": {
-					  "key"       : "api-key"
-					, "secret"    : "secret-key"
-					, "bucket"    : "bucket-name"
+					  "key"       : "AKIAIU6O24SDNJRJ5ORQ"
+					, "secret"    : "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"
+					, "bucket"    : "punchsample"
 					},
 
 					"sftp": {
