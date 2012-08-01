@@ -374,7 +374,7 @@ describe("negotiate content", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith("content not found", null, null, {});
+		expect(spyCallback).toHaveBeenCalledWith("[Error: Content not found]", null, null, {});
 
 	});
 

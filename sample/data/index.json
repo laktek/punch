@@ -1,5 +1,6 @@
 {
   "title": "Test Page",
-  "content": "Body content"
+  "content": "Body content",
+	"fruits": ["Apple", "Orange", "Pears"]
 }
 

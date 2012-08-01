@@ -129,7 +129,7 @@ describe("cancel render", function(){
 		spyOn(mustache_instance, "emit");
 
 		mustache_instance.cancelRender("error");
-		expect(mustache_instance.emit).toHaveBeenCalledWith("renderCanceled", "error");
+		expect(mustache_instance.emit).toHaveBeenCalledWith("renderCanceled", "error", 404);
 	});
 });
 
@@ -192,6 +192,23 @@ describe("calling render", function(){
 
 		mustache_instance.render();
 		expect(mustache_instance.emit).toHaveBeenCalledWith("renderComplete", "rendered output", true);
+	});
+
+	it("emits render canceled event if rendering error occurres", function(){
+		spyOn(Mustache, "render").andCallFake(function(template, content, partials){
+			throw "error"
+		});
+
+    var mustache_instance = new mustache_renderer({"lastRender": new Date(2012, 6, 18)}); 
+		mustache_instance.template = "template";
+		mustache_instance.content = {};
+		mustache_instance.partials = {};
+		mustache_instance.lastModified = new Date(2012, 6, 20);
+
+		spyOn(mustache_instance, "emit");
+
+		mustache_instance.render();
+		expect(mustache_instance.emit).toHaveBeenCalledWith("renderCanceled", "error", 500);
 	});
 
 });

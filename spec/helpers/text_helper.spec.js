@@ -1,4 +1,5 @@
-var text_helper = require("../../lib/helpers/text_helper");
+var text_helper_obj = require("../../lib/helpers/text_helper");
+var text_helper = text_helper_obj.directAccess();
 
 describe("upcase", function(){
 	it("change whole text to uppercase", function(){
@@ -43,4 +44,24 @@ describe("humanize", function(){
 	it("capitalize the sentence", function(){
 		expect(text_helper.humanize("hello-my-dear-people")).toEqual("Hello my dear people");	
 	});
+});
+
+describe("format list", function(){
+
+	it("return empty strings for null values", function(){
+		expect(text_helper.format_list(null)).toEqual("");	
+	});
+
+	it("return the given string if it's not an array literal", function(){
+		expect(text_helper.format_list("hello")).toEqual("hello");	
+	});
+
+	it("return a formatted string for an array literal", function(){
+		expect(text_helper.format_list(["Peter", "John", "Andrew"])).toEqual("Peter, John &amp; Andrew");	
+	});
+
+	it("return a formatted string for an array literal as a string", function(){
+		expect(text_helper.format_list('Peter,John,Andrew')).toEqual("Peter, John &amp; Andrew");	
+	});
+
 });
