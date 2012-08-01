@@ -1,7 +1,8 @@
 var renderer = require("../lib/page_renderer.js");
+
 var module_utils = require("../lib/utils/module_utils.js");
 
-describe("setup", function(){
+describe("setup", function() {
 	var sample_config = {
 		plugins: {
 			template_handler: "sample_template_handler",
@@ -14,181 +15,182 @@ describe("setup", function(){
 		}
 	}
 
-	it("setup the templates handler", function(){
-		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+	it("setup the templates handler", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+			return { "id": id };	
 		});
 
 		renderer.setup(sample_config);
+
 		expect(renderer.templates.id).toEqual("sample_template_handler");
 	});
 
-	it("setup the contents handler", function(){
-		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+	it("setup the contents handler", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+			return { "id": id };	
 		});
 
 		renderer.setup(sample_config);
+
 		expect(renderer.contents.id).toEqual("sample_content_handler");
 	});
 
-	it("setup the template engine", function(){
-		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+	it("setup the template engine", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+			return { "id": id };	
 		});
 
 		renderer.setup(sample_config);
+
 		expect(renderer.templateEngine.id).toEqual("sample_template_engine");
 	});
 
-	it("setup each compiler", function(){
-		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+	it("setup each compiler", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+			return { "id": id };	
 		});
 
 		renderer.setup(sample_config);
-		expect(renderer.compilers).toEqual({".js": {"id": "sample_js_compiler"}, ".css": {"id": "sample_css_compiler"}});
 
+		expect(renderer.compilers).toEqual({ ".js": { "id": "sample_js_compiler" }, ".css": { "id": "sample_css_compiler" } });
 	});
+
 });
 
-describe("handle rendering request", function(){
+describe("handle rendering request", function() {
 
-	it("point the top level request path to index files", function(){
+	it("point the top level request path to index files", function() {
 		spyOn(renderer, "serveStatic");
 
-		renderer.templates = {"isSection": function(){ return true } };
-		renderer.contents = {"isSection": function(){ return true } };
+		renderer.templates = { "isSection": function() { return true } };
+		renderer.contents = { "isSection": function() { return true } };
 
 		var spyCallback = jasmine.createSpy();
 		renderer.render("path/test", ".html", null, {}, spyCallback);	
 
 		expect(renderer.serveStatic.mostRecentCall.args[0]).toEqual("path/test/index.html");
-
 	});
 
-	it("serve the static file if it exists", function(){
+	it("serve the static file if it exists", function() {
 
 		var spyCallback = jasmine.createSpy();
 
-		renderer.templates = {"isSection": function(){ return false } };
-		renderer.contents = {"isSection": function(){ return false } };
+		renderer.templates = { "isSection": function() { return false } };
+		renderer.contents = { "isSection": function() { return false } };
 		
-		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
-			return callback(null, {"body": "static output", "modified": true});	
+		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback) {
+			return callback(null, { "body": "static output", "modified": true });	
 		});
 
 		renderer.render("path/test.html", ".html", null, {}, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith({"body": "static output", "modified": true});
+		expect(spyCallback).toHaveBeenCalledWith({ "body": "static output", "modified": true });
 	});
 
-	it("compile the template in given path for the given content type", function(){
+	it("compile the template in given path for the given content type", function() {
 
 		var spyCallback = jasmine.createSpy();
 
-		renderer.templates = {"isSection": function(){ return false } };
-		renderer.contents = {"isSection": function(){ return false } };
+		renderer.templates = { "isSection": function() { return false } };
+		renderer.contents = { "isSection": function() { return false } };
 		
-		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
-			return callback({"ignore": true, "message": "error"}, null);	
+		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback) {
+			return callback({ "ignore": true, "message": "error" }, null);	
 		});
 
-		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback){
-			return callback(null, {"body": "compiled output", "modified": true}); 	
+		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback) {
+			return callback(null, { "body": "compiled output", "modified": true }); 	
 		});
 
 		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith({"body": "compiled output", "modified": true});
+		expect(spyCallback).toHaveBeenCalledWith({ "body": "compiled output", "modified": true });
 	});
 
-	it("pass the error if compiling a template fails", function(){
+	it("pass the error if compiling a template fails", function() {
 		
 		var spyCallback = jasmine.createSpy();
 
-		renderer.templates = {"isSection": function(){ return false } };
-		renderer.contents = {"isSection": function(){ return false } };
+		renderer.templates = { "isSection": function() { return false } };
+		renderer.contents = { "isSection": function() { return false } };
 		
-		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
-			return callback({"ignore": true, "message": "error"}, null);	
+		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback) {
+			return callback({ "ignore": true, "message": "error" }, null);	
 		});
 
-		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback){
-			return callback({"ignore": false, "message": "compile error"}, null);	
+		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback) {
+			return callback({ "ignore": false, "message": "Compile error" }, null);	
 		});
 
 		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith({"body": null, "modified": true, "options": {"header": {"status": 500 }, "log": {"error": "compile error"} }});
-
+		expect(spyCallback).toHaveBeenCalledWith({ "body": null, "modified": true, "options": { "header": { "status": 500 }, "log": { "message": "[Error] Compile error" } } });
 	});
 
-	it("render the content matching the given path", function(){
+	it("render the content matching the given path", function() {
 	
 		var spyCallback = jasmine.createSpy();
 	
-		renderer.templates = {"isSection": function(){ return false } };
-		renderer.contents = {"isSection": function(){ return false } };
+		renderer.templates = { "isSection": function() { return false } };
+		renderer.contents = { "isSection": function() { return false } };
 			
-		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
-			return callback({"ignore": true, "message": "error"}, null);	
+		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback) {
+			return callback({ "ignore": true, "message": "error" }, null);	
 		});
 
-		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback){
-			return callback({"ignore": true, "message": "error"}, null);	
+		spyOn(renderer, "compileTo").andCallFake(function(path, content_type, last_modified, callback) {
+			return callback({ "ignore": true, "message": "error" }, null);	
 		});
 
-		spyOn(renderer, "renderContent").andCallFake(function(path, content_type, last_modified, options, callback){
-			return callback(null, {"body": "rendered output", "modified": true}); 	
+		spyOn(renderer, "renderContent").andCallFake(function(path, content_type, last_modified, options, callback) {
+			return callback(null, { "body": "rendered output", "modified": true }); 	
 		});
 
 		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith({"body": "rendered output", "modified": true});
-
+		expect(spyCallback).toHaveBeenCalledWith({ "body": "rendered output", "modified": true });
 	});
 
-	it("pass an error if output object is invalid", function(){
+	it("pass an error if output object is invalid", function() {
 		
 		var spyCallback = jasmine.createSpy();
 
-		renderer.templates = {"isSection": function(){ return false } };
-		renderer.contents = {"isSection": function(){ return false } };
+		renderer.templates = { "isSection": function() { return false } };
+		renderer.contents = { "isSection": function() { return false } };
 		
-		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback){
+		spyOn(renderer, "serveStatic").andCallFake(function(path, last_modified, callback) {
 			return callback(null, {});	
 		});
 
 		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith({"body": null, "modified": true, "options": {"header": {"status": 500 }, "log": {"error": "invalid response"} }});
-
+		expect(spyCallback).toHaveBeenCalledWith({ "body": null, "modified": true, "options": { "header": { "status": 500 }, "log": { "message": "[Error] Response should contain body and modified properties" } } });
 	});
 
 });
 
 describe("serving static file", function(){
 
-	it("get the template details for the given full path", function(){
+	it("get the template details for the given full path", function() {
 		var spyGetTemplate = jasmine.createSpy();
+
 		renderer.templates = {
 			"getTemplate": spyGetTemplate	
 		};
 
-		renderer.serveStatic("path/test.jpg", null, function(){});	
+		renderer.serveStatic("path/test.jpg", null, function() { });	
 
 		expect(spyGetTemplate.mostRecentCall.args[0]).toEqual("path/test.jpg");
 	});	
 
-	it("call the callback with the template output if template is modified", function(){
+	it("call the callback with the template output if template is modified", function() {
 		var spyGetTemplate = jasmine.createSpy();
-		spyGetTemplate.andCallFake(function(path, callback){
-			callback(null, {"last_modified": new Date(2012, 6, 13)});
+		spyGetTemplate.andCallFake(function(path, callback) {
+			callback(null, { "last_modified": new Date(2012, 6, 13) });
 		});
 
 		var spyReadTemplate = jasmine.createSpy();
-		spyReadTemplate.andCallFake(function(path, callback){
+		spyReadTemplate.andCallFake(function(path, callback) {
 			callback(null, "static output");	
 		});
 
@@ -202,18 +204,17 @@ describe("serving static file", function(){
 		var old_date = new Date(2012, 6, 10);
 		renderer.serveStatic("path/test.jpg", old_date, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith(null, {"body": "static output", "modified": true});
-
+		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "static output", "modified": true });
 	});
 
-	it("call the callback without the template output if template is not modified", function(){
+	it("call the callback without the template output if template is not modified", function() {
 		var spyGetTemplate = jasmine.createSpy();
-		spyGetTemplate.andCallFake(function(path, callback){
-			callback(null, {"last_modified": new Date(2012, 6, 13)});
+		spyGetTemplate.andCallFake(function(path, callback) {
+			callback(null, { "last_modified": new Date(2012, 6, 13) });
 		});
 
 		var spyReadTemplate = jasmine.createSpy();
-		spyReadTemplate.andCallFake(function(path, callback){
+		spyReadTemplate.andCallFake(function(path, callback) {
 			callback(null, "static output");	
 		});
 
@@ -227,13 +228,12 @@ describe("serving static file", function(){
 		var old_date = new Date(2012, 6, 15);
 		renderer.serveStatic("path/test.jpg", old_date, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith(null, {"body": null, "modified": false});
-
+		expect(spyCallback).toHaveBeenCalledWith(null, { "body": null, "modified": false });
 	});
 
-	it("call the callback with the error if an error occurrs in getting the template", function(){
+	it("call the callback with the error if an error occurrs in getting the template", function() {
 		var spyGetTemplate = jasmine.createSpy();
-		spyGetTemplate.andCallFake(function(path, callback){
+		spyGetTemplate.andCallFake(function(path, callback) {
 			callback("error", null);
 		});
 
@@ -246,34 +246,32 @@ describe("serving static file", function(){
 		var old_date = new Date(2012, 6, 15);
 		renderer.serveStatic("path/test.jpg", old_date, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith({"ignore": true, "message": "error"}, null);
-	
+		expect(spyCallback).toHaveBeenCalledWith({ "ignore": true, "message": "error" }, null);
 	});
 
 });
 
-describe("compile template", function(){
+describe("compile template", function() {
 
-	it("get the matching templates by base path", function(){
+	it("get the matching templates by base path", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
 			".min.js": { "compile": spyCompile }
 		};
-
+		 
 		var spyGetTemplates = jasmine.createSpy();
 
 		renderer.templates = {
 			"getTemplates": spyGetTemplates	
 		}
 		
-		renderer.compileTo("path/test.min.js", ".js", null, function(){});	
+		renderer.compileTo("path/test.min.js", ".js", null, function() { });	
 
 		expect(spyGetTemplates.mostRecentCall.args[0]).toEqual("path/test");
-
 	});
 
-	it("read the template if its modified", function(){
+	it("read the template if its modified", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
@@ -281,9 +279,9 @@ describe("compile template", function(){
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
-		spyGetTemplates.andCallFake(function(basepath, callback){
-			callback(null, [{"full_path": "path/test.html", "last_modified": new Date(2012, 6, 13) },
-											{"full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 13) } 
+		spyGetTemplates.andCallFake(function(basepath, callback) {
+			callback(null, [ { "full_path": "path/test.html", "last_modified": new Date(2012, 6, 13) },
+											 { "full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 13) } 
 										 ]);	
 		});
 
@@ -294,13 +292,12 @@ describe("compile template", function(){
 			"readTemplate": spyReadTemplate
 		};
 		
-		renderer.compileTo("path/test.js", ".js", null, function(){});	
+		renderer.compileTo("path/test.js", ".js", null, function() { });	
 
 		expect(spyReadTemplate.mostRecentCall.args[0]).toEqual("path/test.coffee");
-	
 	});
 
-	it("call compile with the template output", function(){
+	it("call compile with the template output", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
@@ -308,14 +305,14 @@ describe("compile template", function(){
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
-		spyGetTemplates.andCallFake(function(basepath, callback){
-			callback(null, [{"full_path": "path/test.html", "last_modified": new Date(2012, 6, 13) },
-											{"full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 13) } 
+		spyGetTemplates.andCallFake(function(basepath, callback) {
+			callback(null, [{ "full_path": "path/test.html", "last_modified": new Date(2012, 6, 13) },
+											{ "full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 13) } 
 										 ]);	
 		});
 
 		var spyReadTemplate = jasmine.createSpy();
-		spyReadTemplate.andCallFake(function(path, callback){
+		spyReadTemplate.andCallFake(function(path, callback) {
 			callback(null, "template output");	
 		});
 
@@ -328,10 +325,9 @@ describe("compile template", function(){
 		renderer.compileTo("path/test.js", ".js", null, spyCallback);	
 
 		expect(spyCompile.mostRecentCall.args[0]).toEqual("template output");
-
 	});
 
-	it("call the callback without an output if template is not modified", function(){
+	it("call the callback without an output if template is not modified", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
@@ -339,14 +335,14 @@ describe("compile template", function(){
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
-		spyGetTemplates.andCallFake(function(basepath, callback){
-			callback(null, [{"full_path": "path/test.html", "last_modified": new Date(2012, 6, 10) },
-											{"full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 10) } 
+		spyGetTemplates.andCallFake(function(basepath, callback) {
+			callback(null, [{ "full_path": "path/test.html", "last_modified": new Date(2012, 6, 10) },
+											{ "full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 10) } 
 										 ]);	
 		});
 
 		var spyReadTemplate = jasmine.createSpy();
-		spyReadTemplate.andCallFake(function(path, callback){
+		spyReadTemplate.andCallFake(function(path, callback) {
 			callback(null, "template output");	
 		});
 
@@ -358,11 +354,11 @@ describe("compile template", function(){
 		var spyCallback = jasmine.createSpy();
 		renderer.compileTo("path/test.js", ".js", new Date(2012, 6, 13), spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith(null, {"body": null, "modified": false });
+		expect(spyCallback).toHaveBeenCalledWith(null, { "body": null, "modified": false });
 
 	});
 
-	it("call the callback with an error if no compiler found for the given content type", function(){
+	it("call the callback with an error if no compiler found for the given content type", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
@@ -372,11 +368,10 @@ describe("compile template", function(){
 		var spyCallback = jasmine.createSpy();
 		renderer.compileTo("path/test.js", ".js", new Date(2012, 6, 13), spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith({"ignore": true, "message": "no compiler found"}, null);
-
+		expect(spyCallback).toHaveBeenCalledWith({ "ignore": true, "message": "no compiler found" }, null);
 	});
 
-	it("call the callback with an error if no matching template is found", function(){
+	it("call the callback with an error if no matching template is found", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
@@ -384,7 +379,7 @@ describe("compile template", function(){
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
-		spyGetTemplates.andCallFake(function(basepath, callback){
+		spyGetTemplates.andCallFake(function(basepath, callback) {
 			callback("template not found", null);	
 		});
 
@@ -395,11 +390,10 @@ describe("compile template", function(){
 		var spyCallback = jasmine.createSpy();
 		renderer.compileTo("path/test.js", ".js", new Date(2012, 6, 13), spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith({ "ignore": true, "message": "template not found"}, null);
-
+		expect(spyCallback).toHaveBeenCalledWith({ "ignore": true, "message": "template not found" }, null);
 	});
 
-	it("call the callback with an error if it fails to read the template", function(){
+	it("call the callback with an error if it fails to read the template", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
@@ -407,14 +401,14 @@ describe("compile template", function(){
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
-		spyGetTemplates.andCallFake(function(basepath, callback){
-			callback(null, [{"full_path": "path/test.html", "last_modified": new Date(2012, 6, 10) },
-											{"full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 10) } 
+		spyGetTemplates.andCallFake(function(basepath, callback) {
+			callback(null, [{ "full_path": "path/test.html", "last_modified": new Date(2012, 6, 10) },
+											{ "full_path": "path/test.coffee", "last_modified": new Date(2012, 6, 10) } 
 										 ]);	
 		});
 
 		var spyReadTemplate = jasmine.createSpy();
-		spyReadTemplate.andCallFake(function(path, callback){
+		spyReadTemplate.andCallFake(function(path, callback) {
 			callback("template read error", null);	
 		});
 
@@ -426,19 +420,17 @@ describe("compile template", function(){
 		var spyCallback = jasmine.createSpy();
 		renderer.compileTo("path/test.js", ".js", null, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith({ "ignore": false, "message": "template read error"}, null);
-
+		expect(spyCallback).toHaveBeenCalledWith({ "ignore": false, "message": "template read error" }, null);
 	});
 
 });
 
 describe("render content", function(){
 
-	it("creates a new template engine instance", function(){
-
+	it("creates a new template engine instance", function() {
 		var spyEvenListener = jasmine.createSpy();
 
-		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
+		spyOn(renderer, "createTemplateEngine").andCallFake(function() {
 			return {"on": spyEvenListener};
 		});
 
@@ -446,83 +438,78 @@ describe("render content", function(){
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		renderer.contents = {"negotiateContent": spyNegotiateContent};
-		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+		renderer.contents = { "negotiateContent": spyNegotiateContent };
+		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
 	
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
-		expect(renderer.createTemplateEngine).toHaveBeenCalledWith({"lastRender": new Date(2012, 6, 18)});
+		expect(renderer.createTemplateEngine).toHaveBeenCalledWith({ "lastRender": new Date(2012, 6, 18) });
 	});
 
-	it("listen to render complete event", function(){
+	it("listen to render complete event", function() {
 		var spyEvenListener = jasmine.createSpy();
 
-		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEvenListener};
+		spyOn(renderer, "createTemplateEngine").andCallFake(function() {
+			return { "on": spyEvenListener };
 		});
 
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		renderer.contents = {"negotiateContent": spyNegotiateContent};
-		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+		renderer.contents = { "negotiateContent": spyNegotiateContent };
+		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
 	
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
 		expect(spyEvenListener.argsForCall[0][0]).toEqual("renderComplete");
-
 	});
 
-	it("listen to render canceled event", function(){
-	
+	it("listen to render canceled event", function() {
 		var spyEvenListener = jasmine.createSpy();
 
-		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEvenListener};
+		spyOn(renderer, "createTemplateEngine").andCallFake(function() {
+			return { "on": spyEvenListener };
 		});
 
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		renderer.contents = {"negotiateContent": spyNegotiateContent};
-		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+		renderer.contents = { "negotiateContent": spyNegotiateContent };
+		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
 	
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
 		expect(spyEvenListener.argsForCall[1][0]).toEqual("renderCanceled");
-
 	});
 
-	it("fetch and set contents for the given path", function(){
-		
+	it("fetch and set contents for the given path", function() {
 		var spyEvenListener = jasmine.createSpy();	
 		var spySetContent = jasmine.createSpy();
 
-		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEvenListener, "setContent": spySetContent};
+		spyOn(renderer, "createTemplateEngine").andCallFake(function() {
+			return { "on": spyEvenListener, "setContent": spySetContent };
 		});
 
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		spyNegotiateContent.andCallFake(function(path, content_type, options, callback){
-			return callback(null, {"key": "value"}, new Date(2012, 6, 17), {});
+		spyNegotiateContent.andCallFake(function(path, content_type, options, callback) {
+			return callback(null, { "key": "value" }, new Date(2012, 6, 17), {});
 		});
 
-		renderer.contents = {"negotiateContent": spyNegotiateContent};
-		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+		renderer.contents = { "negotiateContent": spyNegotiateContent };
+		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
 	
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
-		expect(spySetContent).toHaveBeenCalledWith({"key": "value"}, new Date(2012, 6, 17));
-
+		expect(spySetContent).toHaveBeenCalledWith({ "key": "value" }, new Date(2012, 6, 17));
 	});
 
 	it("cancel rendering if there's an error fetching content for the given path", function(){
@@ -549,88 +536,82 @@ describe("render content", function(){
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
 		expect(spyCancelRender).toHaveBeenCalledWith("content error");
-
 	});
 
-	it("fetch and set templates for the given path", function(){
+	it("fetch and set templates for the given path", function() {
 	
 		var spyEvenListener = jasmine.createSpy();	
 		var spySetTemplate = jasmine.createSpy();
 
-		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEvenListener, "setTemplate": spySetTemplate};
+		spyOn(renderer, "createTemplateEngine").andCallFake(function() {
+			return { "on": spyEvenListener, "setTemplate": spySetTemplate };
 		});
 
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		spyNegotiateTemplate.andCallFake(function(path, content_type, options, callback){
+		spyNegotiateTemplate.andCallFake(function(path, content_type, options, callback) {
 			return callback(null, "template output", new Date(2012, 6, 17), {});
 		});
 
-		renderer.contents = {"negotiateContent": spyNegotiateContent};
-		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+		renderer.contents = { "negotiateContent": spyNegotiateContent };
+		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
 	
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
 		expect(spySetTemplate).toHaveBeenCalledWith("template output", new Date(2012, 6, 17));
-
 	});
 
-	it("cancel rendering if there's an error fetching templates for the given path", function(){
-			
+	it("cancel rendering if there's an error fetching templates for the given path", function() {
 		var spyEvenListener = jasmine.createSpy();	
 		var spyCancelRender = jasmine.createSpy();
 
-		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEvenListener, "cancelRender": spyCancelRender};
+		spyOn(renderer, "createTemplateEngine").andCallFake(function() {
+			return { "on": spyEvenListener, "cancelRender": spyCancelRender };
 		});
 
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		spyNegotiateTemplate.andCallFake(function(path, content_type, options, callback){
+		spyNegotiateTemplate.andCallFake(function(path, content_type, options, callback) {
 			return callback("template error", null, {});
 		});
 
-		renderer.contents = {"negotiateContent": spyNegotiateContent};
-		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+		renderer.contents = { "negotiateContent": spyNegotiateContent };
+		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
 	
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
 		expect(spyCancelRender).toHaveBeenCalledWith("template error");
-
 	});
 
-	it("fetch and set partials for the given path", function(){
-		
+	it("fetch and set partials for the given path", function() {
 		var spyEvenListener = jasmine.createSpy();	
 		var spySetPartials = jasmine.createSpy();
 
-		spyOn(renderer, "createTemplateEngine").andCallFake(function(){
-			return {"on": spyEvenListener, "setPartials": spySetPartials};
+		spyOn(renderer, "createTemplateEngine").andCallFake(function() {
+			return { "on": spyEvenListener, "setPartials": spySetPartials };
 		});
 
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		spyGetPartials.andCallFake(function(path, extension, options, callback){
-			return callback(null, {"partial": "partial output"}, new Date(2012, 6, 17), {});
+		spyGetPartials.andCallFake(function(path, extension, options, callback) {
+			return callback(null, { "partial": "partial output" }, new Date(2012, 6, 17), {});
 		});
 
-		renderer.contents = {"negotiateContent": spyNegotiateContent};
-		renderer.templates = {"negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials};
+		renderer.contents = { "negotiateContent": spyNegotiateContent };
+		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
 	
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
-		expect(spySetPartials).toHaveBeenCalledWith({"partial": "partial output"}, new Date(2012, 6, 17));
-
+		expect(spySetPartials).toHaveBeenCalledWith({ "partial": "partial output" }, new Date(2012, 6, 17));
 	});
 
 });

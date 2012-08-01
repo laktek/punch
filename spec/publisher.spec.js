@@ -1,14 +1,15 @@
 var publisher = require("../lib/publisher.js");
-var site_generator = require("../lib/site_generator.js");
 
 var fs = require("fs");
 
-describe("calling publish", function(){
+var site_generator = require("../lib/site_generator.js");
 
-	it("extends the default config with the supplied config", function(){
+describe("calling publish", function() {
+
+	it("extends the default config with the supplied config", function() {
 		var supplied_config = { "foo": "bar" };
 
-		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return {"publish": function(){} } });
+		spyOn(publisher, "requireStrategy").andCallFake(function(strategy) { return {"publish": function(){} } } );
 
 		spyOn(publisher, "setLastPublishedDate");
 		spyOn(site_generator, "setup");
