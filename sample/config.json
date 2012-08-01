@@ -4,7 +4,8 @@
       , "output_dir"    : "output"
 
 			, "publish"       : {
-					"s3": {
+					"strategy" 		: "s3", 
+					"options"     : {
 					  "key"       : "AKIAIU6O24SDNJRJ5ORQ"
 					, "secret"    : "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"
 					, "bucket"    : "punchsample"

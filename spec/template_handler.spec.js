@@ -2,8 +2,8 @@ var default_handler = require("../lib/template_handler.js");
 
 var fs = require("fs");
 
-describe("setup", function(){
-	it("set the template directory", function(){
+describe("setup", function() {
+	it("set the template directory", function() {
 		default_handler.setup({"template_dir": "template_dir"});
 		expect(default_handler.templateDir).toEqual("template_dir");
 	});
