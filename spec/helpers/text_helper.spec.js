@@ -56,3 +56,20 @@ describe("humanize", function(){
 	});
 
 });
+
+describe("dasherize", function() {
+
+	it("return the dasherized output", function() {
+		expect(text_helper.dasherize("hello my dear people  ")).toEqual("hello-my-dear-people");	
+	});
+
+});
+
+describe("underscored", function(){
+
+	it("return the underscored output", function() {
+		expect(text_helper.underscored("hello my dear people  ")).toEqual("hello_my_dear_people");	
+	});
+
+
+})
