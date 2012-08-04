@@ -52,7 +52,7 @@ describe("read the given config", function() {
 
 });
 
-describe("read the config file", function() {
+describe("read the config form a file", function() {
 
 	it("read the config file from the file system", function() {
 		spyOn(fs, "readFile");
@@ -106,5 +106,63 @@ describe("read the config file", function() {
 		expect(spyCallback).toHaveBeenCalledWith("error", null);
 	});
 
+});
+
+describe("read the config from a directory", function() {
+
+	it("fetch all files in the given directory", function() {
+		spyOn(fs, "readdir");
+
+		var spyCallback = jasmine.createSpy();
+		config_handler.readConfigDir("path/config_dir", spyCallback);
+
+		expect(fs.readdir).toHaveBeenCalledWith("path/config_dir", jasmine.any(Function));
+	});
+
+	it("call the callback with the error if reading directory gives an error", function() {
+		spyOn(fs, "readdir").andCallFake(function(dir_path, callback) {
+			return callback("error", null);
+		});
+
+		var spyCallback = jasmine.createSpy();
+		config_handler.readConfigDir("path/config_dir", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("error", null);
+	});
+
+	it("read only the config files in given directory", function() {
+		spyOn(fs, "readdir").andCallFake(function(dir_path, callback) {
+			return callback(null, ["plugins.json", "subdir", "publish.json", ".hidden_file"]);
+		});
+
+		spyOn(config_handler, "readConfigFile").andCallFake(function(config_file, callback){
+			return callback(null, { });
+		});
+
+		var spyCallback = jasmine.createSpy();
+		config_handler.readConfigDir("path/config_dir", spyCallback);
+
+		expect(config_handler.readConfigFile.callCount).toEqual(2);
+	});
+
+	it("call the callback with the combined output of each config file", function() {
+		spyOn(fs, "readdir").andCallFake(function(dir_path, callback) {
+			return callback(null, [ "plugins.json", "subdir", "publish.json", ".hidden_file" ]);
+		});
+
+		spyOn(config_handler, "readConfigFile").andCallFake(function(config_file, callback){
+			if (config_file === "plugins.json") {
+				return callback(null, { "plugin_name": "plugin_path" });
+			} else {
+				return callback(null, { "strategy": "" });
+			}
+		});
+
+		var spyCallback = jasmine.createSpy();
+		config_handler.readConfigDir("path/config_dir", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, { "plugins": { "plugin_name": "plugin_path" }, "publish": { "strategy": "" } });
+	});
+	
 });
 
