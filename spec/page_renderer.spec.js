@@ -393,6 +393,30 @@ describe("compile template", function() {
 		expect(spyCallback).toHaveBeenCalledWith({ "ignore": true, "message": "template not found" }, null);
 	});
 
+	it("call the callback with an error if non of the matched templates can be compiled", function() {
+		var spyCompile = jasmine.createSpy();
+
+		renderer.compilers = {
+			".js": { "compile": spyCompile, "input_extensions": [".coffee"] }
+		};
+
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(basepath, callback) {
+			return callback(null, [{ "full_path": "path/test.html", "last_modified": new Date(2012, 6, 13) },
+													 	 { "full_path": "path/test.css", "last_modified": new Date(2012, 6, 13) } 
+										 ]);	
+		});
+
+		renderer.templates = {
+			"getTemplates": spyGetTemplates	
+		};
+		
+		var spyCallback = jasmine.createSpy();
+		renderer.compileTo("path/test.js", ".js", new Date(2012, 6, 13), spyCallback);	
+
+		expect(spyCallback).toHaveBeenCalledWith({ "ignore": true, "message": "no compilable template found" }, null);
+	});
+
 	it("call the callback with an error if it fails to read the template", function() {
 		var spyCompile = jasmine.createSpy();
 
@@ -551,7 +575,7 @@ describe("render content", function(){
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		spyNegotiateTemplate.andCallFake(function(path, content_type, options, callback) {
+		spyNegotiateTemplate.andCallFake(function(path, output_extension, template_extension, options, callback) {
 			return callback(null, "template output", new Date(2012, 6, 17), {});
 		});
 
@@ -576,7 +600,7 @@ describe("render content", function(){
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
-		spyNegotiateTemplate.andCallFake(function(path, content_type, options, callback) {
+		spyNegotiateTemplate.andCallFake(function(path, output_extension, template_extension, options, callback) {
 			return callback("template error", null, {});
 		});
 

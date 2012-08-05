@@ -115,8 +115,18 @@ describe("setting partials", function() {
 
 });
 
-describe("cancel render", function(){
-	it("set rendering cancled flag", function(){
+describe("cancel render", function() {
+
+	it("do nothing if rendering already canceled", function() {
+		var mustache_instance = new mustache_renderer(); 
+		mustache_instance.rendering_canceled = true;
+		spyOn(mustache_instance, "emit");
+
+		mustache_instance.cancelRender("error");
+		expect(mustache_instance.emit).not.toHaveBeenCalled();
+	});
+
+	it("set rendering cancled flag", function() {
 		var mustache_instance = new mustache_renderer(); 
 		spyOn(mustache_instance, "emit");
 
@@ -124,13 +134,14 @@ describe("cancel render", function(){
 		expect(mustache_instance.rendering_canceled).toEqual(true);
 	});
 
-	it("emit renderCanceled event", function(){
+	it("emit renderCanceled event", function() {
 		var mustache_instance = new mustache_renderer(); 
 		spyOn(mustache_instance, "emit");
 
 		mustache_instance.cancelRender("error");
 		expect(mustache_instance.emit).toHaveBeenCalledWith("renderCanceled", "error", 404);
 	});
+
 });
 
 describe("calling render", function(){

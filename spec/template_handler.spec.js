@@ -222,75 +222,145 @@ describe("read template", function(){
 
 });
 
-describe("negotiate template", function(){
+describe("negotiate template", function() {
 
-	it("output template content and the last modified date if it exist in the given path", function(){
-
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
-			return callback(null, "template output");	
+	it("check for a template file for the given output extension", function() {
+		spyOn(fs, "readFile").andCallFake(function(path, callback) {
+			if (path === "template_dir/path/sub_dir/index.html.mustache") {
+				return callback(null, "template output");	
+			} else {
+				return callback("error", null);	
+			}
 		});
 
-		spyOn(fs, "stat").andCallFake(function(path, callback){
-			return callback(null, {"mtime": new Date(2012, 6, 16) });	
+		spyOn(fs, "stat").andCallFake(function(path, callback) {
+			if (path === "template_dir/path/sub_dir/index.html.mustache") {
+				return callback(null, {"mtime": new Date(2012, 6, 16) });	
+			} else {
+				return callback("error", null);	
+			}
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateTemplate("path/sub_dir/index", ".mustache", {}, spyCallback);
+		default_handler.negotiateTemplate("path/sub_dir/index", ".html", ".mustache", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, "template output", new Date(2012, 6, 16));
 	});
 
-	it("read the layout file in same level if template file is not found", function(){
-		spyOn(fs, "readFile");
-
-		spyOn(fs, "stat").andCallFake(function(path, callback){
-			if(path === "template_dir/path/sub_dir/index.mustache"){
-				return callback("error", null);	
+	it("check for a layout file in the same level for the given output extension", function() {
+		spyOn(fs, "readFile").andCallFake(function(path, callback) {
+			if (path === "template_dir/path/sub_dir/_layout.html.mustache") {
+				return callback(null, "layout output");	
 			} else {
-				return callback(null, {"mtime": new Date(2012, 6, 16) });	
+				return callback("error", null);	
 			}
 		});
 
-		default_handler.templateDir = "template_dir";
-
-		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateTemplate("path/sub_dir/index", ".mustache", {}, spyCallback);
-
-		expect(fs.readFile.mostRecentCall.args[0]).toEqual("template_dir/path/sub_dir/_layout.mustache");
-	});
-
-	it("go one level up till a layout file is found", function(){
-		spyOn(fs, "readFile");
-
-		spyOn(fs, "stat").andCallFake(function(path, callback){
-			if(path === "template_dir/_layout.mustache"){
+		spyOn(fs, "stat").andCallFake(function(path, callback) {
+			if (path === "template_dir/path/sub_dir/_layout.html.mustache") {
 				return callback(null, {"mtime": new Date(2012, 6, 16) });	
 			} else {
 				return callback("error", null);	
 			}
 		});
 
-		default_handler.templateDir = "template_dir";
-
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateTemplate("path/sub_dir/index", ".mustache", {}, spyCallback);
+		default_handler.negotiateTemplate("path/sub_dir/index", ".html", ".mustache", {}, spyCallback);
 
-		expect(fs.readFile.mostRecentCall.args[0]).toEqual("template_dir/_layout.mustache");
+		expect(spyCallback).toHaveBeenCalledWith(null, "layout output", new Date(2012, 6, 16));
 	});
 
-	it("call the callback with an error if no layout file is found", function(){
-		spyOn(fs, "stat").andCallFake(function(path, callback){
-			return callback("error", null);	
+	it("check for a layout file in the top levels for the given output extension", function() {
+		spyOn(fs, "readFile").andCallFake(function(path, callback) {
+			if (path === "template_dir/_layout.html.mustache") {
+				return callback(null, "layout output");	
+			} else {
+				return callback("error", null);	
+			}
 		});
 
-		default_handler.templateDir = "template_dir";
+		spyOn(fs, "stat").andCallFake(function(path, callback) {
+			if (path === "template_dir/_layout.html.mustache") {
+				return callback(null, {"mtime": new Date(2012, 6, 16) });	
+			} else {
+				return callback("error", null);	
+			}
+		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateTemplate("path/sub_dir/index", ".mustache", {}, spyCallback);
+		default_handler.negotiateTemplate("path/sub_dir/index", ".html", ".mustache", {}, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith("error", null, null);
+		expect(spyCallback).toHaveBeenCalledWith(null, "layout output", new Date(2012, 6, 16));
 	});
 
+	it("check for a generic template file", function() {
+		spyOn(fs, "readFile").andCallFake(function(path, callback) {
+			if (path === "template_dir/path/sub_dir/index.mustache") {
+				return callback(null, "template output");	
+			} else {
+				return callback("error", null);	
+			}
+		});
+
+		spyOn(fs, "stat").andCallFake(function(path, callback) {
+			if (path === "template_dir/path/sub_dir/index.mustache") {
+				return callback(null, {"mtime": new Date(2012, 6, 16) });	
+			} else {
+				return callback("error", null);	
+			}
+		});
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.negotiateTemplate("path/sub_dir/index", ".html", ".mustache", {}, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, "template output", new Date(2012, 6, 16));
+	});
+
+	it("check for a generic layout file in the same level", function() {
+		spyOn(fs, "readFile").andCallFake(function(path, callback) {
+			if (path === "template_dir/path/sub_dir/_layout.mustache") {
+				return callback(null, "layout output");	
+			} else {
+				return callback("error", null);	
+			}
+		});
+
+		spyOn(fs, "stat").andCallFake(function(path, callback) {
+			if (path === "template_dir/path/sub_dir/_layout.mustache") {
+				return callback(null, {"mtime": new Date(2012, 6, 16) });	
+			} else {
+				return callback("error", null);	
+			}
+		});
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.negotiateTemplate("path/sub_dir/index", ".html", ".mustache", {}, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, "layout output", new Date(2012, 6, 16));
+	});
+
+	it("check for a generic layout file in the top levels", function() {
+		spyOn(fs, "readFile").andCallFake(function(path, callback) {
+			if (path === "template_dir/_layout.mustache") {
+				return callback(null, "layout output");	
+			} else {
+				return callback("error", null);	
+			}
+		});
+
+		spyOn(fs, "stat").andCallFake(function(path, callback) {
+			if (path === "template_dir/_layout.mustache") {
+				return callback(null, {"mtime": new Date(2012, 6, 16) });	
+			} else {
+				return callback("error", null);	
+			}
+		});
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.negotiateTemplate("path/sub_dir/index", ".html", ".mustache", {}, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, "layout output", new Date(2012, 6, 16));
+	});
 });
 
 describe("get partials", function(){

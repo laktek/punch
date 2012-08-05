@@ -70,6 +70,30 @@ describe("handle request", function(){
 		expect(spyCacheLastUpdated.mostRecentCall.args[0]).toEqual("path/test");
 	});
 
+	it("get the file extension for the given request", function(){
+		var dummy_request = { "url": "path/test", "accept": { "types": {} } };
+
+		var spyCacheLastUpdated = jasmine.createSpy();	
+		page_server.cacheStore = {"lastUpdated": spyCacheLastUpdated};
+
+		spyOn(path_utils, "getExtension").andReturn(".html");
+
+		page_server.handle(dummy_request, {}, function(){ });
+		expect(path_utils.getExtension).toHaveBeenCalledWith("path/test", {});
+	});
+
+	it("extract the basename from the request path", function(){
+		var dummy_request = { "url": "path/test.js" };
+
+		var spyCacheLastUpdated = jasmine.createSpy();	
+		page_server.cacheStore = {"lastUpdated": spyCacheLastUpdated};
+
+		spyOn(path_utils, "getExtension").andReturn(".js");
+
+		page_server.handle(dummy_request, {}, function(){ });
+		expect(spyCacheLastUpdated.mostRecentCall.args[0]).toEqual("path/test");
+	});
+
 	it("check when the cache was last updated for the given path", function(){
 		var dummy_request = { "url": "path/test" };
 
@@ -80,7 +104,6 @@ describe("handle request", function(){
 
 		page_server.handle(dummy_request, {}, function(){ });
 		expect(spyCacheLastUpdated.mostRecentCall.args[0]).toEqual("path/test");
-
 	});
 
 	it("call page render", function(){
@@ -177,7 +200,6 @@ describe("send response", function(){
 describe('get status page', function(){
 
 	it("check for the given status page in cache", function(){
-
 		var spyCacheGet = jasmine.createSpy();
 
 		page_server.cacheStore = {"get": spyCacheGet};
@@ -185,8 +207,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(spyCacheGet.mostRecentCall.args.slice(0, 3)).toEqual(["404", ".html", {}]);
-	
+		expect(spyCacheGet.mostRecentCall.args.slice(0, 3)).toEqual([ "404", ".html", { "Content-Type": 'text/html' } ]);
 	});
 
 	it("render a page if no page was found in cache", function(){
@@ -230,7 +251,6 @@ describe('get status page', function(){
 	});
 
 	it("send the rendered result as the response", function(){
-	
 		var spyCacheGet = jasmine.createSpy();
 		spyCacheGet.andCallFake(function(path, extension, header, callback){
 			return callback("error", null);	
@@ -252,12 +272,10 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 404, {"Content-Length": 13}, "rendered page");
-	
+		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 404, { "Content-Length": 13, "Content-Type": "text/html" }, "rendered page");
 	});
 
 	it("send a blank response (without caching) if no result was rendered", function(){
-	
 		var spyCacheGet = jasmine.createSpy();
 		spyCacheGet.andCallFake(function(path, extension, header, callback){
 			return callback("error", null);	
@@ -274,8 +292,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 404, {"Content-Length": 0}, null);
-	
+		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 404, { "Content-Length": 0, "Content-Type": "text/html" }, null);
 	});
 
 });
