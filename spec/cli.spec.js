@@ -2,7 +2,10 @@ var cli = require("../lib/cli.js");
 
 var fs = require("fs");
 
+var server = require("../lib/server.js");
+var generator = require("../lib/site_generator.js");
 var publisher = require("../lib/publisher.js");
+var config_handler = require("../lib/config_handler.js");
 
 describe("init", function() {
 
@@ -38,20 +41,92 @@ describe("setup a new site", function() {
 
 describe("start the server", function() {
 
+	it("get the config given in the path", function() {
+		spyOn(config_handler, "getConfig");
+
+		cli.server(["custom_config.json"]);
+	
+		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
+	});
+
+	it("start the server with the port given in arguments", function() {
+		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
+			return callback({ "server": { "port": 9009 } });	
+		});
+
+		spyOn(server, "startServer");
+
+		cli.server(["3001"]);
+
+		expect(server.startServer).toHaveBeenCalledWith({ "server": { "port": 3001 } });
+	});
+
 });
 
 describe("generate a site", function() {
+
+	it("get the config given in the path", function() {
+		spyOn(config_handler, "getConfig");
+
+		cli.generate(["custom_config.json"]);
+	
+		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
+	});
+
+	it("setup the generator with the supplied config", function() {
+		var spyConfigObj = jasmine.createSpy();
+
+		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
+			return callback(spyConfigObj);
+		});
+
+		spyOn(generator, "setup");
+		spyOn(generator, "generate");
+
+		cli.generate(["custom_config.json"]);
+	
+		expect(generator.setup).toHaveBeenCalledWith(spyConfigObj);
+	});
+
+	it("call generate with a callback", function() {
+		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
+			return callback({});
+		});
+
+		spyOn(generator, "setup");
+		spyOn(generator, "generate");
+
+		cli.generate(["custom_config.json"]);
+	
+		expect(generator.generate).toHaveBeenCalledWith(jasmine.any(Function));
+	});
 
 });
 
 describe("publish a site", function() {
 
-	it("overrides the default config file with the config file given explicitly", function() {
-		spyOn(fs, "readFile");		
+	it("get the config given in the path", function() {
+		spyOn(config_handler, "getConfig");
+
+		spyOn(publisher, "publish");
+
+		cli.publish(["custom_config.json"]);
+	
+		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
+	});
+
+	it("call publish with the supplied config", function() {
+		var spyConfigObj = jasmine.createSpy();
+
+		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
+			return callback(spyConfigObj);	
+		});
+
+		spyOn(publisher, "publish");
 
 		cli.publish(["custom_config.json"]);
 
-		expect(fs.readFile.mostRecentCall.args[0]).toEqual("custom_config.json");
+		expect(publisher.publish).toHaveBeenCalledWith(spyConfigObj);
 	});
 
 });
