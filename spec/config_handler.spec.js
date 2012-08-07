@@ -166,3 +166,67 @@ describe("read the config from a directory", function() {
 	
 });
 
+describe("get config", function() {
+
+	it("read the config in given path", function() {
+		spyOn(config_handler, "readConfig");
+
+		var spyCallback = jasmine.createSpy();
+		config_handler.getConfig("custom_config.json", spyCallback);	
+
+		expect(config_handler.readConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
+	});
+
+	it("read the config directory if user-defined config path is invalid", function() {
+		spyOn(config_handler, "readConfig").andCallFake(function(config_path, callback) {
+			if (config_path === "config") {
+				return callback(null, {});
+			}	else {
+				return callback("error", null)
+			}
+		});
+
+		var spyCallback = jasmine.createSpy();
+		config_handler.getConfig("custom_config.json", spyCallback);	
+
+		expect(config_handler.readConfig).toHaveBeenCalledWith("config", jasmine.any(Function));
+	});
+
+	it("try to read config.json if there's no config directory or path is given", function() {
+		spyOn(config_handler, "readConfig").andCallFake(function(config_path, callback) {
+			if (config_path === "config.json") {
+				return callback(null, {});
+			}	else {
+				return callback("error", null)
+			}
+		});
+
+		var spyCallback = jasmine.createSpy();
+		config_handler.getConfig("custom_config.json", spyCallback);	
+
+		expect(config_handler.readConfig).toHaveBeenCalledWith("config.json", jasmine.any(Function));
+	});
+
+	it("extend the user-defined config with default config", function() {
+		spyOn(config_handler, "readConfig").andCallFake(function(config_path, callback) {
+			return callback(null, { "server": { "port": 3001 } });
+		});
+
+		config_handler.getConfig("custom_config.json", function(output) {
+			expect(output.server.port).toEqual(3001);
+		});	
+	});
+
+	it("return the default config if no user-defined config can be found", function() {
+		spyOn(config_handler, "readConfig").andCallFake(function(config_path, callback) {
+			return callback("error", null);
+		});
+
+		config_handler.getConfig("custom_config.json", function(output) {
+			expect(output.server.port).toEqual(9009);
+		});	
+
+	});
+
+});
+
