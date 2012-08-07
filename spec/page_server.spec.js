@@ -177,23 +177,32 @@ describe("prepare response", function(){
 
 });
 
-describe("send response", function(){
-	it("write head", function(){
-		spyWriteHead = jasmine.createSpy();
+describe("send response", function() {
+	it("set the status code", function() {
+		spySetHeader = jasmine.createSpy();
 		spyEnd = jasmine.createSpy();
-		var spyResponse = {"writeHead": spyWriteHead, "end": spyEnd} 
+		var spyResponse = {"setHeader": spySetHeader, "end": spyEnd} 
 
-		page_server.sendResponse(spyResponse, 200, {"Content-Type": "text/html"}, "content");	
-		expect(spyWriteHead).toHaveBeenCalledWith(200, {"Content-Type": "text/html"});
+		page_server.sendResponse(spyResponse, 200, {"Content-Type": "text/html", "Content-Length": 100}, "content");	
+		expect(spyResponse.statusCode).toEqual(200);
 	});
 
-	it("write body and end the message", function(){
-		spyWriteHead = jasmine.createSpy();
+	it("set headers", function() {
+		spySetHeader = jasmine.createSpy();
 		spyEnd = jasmine.createSpy();
-		var spyResponse = {"writeHead": spyWriteHead, "end": spyEnd} 
+		var spyResponse = {"setHeader": spySetHeader, "end": spyEnd} 
 
-		page_server.sendResponse(spyResponse, 200, {"Content-Type": "text/html"}, "content");	
-		expect(spyEnd).toHaveBeenCalledWith("content", "binary");
+		page_server.sendResponse(spyResponse, 200, {"Content-Type": "text/html", "Content-Length": 100}, "content");	
+		expect(spySetHeader.callCount).toEqual(2);
+	});
+
+	it("write body and end the message", function() {
+		spySetHeader = jasmine.createSpy();
+		spyEnd = jasmine.createSpy();
+		var spyResponse = {"setHeader": spySetHeader, "end": spyEnd} 
+
+		page_server.sendResponse(spyResponse, 200, {"Content-Type": "text/html", "Content-Length": 100}, "content");	
+		expect(spyEnd).toHaveBeenCalled();
 	});
 });
 
