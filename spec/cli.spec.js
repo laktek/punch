@@ -2,6 +2,7 @@ var cli = require("../lib/cli.js");
 
 var fs = require("fs");
 
+var setup = require("../lib/setup.js");
 var server = require("../lib/server.js");
 var generator = require("../lib/site_generator.js");
 var publisher = require("../lib/publisher.js");
@@ -36,6 +37,15 @@ describe("init", function() {
 });
 
 describe("setup a new site", function() {
+
+	it("call to create a bare structure with the target path", function() {
+		spyOn(setup, "bare_structure");	
+
+		cli.setup(["path/target"]);
+
+		expect(setup.bare_structure).toHaveBeenCalledWith("path/target");
+	});
+
 });
 
 describe("start the server", function() {
