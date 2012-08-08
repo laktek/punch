@@ -3,6 +3,7 @@ var publisher = require("../lib/publisher.js");
 var fs = require("fs");
 
 var site_generator = require("../lib/site_generator.js");
+var module_utils = require("../lib/utils/module_utils.js");
 
 describe("calling publish", function() {
 
@@ -106,9 +107,9 @@ describe("calling publish", function() {
 
 });
 
-describe("require strategy", function(){
+describe("require strategy", function() {
 
-	it("throws an error if the strategy is not available", function(){
+	it("throw an error if the strategy is not available", function() {
 		var error = "s3 isn't available as a publishing strategy."
 		publisher.config = { "plugins": {"publishers": {}} };
 
@@ -116,11 +117,14 @@ describe("require strategy", function(){
 
 	});	
 
-	it("requires the given strategy", function(){
-		publisher.config =  {"plugins": {"publishers": {"sample": "../spec/sample_publisher"}} }		
+	it("require the given strategy", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+			return { "id": id };	
+		});
 
-		var sample_publisher = publisher.requireStrategy("sample");
-		expect(sample_publisher.name).toEqual("sample publisher");
+		publisher.config =  {"plugins": {"publishers": {"sample": "sample_publisher"}} }		
+
+		expect(publisher.requireStrategy("sample").id).toEqual("sample_publisher");
 	});
 
 });

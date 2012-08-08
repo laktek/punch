@@ -163,6 +163,29 @@ describe("read the config from a directory", function() {
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "plugins": { "plugin_name": "plugin_path" }, "publish": { "strategy": "" } });
 	});
+
+	it("don't nest main config values", function() {
+		spyOn(fs, "readdir").andCallFake(function(dir_path, callback) {
+			return callback(null, [ "main.json", "plugins.json", "subdir", "publish.json", ".hidden_file" ]);
+		});
+
+		spyOn(config_handler, "readConfigFile").andCallFake(function(config_file, callback){
+			if (config_file === "main.json") {
+				return callback(null, { "main_key": "main_value" });
+			} else if (config_file === "plugins.json") {
+				return callback(null, { "plugin_name": "plugin_path" });
+			} else {
+				return callback(null, { "strategy": "" });
+			}
+		});
+
+		var spyCallback = jasmine.createSpy();
+		config_handler.readConfigDir("path/config_dir", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, { "main_key": "main_value", "plugins": { "plugin_name": "plugin_path" }, "publish": { "strategy": "" } });
+	});
+	
+
 	
 });
 

@@ -3,6 +3,7 @@ var renderer = require("../lib/page_renderer.js");
 var module_utils = require("../lib/utils/module_utils.js");
 
 describe("setup", function() {
+
 	var sample_config = {
 		plugins: {
 			template_handler: "sample_template_handler",

@@ -36,7 +36,6 @@ describe("init", function() {
 });
 
 describe("setup a new site", function() {
-
 });
 
 describe("start the server", function() {
@@ -130,5 +129,3 @@ describe("publish a site", function() {
 	});
 
 });
-
-
