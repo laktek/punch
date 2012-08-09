@@ -8,26 +8,25 @@ describe("setup", function(){
 	});
 });
 
-describe("last updated for a file", function(){
+describe("stat for a file", function(){
 
-	it("calls the callback with the file's modified time", function(){
+	it("call the callback with the file's modified time", function(){
 
 		cache_store.outputDir = "output_dir"
 
 		spyOn(fs, "stat").andCallFake(function(file_path, callback){
 			if(file_path === "output_dir/path/test.html"){
-				return callback(null, {"mtime": new Date(2012, 6, 21)});	
+				return callback(null, {"mtime": new Date(2012, 6, 21), "size": 527});	
 			}
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.lastUpdated("path/test", ".html", spyCallback);
+		cache_store.stat("path/test", ".html", spyCallback);
 		
-		expect(spyCallback).toHaveBeenCalledWith(null, new Date(2012, 6, 21));
-	
+		expect(spyCallback).toHaveBeenCalledWith(null, { "mtime": new Date(2012, 6, 21), "size": 527 });
 	});
 
-	it("calls the callback with an error if file doesn't exist", function(){
+	it("call the callback with an error if file doesn't exist", function(){
 
 		cache_store.outputDir = "output_dir"
 
@@ -36,9 +35,9 @@ describe("last updated for a file", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.lastUpdated("path/test", ".html", spyCallback);
+		cache_store.stat("path/test", ".html", spyCallback);
 		
-		expect(spyCallback).toHaveBeenCalledWith("error", null);
+		expect(spyCallback).toHaveBeenCalledWith("error");
 	
 	});
 
@@ -46,12 +45,12 @@ describe("last updated for a file", function(){
 
 describe("get a file", function(){
 
-	it("calls the callback with file content", function(){
+	it("call the callback with file content", function(){
 		
 		var cached_content = new Buffer("cached content");
 
 		spyOn(fs, "stat").andCallFake(function(file_path, callback){
-			return callback(null, {"mtime": new Date(2012, 6, 21)});	
+			return callback(null, { "mtime": new Date(2012, 6, 21), "size": 567 });	
 		});
 
 		spyOn(fs, "readFile").andCallFake(function(file_path, encoding, callback){
@@ -61,14 +60,14 @@ describe("get a file", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.get("path/test", ".html", {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith(null, {"body": cached_content, "updated_at": new Date(2012, 6, 21), "options": {"header": {"Content-Length": 14}}});
+		expect(spyCallback).toHaveBeenCalledWith(null, { "body": cached_content, "options": { "header": { "Content-Length": 14, "ETag": '"567-1342809000000"', "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
 
 	});
 
-	it("calls the callback with the error if there's an error reading the file", function(){
+	it("call the callback with the error if there's an error reading the file", function(){
 	
 		spyOn(fs, "stat").andCallFake(function(file_path, callback){
-			return callback(null, {"mtime": new Date(2012, 6, 21)});	
+			return callback(null, { "mtime": new Date(2012, 6, 21), "size": 567 });	
 		});
 
 		spyOn(fs, "readFile").andCallFake(function(file_path, encoding, callback){
@@ -78,12 +77,13 @@ describe("get a file", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.get("path/test", ".html", {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith("error", {"body": null, "updated_at": new Date(2012, 6, 21), "options": {"header": {"Content-Length": 0 }}});
+		expect(spyCallback).toHaveBeenCalledWith("error", { "body": null, "options": { "header": { "Content-Length": 0, "ETag": '"567-1342809000000"', "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
 
 	});
 });
 
 describe("update a file", function(){
+
 	it("create missing directories", function(){
 		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
 			return callback(null, {"isDirectory": function(){ return false }});
@@ -98,7 +98,7 @@ describe("update a file", function(){
 		cache_store.outputDir = "output_dir";
 	
 		var spyCallback = jasmine.createSpy();
-		cache_store.update("path/subdir/test", ".html", "test", spyCallback);
+		cache_store.update("path/subdir/test", ".html", "test", {}, spyCallback);
 
 		expect(fs.mkdir.callCount).toEqual(3);
 
@@ -112,14 +112,13 @@ describe("update a file", function(){
 		spyOn(fs, "writeFile");
 	
 		var spyCallback = jasmine.createSpy();
-		cache_store.update("path/test", ".html", "test", spyCallback);
+		cache_store.update("path/test", ".html", "test", {}, spyCallback);
 
 		expect(fs.writeFile.mostRecentCall.args.splice(0, 2)).toEqual(["output_dir/path/test.html", "test"]);
 
 	});
 
-	it("calls the callback with the error if there's an error in writing the file", function(){
-
+	it("call the callback with the error if there's an error in writing the file", function(){
 		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
 			return callback(null, {"isDirectory": function(){ return true }});
 		});
@@ -129,9 +128,30 @@ describe("update a file", function(){
 		});
 	
 		var spyCallback = jasmine.createSpy();
-		cache_store.update("path/test", ".html", "test", spyCallback);
+		cache_store.update("path/test", ".html", "test", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error");
+	});
+
+	it("call the callback a valid cache object", function(){
+
+		spyOn(fs, "stat").andCallFake(function(dirpath, callback) {
+			return callback(null, { "isDirectory": function(){ return true } });
+		});
+
+		spyOn(fs, "writeFile").andCallFake(function(file_path, body, encoding, callback) {
+			return callback(null);	
+		});
+
+		spyOn(cache_store, "stat").andCallFake(function(file_path, file_ext, callback) {
+			return callback(null, {"mtime": new Date(2012, 6, 21), "size": 527});	
+		})
+	
+		var spyCallback = jasmine.createSpy();
+		cache_store.update("path/test", ".html", "test", { "Content-Type": "text/css", "Cache-Control": "public, max-age=0" }, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "test", "options": { "header": { "Content-Type": "text/css", "Cache-Control": "public, max-age=0", "Content-Length": 4, "ETag": '"527-1342809000000"', "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
 
 	});
+
 });
