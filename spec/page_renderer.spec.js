@@ -125,7 +125,7 @@ describe("handle rendering request", function() {
 
 		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith({ "body": null, "modified": true, "options": { "header": { "status": 500 }, "log": { "message": "[Error] Compile error" } } });
+		expect(spyCallback).toHaveBeenCalledWith({ "body": null, "modified": true, "options": { "status": 500, "log": { "message": "[Error] Compile error" } } });
 	});
 
 	it("render the content matching the given path", function() {
@@ -165,7 +165,7 @@ describe("handle rendering request", function() {
 
 		renderer.render("path/test.css", ".css", null, {}, spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith({ "body": null, "modified": true, "options": { "header": { "status": 500 }, "log": { "message": "[Error] Response should contain body and modified properties" } } });
+		expect(spyCallback).toHaveBeenCalledWith({ "body": null, "modified": true, "options": { "status": 500, "log": { "message": "[Error] Response should contain body and modified properties" } } });
 	});
 
 });
