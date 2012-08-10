@@ -287,47 +287,46 @@ describe("collect paths", function(){
 
 });
 
-describe("store output", function(){
+describe("store output", function() {
 
-	it("get the last updated date from the cache", function(){
-		var spyCacheLastUpdated = jasmine.createSpy();	
-		site_generator.cacheStore = {"lastUpdated": spyCacheLastUpdated};
+	it("get the last updated date from the cache", function() {
+		var spyCacheStat = jasmine.createSpy();	
+		site_generator.cacheStore = { "stat": spyCacheStat };
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
 		var spyCallback = jasmine.createSpy();
-		site_generator.storeOutput("path/test", spyCallback);
+		site_generator.storeOutput("path/test.html", spyCallback);
 
-		expect(spyCacheLastUpdated.mostRecentCall.args[0]).toEqual("path/test");
+		expect(spyCacheStat).toHaveBeenCalledWith("path/test", ".html", jasmine.any(Function));
 	});
 
-	it("call to render", function(){
-		var spyCacheLastUpdated = jasmine.createSpy();	
-		spyCacheLastUpdated.andCallFake(function(request_path, file_extension, callback){
-			return callback(null, new Date(2012, 6, 27));	
+	it("call to render", function() {
+		var spyCacheStat = jasmine.createSpy();	
+		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
+			return callback(null, { "mtime": new Date(2012, 6, 27) });	
 		});
-		site_generator.cacheStore = {"lastUpdated": spyCacheLastUpdated};
+		site_generator.cacheStore = { "stat": spyCacheStat };
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
 		spyOn(page_renderer, "render");
 
 		var spyCallback = jasmine.createSpy();
-		site_generator.storeOutput("path/test", spyCallback);
+		site_generator.storeOutput("path/test.html", spyCallback);
 
-		expect(page_renderer.render.mostRecentCall.args.slice(0, 4)).toEqual(["path/test", ".html", new Date(2012, 6, 27), {}]);
-
+		expect(page_renderer.render).toHaveBeenCalledWith("path/test", ".html", new Date(2012, 6, 27), {}, jasmine.any(Function));
 	});
 
-	it("update the cache with the modified output", function(){
-		var spyCacheLastUpdated = jasmine.createSpy();	
-		spyCacheLastUpdated.andCallFake(function(request_path, file_extension, callback){
-			return callback(null, new Date(2012, 6, 27));	
+	it("update the cache with the modified output", function() {
+		var spyCacheStat = jasmine.createSpy();	
+		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
+			return callback(null, { "mtime": new Date(2012, 6, 27) });	
 		});
 
 		var spyCacheUpdate = jasmine.createSpy();	
 
-		site_generator.cacheStore = {"lastUpdated": spyCacheLastUpdated, "update": spyCacheUpdate};
+		site_generator.cacheStore = { "stat": spyCacheStat, "update": spyCacheUpdate };
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
@@ -336,31 +335,28 @@ describe("store output", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		site_generator.storeOutput("path/test", spyCallback);
+		site_generator.storeOutput("path/test.html", spyCallback);
 
-		expect(spyCacheUpdate.mostRecentCall.args.slice(0, 3)).toEqual(["path/test", ".html", "rendered output"]);
-
+		expect(spyCacheUpdate).toHaveBeenCalledWith("path/test", ".html", "rendered output", jasmine.any(Function));
 	});
 
-	it("call the callback directly if output is not modified", function(){
-		var spyCacheLastUpdated = jasmine.createSpy();	
-		spyCacheLastUpdated.andCallFake(function(request_path, file_extension, callback){
-			return callback(null, new Date(2012, 6, 27));	
+	it("call the callback directly if output is not modified", function() {
+		var spyCacheStat = jasmine.createSpy();	
+		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
+			return callback(null, { "mtime": new Date(2012, 6, 27) });	
 		});
-
-		site_generator.cacheStore = {"lastUpdated": spyCacheLastUpdated};
+		site_generator.cacheStore = { "stat": spyCacheStat };
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
-		spyOn(page_renderer, "render").andCallFake(function(request_path, file_extension, cache_last_updated, options, callback){
-			return callback({"mdoified": false, "body": null});	
+		spyOn(page_renderer, "render").andCallFake(function(request_path, file_extension, cache_last_updated, options, callback) {
+			return callback({ "modified": false, "body": null });	
 		});
 
 		var spyCallback = jasmine.createSpy();
-		site_generator.storeOutput("path/test", spyCallback);
+		site_generator.storeOutput("path/test.html", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalled();
-
 	});
 
 });

@@ -19,3 +19,18 @@ describe("get the extension", function() {
 	});
 
 });
+
+describe("get the basename", function() {
+
+	it("return the path after removing the extension", function() {
+		expect(path_utils.getBasename("path/sub/test.html", ".html")).toEqual("path/sub/test");	
+	});
+
+	it("don't change the paths without the extension", function() {
+		expect(path_utils.getBasename("path/sub_html/test", ".html")).toEqual("path/sub_html/test");	
+	});
+
+	it("set the root path to index", function() {
+		expect(path_utils.getBasename("/", ".html")).toEqual("/index");	
+	});
+});
