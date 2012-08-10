@@ -337,7 +337,7 @@ describe("store output", function() {
 		var spyCallback = jasmine.createSpy();
 		site_generator.storeOutput("path/test.html", spyCallback);
 
-		expect(spyCacheUpdate).toHaveBeenCalledWith("path/test", ".html", "rendered output", jasmine.any(Function));
+		expect(spyCacheUpdate).toHaveBeenCalledWith("path/test", ".html", "rendered output", {}, jasmine.any(Function));
 	});
 
 	it("call the callback directly if output is not modified", function() {

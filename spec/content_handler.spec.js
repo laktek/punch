@@ -414,9 +414,9 @@ describe("get sections", function(){
 
 describe("get contents", function(){
 
-	it("collect all content files", function(){
+	it("collect all content files (except shared file)", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			return callback(null, ["index.json", "page1.json", "page2.json"]);	
+			return callback(null, ["index.json", "page1.json", "page2.json", "_shared"]);	
 		});	
 
 		var spyCallback = jasmine.createSpy();

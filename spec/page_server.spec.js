@@ -423,7 +423,7 @@ describe('get status page', function(){
 		});
 
 		var spyCacheUpdate = jasmine.createSpy();
-		spyCacheUpdate.andCallFake(function(path, extension, body, callback){
+		spyCacheUpdate.andCallFake(function(path, extension, body, header, callback){
 			return callback(null);	
 		});
 
