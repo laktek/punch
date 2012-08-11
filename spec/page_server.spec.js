@@ -119,13 +119,13 @@ describe("handle request", function(){
 	it("extract the basename from the request path", function(){
 		var dummy_request = { "url": "path/test.js" };
 
-		var spyCacheLastUpdated = jasmine.createSpy();	
-		page_server.cacheStore = {"stat": spyCacheLastUpdated};
+		var spyCacheStat = jasmine.createSpy();	
+		page_server.cacheStore = { "stat": spyCacheStat };
 
 		spyOn(path_utils, "getExtension").andReturn(".js");
 
 		page_server.handle(dummy_request, {}, function(){ });
-		expect(spyCacheLastUpdated.mostRecentCall.args[0]).toEqual("path/test");
+		expect(spyCacheStat.mostRecentCall.args[0]).toEqual("path/test");
 	});
 
 	it("check when the cache was last updated for the given path", function(){
@@ -140,8 +140,10 @@ describe("handle request", function(){
 		expect(spyCacheStat).toHaveBeenCalledWith("path/test", ".html", jasmine.any(Function));
 	});
 
-	it("call page render", function() {
-		var dummy_request = { "url": "path/test" };
+	it("pass options when calling page render", function() {
+		var spyCookies = jasmine.createSpy();
+		var spyAuthorization = jasmine.createSpy();
+		var dummy_request = { "url": "http://sub.example.com/path/test?foo=bar", "cookies": spyCookies, "headers": { "authorization": spyAuthorization } };
 
 		var spyCacheStat = jasmine.createSpy();	
 		spyCacheStat.andCallFake(function(path, extension, callback) {
@@ -154,7 +156,7 @@ describe("handle request", function(){
 		spyOn(page_renderer, "render");
 	
 		page_server.handle(dummy_request, {}, function(){});
-		expect(page_renderer.render.mostRecentCall.args.splice(0, 4)).toEqual(["path/test", ".html", new Date(2012, 6, 21), {"query": {} }]);
+		expect(page_renderer.render).toHaveBeenCalledWith("/path/test", ".html", new Date(2012, 6, 21), { "query": { "foo": "bar" }, "host": "sub.example.com", "cookies": spyCookies, "authorization": spyAuthorization }, jasmine.any(Function));
 	});
 
 	it("prepare rendered response if the rendered object is modified", function() {
