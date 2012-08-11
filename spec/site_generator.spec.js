@@ -5,6 +5,7 @@ var module_utils = require("../lib/utils/module_utils.js");
 var path_utils = require("../lib/utils/path_utils.js");
 
 describe("setup", function(){
+
 	var sample_config = {
 		plugins: {
 			template_handler: "sample_template_handler",
@@ -14,8 +15,20 @@ describe("setup", function(){
 				".js": "sample_js_compiler",	
 				".css": "sample_css_compiler"	
 			}
+		},
+		generator: {
+			blank: true	
 		}
 	}
+
+	it("set the clear cache flag", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		site_generator.setup(sample_config);
+		expect(site_generator.clearCache).toEqual(true);
+	});
 
 	it("setup the templates handler", function(){
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
@@ -82,10 +95,24 @@ describe("setup", function(){
 
 });
 
-describe("generate site", function(){
+describe("generate site", function() {
+
+	it("clear the cache if the flag is set", function() {
+		spyClearCache = jasmine.createSpy();
+		site_generator.cacheStore = { "clear": spyClearCache };
+		
+		site_generator.clearCache = true;
+
+		var spyCallback = jasmine.createSpy();
+		site_generator.generate(spyCallback);
+
+		expect(spyClearCache).toHaveBeenCalled();
+	});
 	
 	it("collect sections", function(){
 		spyOn(site_generator, "collectSections");
+
+		site_generator.clearCache = false;
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.generate(spyCallback);
@@ -93,47 +120,48 @@ describe("generate site", function(){
 		expect(site_generator.collectSections).toHaveBeenCalled();
 	});
 
-	it("collect paths for each section", function(){
-
-		spyOn(site_generator, "collectSections").andCallFake(function(callback){
-			return callback(null, ["path/test", "path/test2"]);	
+	it("collect paths for each section", function() {
+		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
+			return callback(null, [ "path/test", "path/test2" ]);	
 		});
 
-		spyOn(site_generator, "collectPaths").andCallFake(function(section, callback){
+		spyOn(site_generator, "collectPaths").andCallFake(function(section, callback) {
 			return callback();	
 		});
+
+		site_generator.clearCache = false;
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.generate(spyCallback);
 
 		expect(site_generator.collectPaths.callCount).toEqual(2);
-
 	});
 
-	it("calls render for each path", function(){
-	
-		spyOn(site_generator, "collectSections").andCallFake(function(callback){
-			return callback(null, ["path/test", "path/test2"]);	
+	it("calls render for each path", function() {
+		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
+			return callback(null, [ "path/test", "path/test2" ]);	
 		});
 
-		spyOn(site_generator, "collectPaths").andCallFake(function(section, callback){
-			return callback(null, ["path/test/index"]);	
+		spyOn(site_generator, "collectPaths").andCallFake(function(section, callback) {
+			return callback(null, [ "path/test/index" ]);	
 		});
 
-		spyOn(site_generator, "storeOutput").andCallFake(function(section, callback){
+		spyOn(site_generator, "storeOutput").andCallFake(function(section, callback) {
 			return callback();	
 		});
+
+		site_generator.clearCache = false;
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.generate(spyCallback);
 
 		expect(site_generator.storeOutput.callCount).toEqual(2);
-
 	});
 
 });
 
-describe("collect sections", function(){
+describe("collect sections", function() {
+
 	it("collect the sections from the templates", function(){
 		var spyTemplates = jasmine.createSpy();
 		site_generator.templates = {"getSections": spyTemplates};

@@ -82,11 +82,22 @@ describe("generate a site", function() {
 		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
 	});
 
-	it("setup the generator with the supplied config", function() {
-		var spyConfigObj = jasmine.createSpy();
+	it("set the blank state", function() {
+		spyOn(config_handler, "getConfig").andCallFake(function(path, callback) {
+			callback({ "generator": { "blank": false } });
+		});
+		spyOn(generator, "setup");
+		spyOn(generator, "generate");
 
-		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
-			return callback(spyConfigObj);
+		cli.generate(["--blank"]);
+	
+		expect(generator.setup).toHaveBeenCalledWith({ "generator": { "blank": true } });
+	});
+
+	it("setup the generator with the supplied config", function() {
+		var dummy_config = { "generator": { "blank": false } };
+		spyOn(config_handler, "getConfig").andCallFake(function(path, callback) {
+			callback(dummy_config);
 		});
 
 		spyOn(generator, "setup");
@@ -94,12 +105,13 @@ describe("generate a site", function() {
 
 		cli.generate(["custom_config.json"]);
 	
-		expect(generator.setup).toHaveBeenCalledWith(spyConfigObj);
+		expect(generator.setup).toHaveBeenCalledWith(dummy_config);
 	});
 
 	it("call generate with a callback", function() {
+		var dummy_config = { "generator": { "blank": false } };
 		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
-			return callback({});
+			return callback(dummy_config);
 		});
 
 		spyOn(generator, "setup");

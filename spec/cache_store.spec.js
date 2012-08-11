@@ -1,14 +1,18 @@
 var fs = require("fs");
+var path = require("path");
+
 var cache_store = require("../lib/cache_store.js");
 
 describe("setup", function(){
+
 	it("set the output directory", function(){
 		cache_store.setup({"output_dir": "output_dir"});
 		expect(cache_store.outputDir).toEqual("output_dir");
 	});
+
 });
 
-describe("stat for a file", function(){
+describe("stat", function(){
 
 	it("call the callback with the file's modified time", function(){
 
@@ -43,7 +47,7 @@ describe("stat for a file", function(){
 
 });
 
-describe("get a file", function(){
+describe("get", function(){
 
 	it("call the callback with file content", function(){
 		
@@ -80,9 +84,10 @@ describe("get a file", function(){
 		expect(spyCallback).toHaveBeenCalledWith("error", { "body": null, "options": { "header": { "Content-Length": 0, "ETag": '"567-1342809000000"', "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
 
 	});
+
 });
 
-describe("update a file", function(){
+describe("update", function(){
 
 	it("create missing directories", function(){
 		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
@@ -152,6 +157,48 @@ describe("update a file", function(){
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "test", "options": { "header": { "Content-Type": "text/css", "Cache-Control": "public, max-age=0", "Content-Length": 4, "ETag": '"527-1342809000000"', "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
 
+	});
+
+});
+
+describe("clear", function() {
+
+	it("remove all files (except hidden files)", function(done) {
+		cache_store.outputDir = path.join(__dirname, "sample_directory");
+
+		spyOn(fs, "rmdir").andCallFake(function(path, callback) {
+			return callback();	
+		});
+
+		spyOn(fs, "unlink").andCallFake(function(path, callback) {
+			return callback();	
+		});
+
+		var cb = function() { 
+			expect(fs.unlink.callCount).toEqual(3); 
+			done();
+	 	};
+
+		cache_store.clear(cb);
+	});
+	
+	it("remove all directories (except hidden directories)", function(done) {
+		cache_store.outputDir = path.join(__dirname, "sample_directory");
+
+		spyOn(fs, "rmdir").andCallFake(function(path, callback) {
+			return callback();	
+		});
+
+		spyOn(fs, "unlink").andCallFake(function(path, callback) {
+			return callback();	
+		});
+
+		var cb = function() { 
+			expect(fs.rmdir.callCount).toEqual(1);
+			done();
+	 	};
+
+		cache_store.clear(cb);
 	});
 
 });

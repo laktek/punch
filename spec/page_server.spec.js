@@ -302,30 +302,29 @@ describe("validate public cache", function() {
 	});
 
 	it("call the callback if requested file is modified", function(){
-		var dummy_request = { "url": "path/test/" };
+		var dummy_request = { "url": "path/test/", "if-none-match": '"0-11"' };
 		var dummy_response = { };
+		var dummy_stat = { "mtime": 0, "size": 0 };
 
-		spyOn(connect_utils, "conditionalGET").andReturn(false);
-		spyOn(connect_utils, "modified").andReturn(true);
+		spyOn(connect_utils, "conditionalGET").andReturn(true);
 
 		var spyStat = jasmine.createSpy();
 		var spyCallback = jasmine.createSpy();
-		page_server.validatePublicCache(dummy_request, dummy_response, spyStat, spyCallback);
+		page_server.validatePublicCache(dummy_request, dummy_response, dummy_stat, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalled();
 	});
 
 	it("send not modified response if requested file is not modified", function(){
-		var dummy_request = { "url": "path/test/" };
+		var dummy_request = { "url": "path/test/", "if-none-match": '"0-0"' };
 		var dummy_response = { };
+		var dummy_stat = { "mtime": 0, "size": 0 };
 
-		spyOn(connect_utils, "conditionalGET").andReturn(false);
-		spyOn(connect_utils, "modified").andReturn(true);
+		spyOn(connect_utils, "conditionalGET").andReturn(true);
 		spyOn(connect_utils, "notModified");
 
-		var spyStat = jasmine.createSpy();
 		var spyCallback = jasmine.createSpy();
-		page_server.validatePublicCache(dummy_request, dummy_response, spyStat, spyCallback);
+		page_server.validatePublicCache(dummy_request, dummy_response, dummy_stat, spyCallback);
 
 		expect(connect_utils.notModified).toHaveBeenCalledWith(dummy_response);
 	});
