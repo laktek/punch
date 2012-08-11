@@ -14,6 +14,9 @@ describe("setup", function(){
 			compilers: {
 				".js": "sample_js_compiler",	
 				".css": "sample_css_compiler"	
+			},
+			generator_hooks: {
+				"sample": "sample_hook"	
 			}
 		},
 		generator: {
@@ -93,6 +96,17 @@ describe("setup", function(){
 
 	});
 
+	it("setup each generator hook", function(){
+		site_generator.generatorHooks = [];
+
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		site_generator.setup(sample_config);
+		expect(site_generator.generatorHooks).toEqual([{ "id": "sample_hook" }]);
+	});
+
 });
 
 describe("generate site", function() {
@@ -129,6 +143,8 @@ describe("generate site", function() {
 			return callback();	
 		});
 
+		site_generator.generatorHooks = [];
+
 		site_generator.clearCache = false;
 
 		var spyCallback = jasmine.createSpy();
@@ -137,7 +153,34 @@ describe("generate site", function() {
 		expect(site_generator.collectPaths.callCount).toEqual(2);
 	});
 
-	it("calls render for each path", function() {
+	it("call the generator hooks after rendering each path", function() {
+		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
+			return callback(null, [ "path/test", "path/test2" ]);	
+		});
+
+		spyOn(site_generator, "collectPaths").andCallFake(function(section, callback) {
+			return callback(null, [ "path/test/index" ]);	
+		});
+
+		spyOn(site_generator, "storeOutput").andCallFake(function(path, callback) {
+			return callback(path);	
+		});
+
+		spyGeneratorHook = jasmine.createSpy();
+		spyGeneratorHook.andCallFake(function(path, callback) {
+			return callback();	
+		});
+		site_generator.generatorHooks = [ { "run": spyGeneratorHook }, { "run": spyGeneratorHook } ];
+
+		site_generator.clearCache = false;
+
+		var spyCallback = jasmine.createSpy();
+		site_generator.generate(spyCallback);
+
+		expect(spyGeneratorHook.callCount).toEqual(4);
+	});
+
+	it("store output after rendering each path", function() {
 		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
 			return callback(null, [ "path/test", "path/test2" ]);	
 		});
