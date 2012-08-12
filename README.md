@@ -3,8 +3,6 @@
 
 ### What is Punch?
 
-Punch acts as a generator, a server and a publisher.
-
 Punch is a simple tool to generate HTML outputs from [Mustache](http://mustache.github.com/) templates and content stored in either [JSON](http://json.org) or [Markdown](http://daringfireball.net/projects/markdown/) format.
 
 ### Why Punch?
