@@ -1,6 +1,6 @@
 var site_generator = require("../lib/site_generator.js");
-var page_renderer = require("../lib/page_renderer.js");
 
+var page_renderer = require("../lib/page_renderer.js");
 var module_utils = require("../lib/utils/module_utils.js");
 var path_utils = require("../lib/utils/path_utils.js");
 
@@ -11,6 +11,7 @@ describe("setup", function(){
 			template_handler: "sample_template_handler",
 			content_handler: "sample_content_handler",
 			template_engine: "sample_template_engine",
+			cache_store: "sample_cache_store",
 			compilers: {
 				".js": "sample_js_compiler",	
 				".css": "sample_css_compiler"	
@@ -57,20 +58,18 @@ describe("setup", function(){
 		});
 
 		site_generator.setup(sample_config);
+
 		expect(site_generator.templateEngine.id).toEqual("sample_template_engine");
 	});
 
 	it("setup the cache store", function(){
-		var sample_config = {"plugins": {"cache_store": "./sample_cache_store" }};
-
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return 	{}
+			return {"id": id};	
 		});
 
-		spyOn(site_generator, "setup");	
-			
 		site_generator.setup(sample_config);
-		expect(site_generator.cacheStore).toEqual({});
+
+		expect(site_generator.cacheStore.id).toEqual("sample_cache_store");
 	});
 
 	it("setup the renderer", function(){
