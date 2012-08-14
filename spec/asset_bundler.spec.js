@@ -344,8 +344,13 @@ describe("touch bundles", function() {
 			return callback("");	
 		});
 
-		var spyCallback = jasmine.createSpy();
-		asset_bundler.touchBundles(spyCallback);	
+		var spyAfter = jasmine.createSpy();
+		spyAfter.andCallFake(function(path, callback) {
+			return callback();	
+		});
+		var spyComplete = jasmine.createSpy();
+		asset_bundler.touchBundles(spyAfter, spyComplete);	
+
 		expect(asset_bundler.getBundle).toHaveBeenCalledWith("assets/css/global", ".css", jasmine.any(Function));
 	});
 
@@ -356,19 +361,46 @@ describe("touch bundles", function() {
 			return callback("");	
 		});
 
-		var spyCallback = jasmine.createSpy();
-		asset_bundler.touchBundles(spyCallback);	
+		var spyAfter = jasmine.createSpy();
+		spyAfter.andCallFake(function(path, callback) {
+			return callback();	
+		});
+		var spyComplete = jasmine.createSpy();
+		asset_bundler.touchBundles(spyAfter, spyComplete);	
+
 		expect(asset_bundler.getBundle.callCount).toEqual(4);
 	});
 
-	it("call the callback after touching all bundles", function() {
+	it("call the after callback with the touched bundle path", function() {
+		asset_bundler.bundles = sample_bundles; 
+
 		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
 			return callback("");	
 		});
 
-		var spyCallback = jasmine.createSpy();
-		asset_bundler.touchBundles(spyCallback);	
-		expect(spyCallback).toHaveBeenCalled();
+		var spyAfter = jasmine.createSpy();
+		spyAfter.andCallFake(function(path, callback) {
+			return callback();	
+		});
+		var spyComplete = jasmine.createSpy();
+		asset_bundler.touchBundles(spyAfter, spyComplete);	
+
+		expect(spyAfter).toHaveBeenCalledWith("assets/css/layouts.css", jasmine.any(Function));
+	});
+
+	it("call the complete callback after touching all bundles", function() {
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
+			return callback("");	
+		});
+
+		var spyAfter = jasmine.createSpy();
+		spyAfter.andCallFake(function(path, callback) {
+			return callback();	
+		});
+		var spyComplete = jasmine.createSpy();
+		asset_bundler.touchBundles(spyAfter, spyComplete);	
+
+		expect(spyComplete).toHaveBeenCalled();
 	});
 
 });
