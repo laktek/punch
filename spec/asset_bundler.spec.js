@@ -208,13 +208,13 @@ describe("prepare a bundle", function() {
 		asset_bundler.minifiers = {".js": {}};
 
 		spyOn(asset_bundler, "compileAndMinify").andCallFake(function(template, compiler, minifier, callback) {
-			return callback(null, "a");	
+			return callback(null, "(a())");	
 		});
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.prepareBundle(["file1.js", "file2.js"], ".js", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith("aa");
+		expect(spyCallback).toHaveBeenCalledWith("(a());(a());");
 	});
 
 });
