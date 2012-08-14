@@ -1,18 +1,26 @@
 {
-        "template_dir"  : "templates"
-      , "content_dir"   : "data"
-      , "output_dir"    : "output"
+        "template_dir" : "templates"
+      , "content_dir" : "data"
+      , "output_dir" : "output"
 
-			, "publish"       : {
-					"strategy" 		: "s3", 
-					"options"     : {
-					  "key"       : "key"
-					, "secret"    : "secret"
-					, "bucket"    : "bucketname"
+			, "publish" : {
+					"strategy" : "s3", 
+					"options" : {
+					  "key" : "key"
+					, "secret" : "secret"
+					, "bucket" : "bucketname"
 					}
 			},
 
-			"generator"      : {
-				"blank"				 : false 
+			"generator" : {
+				"blank" : false 
+			},
+
+			"bundles" : {
+				"assets/all.js" : [
+					"assets/mustache.js",
+					"assets/site.js",
+					"sample.coffee"	
+				]	
 			}
 }

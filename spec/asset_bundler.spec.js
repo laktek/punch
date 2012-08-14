@@ -18,15 +18,10 @@ describe("setup", function(){
 			}
 		},
 		bundles: {
-			"js": {
-				"assets/js/global.js": [ "assets/js/jquery.js", "assets/js/site.js"],
-				"assets/js/libs.js": [ "assets/js/lib1.js", "assets/js/lib2.js"]
-			},
-			
-			"css": {
-				"assets/css/global.css": [ "assets/css/initial.js", "assets/css/form.css"],
-				"assets/css/layouts.css": [ "assets/css/header.css", "assets/css/body.css"]
-			}	
+			"assets/js/global.js": [ "assets/js/jquery.js", "assets/js/site.js"],
+			"assets/js/libs.js": [ "assets/js/lib1.js", "assets/js/lib2.js"],
+			"assets/css/global.css": [ "assets/css/initial.js", "assets/css/form.css"],
+			"assets/css/layouts.css": [ "assets/css/header.css", "assets/css/body.css"]
 		}
 	}
 
@@ -84,7 +79,7 @@ describe("setup", function(){
 describe("get a bundle", function() {
 
 	it("call the callback with an error if there's no bundle for the given path", function() {
-		asset_bundler.bundles = { "js": {}};
+		asset_bundler.bundles = { };
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.getBundle("path/all", ".js", spyCallback);	
@@ -94,7 +89,7 @@ describe("get a bundle", function() {
 
 	it("prepare bundle if there's no cached bundle file", function() {
 		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "js": { "path/all.js": bundle } };
+		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, callback){
@@ -107,12 +102,12 @@ describe("get a bundle", function() {
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.getBundle("path/all", ".js", spyCallback);	
 
-		expect(asset_bundler.prepareBundle).toHaveBeenCalledWith(bundle, "js", spyCallback);
+		expect(asset_bundler.prepareBundle).toHaveBeenCalledWith(bundle, ".js", jasmine.any(Function));
 	});
 
 	it("prepare bundle if any included file in the cached bundle is modified", function() {
 		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "js": { "path/all.js": bundle } };
+		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, callback){
@@ -131,12 +126,12 @@ describe("get a bundle", function() {
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.getBundle("path/all", ".js", spyCallback);	
 
-		expect(asset_bundler.prepareBundle).toHaveBeenCalledWith(bundle, "js", jasmine.any(Function));
+		expect(asset_bundler.prepareBundle).toHaveBeenCalledWith(bundle, ".js", jasmine.any(Function));
 	});
 
 	it("update the cache with prepared bundle", function() {
 		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "js": { "path/all.js": bundle } };
+		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, callback){
@@ -166,7 +161,7 @@ describe("get a bundle", function() {
 
 	it("serve from cache if non of included files in the cached bundle is modified", function() {
 		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "js": { "path/all.js": bundle } };
+		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, callback){
@@ -203,7 +198,7 @@ describe("prepare a bundle", function() {
 		});
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.prepareBundle(["file1.js", "file2.js"], "js", spyCallback);
+		asset_bundler.prepareBundle(["file1.js", "file2.js"], ".js", spyCallback);
 
 		expect(asset_bundler.compileAndMinify.callCount).toEqual(2);
 	});
@@ -217,7 +212,7 @@ describe("prepare a bundle", function() {
 		});
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.prepareBundle(["file1.js", "file2.js"], "js", spyCallback);
+		asset_bundler.prepareBundle(["file1.js", "file2.js"], ".js", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("aa");
 	});
@@ -329,6 +324,51 @@ describe("compile and minify", function() {
 		asset_bundler.compileAndMinify("path/test.js", dummy_compiler, dummy_minifier, spyCallback);	
 		
 		expect(spyMinify).toHaveBeenCalledWith("template output", spyCallback);
+	});
+
+});
+
+describe("touch bundles", function() {
+
+	var sample_bundles = {
+		"assets/js/global.js": [ "assets/js/jquery.js", "assets/js/site.js"],
+		"assets/js/libs.js": [ "assets/js/lib1.js", "assets/js/lib2.js"],
+		"assets/css/global.css": [ "assets/css/initial.css", "assets/css/form.css"],
+		"assets/css/layouts.css": [ "assets/css/header.css", "assets/css/body.css"]
+	};
+
+	it("use correct basename and type when calling a bundle", function() {
+		asset_bundler.bundles = sample_bundles; 
+
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
+			return callback("");	
+		});
+
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.touchBundles(spyCallback);	
+		expect(asset_bundler.getBundle).toHaveBeenCalledWith("assets/css/global", ".css", jasmine.any(Function));
+	});
+
+	it("touch all defined bundles", function() {
+		asset_bundler.bundles = sample_bundles; 
+
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
+			return callback("");	
+		});
+
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.touchBundles(spyCallback);	
+		expect(asset_bundler.getBundle.callCount).toEqual(4);
+	});
+
+	it("call the callback after touching all bundles", function() {
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
+			return callback("");	
+		});
+
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.touchBundles(spyCallback);	
+		expect(spyCallback).toHaveBeenCalled();
 	});
 
 });
