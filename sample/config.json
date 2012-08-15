@@ -13,7 +13,8 @@
 			},
 
 			"generator" : {
-				"blank" : false 
+				"blank" : false,
+				"skip_paths" : [ "/assets/less*" ]
 			},
 
 			"bundles" : {
@@ -21,6 +22,6 @@
 					"assets/mustache.js",
 					"assets/site.js",
 					"sample.coffee"	
-				]	
+				]
 			}
 }

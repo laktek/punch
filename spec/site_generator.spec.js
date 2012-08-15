@@ -22,7 +22,8 @@ describe("setup", function(){
 			}
 		},
 		generator: {
-			blank: true	
+			blank: true,
+			skip_paths: [ "path/ignore/page1", "path/ignore/page1" ]
 		}
 	}
 
@@ -33,6 +34,15 @@ describe("setup", function(){
 
 		site_generator.setup(sample_config);
 		expect(site_generator.blankState).toEqual(true);
+	});
+
+	it("set the paths to skip", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		site_generator.setup(sample_config);
+		expect(site_generator.pathsToSkip).toEqual([ "path/ignore/page1", "path/ignore/page1" ]);
 	});
 
 	it("setup the templates handler", function(){
@@ -422,6 +432,23 @@ describe("collect paths", function() {
 		expect(site_generator.collectPathsForSection.callCount).toEqual(2);
 	});
 
+	it("don't traverse sections to be skipped", function() {
+		site_generator.pathsToSkip = [ "/path/sub*" ];
+
+		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
+			return callback(null, [ "/path/sub", "/path/sub/subsub", "/path/other" ]);	
+		});
+
+		spyOn(site_generator, "collectPathsForSection").andCallFake(function(section, callback) {
+			return callback(null, [ ]);	
+		});
+
+		var spyCallback = jasmine.createSpy();
+		site_generator.collectPaths(spyCallback);
+
+		expect(site_generator.collectPathsForSection.callCount).toEqual(1);
+	});
+
 	it("call the callback with collected paths", function() {
 		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
 			return callback(null, [ "path1", "path2" ]);	
@@ -435,6 +462,27 @@ describe("collect paths", function() {
 		site_generator.collectPaths(spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith([ "path/test1", "path/test2", "path/test1", "path/test2" ]);
+	});
+
+	it("remove paths to be skipped from the collected paths", function() {
+		site_generator.pathsToSkip = [ "path/test1", "path/test3" ];
+
+		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
+			return callback(null, [ "path1", "path2" ]);	
+		});
+
+		spyOn(site_generator, "collectPathsForSection").andCallFake(function(section, callback) {
+			if (section === "path1") {
+				return callback(null, [ "path/test1", "path/test2" ]);	
+			} else {
+				return callback(null, [ "path/test3", "path/test4" ]);	
+			}
+		});
+
+		var spyCallback = jasmine.createSpy();
+		site_generator.collectPaths(spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith([ "path/test2", "path/test4" ]);
 	});
 
 });
