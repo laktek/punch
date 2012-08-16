@@ -9,7 +9,7 @@ describe("calling compile", function() {
 		});
 
 		var spyCallback = jasmine.createSpy();
-		coffee_script_compiler.compile("test", spyCallback);
+		coffee_script_compiler.compile("test", "test.coffee", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(undefined, "rendered file");
 	});
@@ -20,7 +20,7 @@ describe("calling compile", function() {
 		});
 
 		var spyCallback = jasmine.createSpy();
-		coffee_script_compiler.compile("test", spyCallback);
+		coffee_script_compiler.compile("test", "test.coffee", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error", undefined);
 	});

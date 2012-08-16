@@ -298,7 +298,7 @@ describe("compile template", function() {
 		expect(spyReadTemplate.mostRecentCall.args[0]).toEqual("path/test.coffee");
 	});
 
-	it("call compile with the template output", function() {
+	it("call compile with the template output and full template path", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
@@ -319,13 +319,14 @@ describe("compile template", function() {
 
 		renderer.templates = {
 			"getTemplates": spyGetTemplates,
-			"readTemplate": spyReadTemplate
+			"readTemplate": spyReadTemplate,
+			"templateDir": "templates"
 		};
 		
 		var spyCallback = jasmine.createSpy();
 		renderer.compileTo("path/test.js", ".js", null, spyCallback);	
 
-		expect(spyCompile.mostRecentCall.args[0]).toEqual("template output");
+		expect(spyCompile).toHaveBeenCalledWith("template output", "templates/path/test.coffee", jasmine.any(Function));
 	});
 
 	it("call the callback without an output if template is not modified", function() {

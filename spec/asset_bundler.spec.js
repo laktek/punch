@@ -259,17 +259,17 @@ describe("compile and minify", function() {
 		spyReadTemplate.andCallFake(function(path, callback) {
 			return callback(null, "template output");	
 		});
-		asset_bundler.templates = { "readTemplate": spyReadTemplate };
+		asset_bundler.templates = { "readTemplate": spyReadTemplate, "templateDir": "templates" };
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.compileAndMinify("path/test.coffee", dummy_compiler, {}, spyCallback);	
 		
-		expect(spyCompile).toHaveBeenCalledWith("template output", jasmine.any(Function));
+		expect(spyCompile).toHaveBeenCalledWith("template output", "templates/path/test.coffee", jasmine.any(Function));
 	});
 
 	it("call the callback with an error if compilation fails", function() {
 		var spyCompile = jasmine.createSpy();
-		spyCompile.andCallFake(function(input, callback) {
+		spyCompile.andCallFake(function(input, file_path, callback) {
 			return callback("compile error", null);	
 		});
 		dummy_compiler = { "compile": spyCompile, "input_extensions": [".coffee"] };
@@ -278,7 +278,7 @@ describe("compile and minify", function() {
 		spyReadTemplate.andCallFake(function(path, callback) {
 			return callback(null, "template output");	
 		});
-		asset_bundler.templates = { "readTemplate": spyReadTemplate };
+		asset_bundler.templates = { "readTemplate": spyReadTemplate, "templateDir": "templates" };
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.compileAndMinify("path/test.coffee", dummy_compiler, {}, spyCallback);	
@@ -288,7 +288,7 @@ describe("compile and minify", function() {
 
 	it("call minify after compilation", function() {
 		var spyCompile = jasmine.createSpy();
-		spyCompile.andCallFake(function(input, callback) {
+		spyCompile.andCallFake(function(input, file_path, callback) {
 			return callback(null, "compiled output");	
 		});
 		dummy_compiler = { "compile": spyCompile, "input_extensions": [".coffee"] };
@@ -300,7 +300,7 @@ describe("compile and minify", function() {
 		spyReadTemplate.andCallFake(function(path, callback) {
 			return callback(null, "template output");	
 		});
-		asset_bundler.templates = { "readTemplate": spyReadTemplate };
+		asset_bundler.templates = { "readTemplate": spyReadTemplate, "templateDir": "templates" };
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.compileAndMinify("path/test.coffee", dummy_compiler, dummy_minifier, spyCallback);	
@@ -318,7 +318,7 @@ describe("compile and minify", function() {
 		spyReadTemplate.andCallFake(function(path, callback) {
 			return callback(null, "template output");	
 		});
-		asset_bundler.templates = { "readTemplate": spyReadTemplate };
+		asset_bundler.templates = { "readTemplate": spyReadTemplate, "templateDir": "templates" };
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.compileAndMinify("path/test.js", dummy_compiler, dummy_minifier, spyCallback);	
