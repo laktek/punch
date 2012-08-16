@@ -1,6 +1,7 @@
 var page_server = require("../lib/page_server.js");
 
 var page_renderer = require("../lib/page_renderer.js");
+var asset_bundler = require("../lib/asset_bundler.js");
 var module_utils = require("../lib/utils/module_utils.js");
 var path_utils = require("../lib/utils/path_utils.js");
 var connect_utils = require("connect").utils;
@@ -78,7 +79,7 @@ describe("set cache expiry headers", function() {
 
 });
 
-describe("handle request", function(){
+describe("handle request", function() {
 
 	it("strip the trailing slashes from the request url", function(){
 		var dummy_request = { "url": "path/test/" };
@@ -128,6 +129,58 @@ describe("handle request", function(){
 		expect(spyCacheStat.mostRecentCall.args[0]).toEqual("path/test");
 	});
 
+	it("extract options from the request", function() {
+		var spyCookies = jasmine.createSpy();
+		var spyAuthorization = jasmine.createSpy();
+		var dummy_request = { "url": "http://sub.example.com/path/test?foo=bar", "cookies": spyCookies, "headers": { "authorization": spyAuthorization } };
+
+		spyOn(path_utils, "getExtension").andReturn(".html");
+
+		spyOn(page_server, "handlePageRequest");
+	
+		page_server.handle(dummy_request, {}, function(){});
+
+		expect(page_server.handlePageRequest).toHaveBeenCalledWith(dummy_request, {}, "/path/test", ".html", { "query": { "foo": "bar" }, "host": "sub.example.com", "cookies": spyCookies, "authorization": spyAuthorization });
+	});
+
+	it("handle bundle requests", function() {
+		var dummy_request = { "url": "path/test.js" };
+
+		var spyCacheStat = jasmine.createSpy();	
+		page_server.cacheStore = { "stat": spyCacheStat };
+
+		spyOn(path_utils, "getExtension").andReturn(".js");
+
+		spyOn(asset_bundler, "isBundleRequest").andReturn(true);
+
+		spyOn(page_server, "handleBundleRequest");
+
+		page_server.handle(dummy_request, {}, function(){ });
+
+		expect(page_server.handleBundleRequest).toHaveBeenCalledWith(dummy_request, {}, "path/test", ".js", jasmine.any(Object));
+	});
+
+	it("handle page requests", function() {
+		var dummy_request = { "url": "path/test.js" };
+
+		var spyCacheStat = jasmine.createSpy();	
+		page_server.cacheStore = { "stat": spyCacheStat };
+
+		spyOn(path_utils, "getExtension").andReturn(".js");
+
+		spyOn(asset_bundler, "isBundleRequest").andReturn(false);
+
+		spyOn(page_server, "handlePageRequest");
+
+		page_server.handle(dummy_request, {}, function(){ });
+
+		expect(page_server.handlePageRequest).toHaveBeenCalledWith(dummy_request, {}, "path/test", ".js", jasmine.any(Object));
+	});
+
+});
+
+describe("handle page request", function() {
+
 	it("check when the cache was last updated for the given path", function(){
 		var dummy_request = { "url": "path/test" };
 
@@ -136,14 +189,13 @@ describe("handle request", function(){
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
-		page_server.handle(dummy_request, {}, function(){ });
+		page_server.handlePageRequest(dummy_request, {}, "path/test", ".html", {});
 		expect(spyCacheStat).toHaveBeenCalledWith("path/test", ".html", jasmine.any(Function));
 	});
 
 	it("pass options when calling page render", function() {
-		var spyCookies = jasmine.createSpy();
-		var spyAuthorization = jasmine.createSpy();
-		var dummy_request = { "url": "http://sub.example.com/path/test?foo=bar", "cookies": spyCookies, "headers": { "authorization": spyAuthorization } };
+		var spyOptions = jasmine.createSpy();
+		var dummy_request = { "url": "http://sub.example.com/path/test?foo=bar" };
 
 		var spyCacheStat = jasmine.createSpy();	
 		spyCacheStat.andCallFake(function(path, extension, callback) {
@@ -152,11 +204,11 @@ describe("handle request", function(){
 		page_server.cacheStore = {"stat": spyCacheStat};
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
-
 		spyOn(page_renderer, "render");
 	
-		page_server.handle(dummy_request, {}, function(){});
-		expect(page_renderer.render).toHaveBeenCalledWith("/path/test", ".html", new Date(2012, 6, 21), { "query": { "foo": "bar" }, "host": "sub.example.com", "cookies": spyCookies, "authorization": spyAuthorization }, jasmine.any(Function));
+		page_server.handlePageRequest(dummy_request, {}, "/path/test", ".html", spyOptions);
+
+		expect(page_renderer.render).toHaveBeenCalledWith("/path/test", ".html", new Date(2012, 6, 21), spyOptions, jasmine.any(Function));
 	});
 
 	it("prepare rendered response if the rendered object is modified", function() {
@@ -177,7 +229,7 @@ describe("handle request", function(){
 
 		spyOn(page_server, "prepareRenderedResponse");
 	
-		page_server.handle(dummy_request, {}, function(){});
+		page_server.handlePageRequest(dummy_request, {}, "path/test", ".html", {});
 		expect(page_server.prepareRenderedResponse).toHaveBeenCalledWith({}, "path/test", ".html", dummy_rendered_obj);	
 	});
 
@@ -200,7 +252,7 @@ describe("handle request", function(){
 
 		spyOn(page_server, "validatePublicCache");
 	
-		page_server.handle(dummy_request, {}, function(){});
+		page_server.handlePageRequest(dummy_request, {}, "path/test", ".html", {});
 		expect(page_server.validatePublicCache).toHaveBeenCalledWith(dummy_request, {}, dummy_stat, jasmine.any(Function));	
 	});
 
@@ -226,7 +278,7 @@ describe("handle request", function(){
 
 		spyOn(page_server, "prepareCachedResponse");
 	
-		page_server.handle(dummy_request, {}, function(){});
+		page_server.handlePageRequest(dummy_request, {}, "path/test", ".html", {});
 		expect(page_server.prepareCachedResponse).toHaveBeenCalledWith({}, "path/test", ".html", dummy_rendered_obj);	
 	});
 
