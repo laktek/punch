@@ -404,3 +404,14 @@ describe("touch bundles", function() {
 	});
 
 });
+
+describe("is bundle path", function() {
+
+	it("check if there's a bundle path matching given basename and file extension", function() {
+		var bundle = [ "file1.js", "file2.js" ];
+		asset_bundler.bundles = { "path/all.js": bundle };
+		
+		expect(asset_bundler.isBundlePath("path/all-1234", ".js")).toEqual(true);
+	});
+
+});
