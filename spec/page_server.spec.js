@@ -491,7 +491,7 @@ describe("validate public cache", function() {
 	});
 
 	it("call the callback if requested file is modified", function(){
-		var dummy_request = { "url": "path/test/", "if-none-match": '"0-11"' };
+		var dummy_request = { "url": "path/test/", "headers": { "if-none-match": '"0-11"' } };
 		var dummy_response = { };
 		var dummy_stat = { "mtime": 0, "size": 0 };
 
@@ -505,7 +505,7 @@ describe("validate public cache", function() {
 	});
 
 	it("send not modified response if requested file is not modified", function(){
-		var dummy_request = { "url": "path/test/", "if-none-match": '"0-0"' };
+		var dummy_request = { "url": "path/test/", "headers": { "if-none-match": '"0-0"' } };
 		var dummy_response = { };
 		var dummy_stat = { "mtime": 0, "size": 0 };
 
@@ -519,7 +519,7 @@ describe("validate public cache", function() {
 	});
 
 	it("use the header fields in response if no stat object given", function(){
-		var dummy_request = { "url": "path/test/", "if-none-match": '"0-11"' };
+		var dummy_request = { "url": "path/test/", "headers": { "if-none-match": '"0-11"' } };
 		var dummy_response = { "header": { "etag": "0-10", "last-modified": "utc-string" }, "getHeader": function(key) { return this["header"][key] }};
 		var dummy_stat = null;
 

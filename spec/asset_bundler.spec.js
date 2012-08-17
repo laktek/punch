@@ -168,7 +168,7 @@ describe("get a bundle", function() {
 		});
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all", ".js", spyCallback);	
+		asset_bundler.getBundle("path/all-1221", ".js", spyCallback);	
 
 		expect(spyCacheStoreUpdate).toHaveBeenCalledWith("path/all", ".js", "prepared bundle", {}, jasmine.any(Function));
 	});
@@ -200,7 +200,7 @@ describe("get a bundle", function() {
 		asset_bundler.bundleOptions = { "cache": {}, "header": { "key": "value" }};
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all", ".js", spyCallback);	
+		asset_bundler.getBundle("path/all-1221", ".js", spyCallback);	
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "prepared bundle", "modified": true, "options": { "cache": {}, "header": { "key": "value" } } });
 	});
@@ -228,7 +228,7 @@ describe("get a bundle", function() {
 		asset_bundler.bundleOptions = { "cache": {}, "header": { "key": "value" }};
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all", ".js", spyCallback);	
+		asset_bundler.getBundle("path/all-1221", ".js", spyCallback);	
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "cached bundle", "modified": false, "options": { "cache": {}, "header": { "last-modified": "utc-string" } } });
 	});
