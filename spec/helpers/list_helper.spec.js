@@ -1,5 +1,5 @@
 var list_helper_obj = require("../../lib/helpers/list_helper");
-var list_helper = list_helper_obj.directAccess();
+var list_helper = list_helper_obj.directAccess()["block_helpers"];
 
 describe("format list", function(){
 

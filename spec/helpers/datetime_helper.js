@@ -1,5 +1,5 @@
 var date_helper_obj = require("../../lib/helpers/datetime_helper");
-var date_helper = date_helper_obj.directAccess();
+var date_helper = date_helper_obj.directAccess()["block_helpers"];
 
 describe("datetime", function() {
 

@@ -1,5 +1,5 @@
 var text_helper_obj = require("../../lib/helpers/text_helper");
-var text_helper = text_helper_obj.directAccess();
+var text_helper = text_helper_obj.directAccess()["block_helpers"];
 
 describe("upcase", function(){
 

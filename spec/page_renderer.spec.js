@@ -695,7 +695,7 @@ describe("render content", function(){
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
 
-		expect(spySetHelpers).toHaveBeenCalledWith(spyHelperObj);
+		expect(spySetHelpers).toHaveBeenCalledWith(spyHelperObj, spyHelperOptions);
 	});
 
 });
@@ -717,12 +717,12 @@ describe("get helpers", function() {
 	it("call the callback with all content collected by helpers", function(){
 		var spyHelperGet1 = jasmine.createSpy();
 		spyHelperGet1.andCallFake(function(path, content_type, options, callback){
-			return callback(null, { "key1": "value1" }, { "opt1": "value" });	
+			return callback(null, { "tag_helper1": "value" }, { "block_helper1": "value"}, { "opt1": "value" });	
 		});
 
 		var spyHelperGet2 = jasmine.createSpy();
 		spyHelperGet2.andCallFake(function(path, content_type, options, callback){
-			return callback(null, { "key2": "value2" }, { "opt2": "value" });	
+			return callback(null, { "tag_helper2": "value" }, { "block_helper2": "value"}, { "opt2": "value" });	
 		});
 
 		renderer.helpers = [{ "get": spyHelperGet1 }, { "get": spyHelperGet2 }];
@@ -731,7 +731,7 @@ describe("get helpers", function() {
 		var spyOptions = jasmine.createSpy();
 		renderer.getHelpers("path/test", "html", spyOptions, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith(null, { "key1": "value1", "key2": "value2" }, { "opt1": "value", "opt2": "value" });
+		expect(spyCallback).toHaveBeenCalledWith(null, { "tag_helpers": { "tag_helper1": "value", "tag_helper2": "value" }, "block_helpers": { "block_helper1": "value", "block_helper2": "value" } }, { "opt1": "value", "opt2": "value" });
 	});
 
 });
