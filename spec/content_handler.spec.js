@@ -4,6 +4,7 @@ var module_utils = require("../lib/utils/module_utils.js");
 var fs = require("fs");
 
 describe("setup", function(){
+
 	var sample_config = {
 		content_dir: "content_dir",
 
@@ -37,18 +38,6 @@ describe("setup", function(){
 
 		default_handler.setup(sample_config);
 		expect(default_handler.parsers).toEqual({".markdown": {"id": "sample_markdown_parser"}, ".yml": {"id": "sample_yml_parser"}});
-
-	});
-
-	it("setup each helper", function(){
-		default_handler.helpers = [];
-
-		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
-		});
-
-		default_handler.setup(sample_config);
-		expect(default_handler.helpers).toEqual([{"id": "sample_number_helper"}, {"id": "sample_image_helper"}]);
 
 	});
 
@@ -259,48 +248,13 @@ describe("parse extended content", function(){
 });
 
 describe("get shared content", function(){
+
 	it("should call get content with shared path", function(){
 		spyOn(default_handler, "getContent");	
 		var spyCallback = jasmine.createSpy();
 
 		default_handler.getSharedContent(spyCallback);
 		expect(default_handler.getContent).toHaveBeenCalledWith("shared", spyCallback);
-	});
-
-});
-
-describe("get helper content", function(){
-
-	it("call the helper with all given arguments", function(){
-
-		var spyHelperGet = jasmine.createSpy();
-
-		default_handler.helpers = [{ "get": spyHelperGet }];
-
-		var spyCallback = jasmine.createSpy();
-		default_handler.getHelperContent("path/test", "html", {}, spyCallback);	
-
-		expect(spyHelperGet.mostRecentCall.args.splice(0, 3)).toEqual(["path/test", "html", {}]);
-	});
-
-	it("call the callback with all content collected by helpers", function(){
-		var spyHelperGet1 = jasmine.createSpy();
-		spyHelperGet1.andCallFake(function(path, content_type, options, callback){
-			return callback(null, {"key1": "value1"});	
-		});
-
-		var spyHelperGet2 = jasmine.createSpy();
-		spyHelperGet2.andCallFake(function(path, content_type, options, callback){
-			return callback(null, {"key2": "value2"});	
-		});
-
-		default_handler.helpers = [{ "get": spyHelperGet1 }, { "get": spyHelperGet2 }];
-
-		var spyCallback = jasmine.createSpy();
-		default_handler.getHelperContent("path/test", "html", {}, spyCallback);	
-
-		expect(spyCallback).toHaveBeenCalledWith(null, {"key1": "value1", "key2": "value2"});
-
 	});
 
 });
@@ -321,28 +275,11 @@ describe("negotiate content", function(){
 		});
 
 		spyOn(default_handler, "getSharedContent");
-		spyOn(default_handler, "getHelperContent");
 
 		var spyCallback = jasmine.createSpy();
 		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
 		expect(default_handler.getSharedContent).toHaveBeenCalled();
-
-	});
-
-	it("extend it with helper contents", function(){
-	
-		spyOn(default_handler, "getContent").andCallFake(function(path, callback){
-			return callback(null, {});	
-		});
-
-		spyOn(default_handler, "getSharedContent");
-		spyOn(default_handler, "getHelperContent");
-
-		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
-
-		expect(default_handler.getHelperContent.mostRecentCall.args.splice(0,3)).toEqual(["path/test", ".html", {}]);
 
 	});
 
@@ -355,15 +292,10 @@ describe("negotiate content", function(){
 			return callback(null, {"shared_key": "shared_value"}, new Date(2012, 6, 18));
 		});
 
-		spyOn(default_handler, "getHelperContent").andCallFake(function(path, content_type, options, callback){
-			return callback(null, {"helper_key": "helper_value"});
-		});
-
 		var spyCallback = jasmine.createSpy();
 		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith(null, {"content_key": "content_value", "shared_key": "shared_value", "helper_key": "helper_value"}, new Date(2012, 6, 18), {});
-
+		expect(spyCallback).toHaveBeenCalledWith(null, { "content_key": "content_value", "shared_key": "shared_value" }, new Date(2012, 6, 18), {});
 	});
 
 	it("call the callback with an error object, if content for path doesn't exist", function(){
@@ -375,7 +307,6 @@ describe("negotiate content", function(){
 		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);	
 
 		expect(spyCallback).toHaveBeenCalledWith("[Error: Content not found]", null, null, {});
-
 	});
 
 });

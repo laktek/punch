@@ -98,7 +98,7 @@ describe("get a bundle", function() {
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.getBundle("path/all", ".js", spyCallback);	
 
-		expect(spyCallback).toHaveBeenCalledWith("There's no Bundle for the given path", null);
+		expect(spyCallback).toHaveBeenCalledWith("[Error: There's no Bundle for the given path]", null);
 	});
 
 	it("prepare bundle if there's no cached bundle file", function() {

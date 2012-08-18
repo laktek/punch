@@ -12,6 +12,10 @@ describe("setup", function() {
 			compilers: {
 				".js": "sample_js_compiler",	
 				".css": "sample_css_compiler"	
+			},
+			helpers: {
+				"numbers_helper": "sample_number_helper",
+				"image_helper": "sample_image_helper"	
 			}
 		}
 	}
@@ -54,6 +58,17 @@ describe("setup", function() {
 		renderer.setup(sample_config);
 
 		expect(renderer.compilers).toEqual({ ".js": { "id": "sample_js_compiler" }, ".css": { "id": "sample_css_compiler" } });
+	});
+
+	it("setup each helper", function(){
+		renderer.helpers = [];
+
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+			return {"id": id};	
+		});
+
+		renderer.setup(sample_config);
+		expect(renderer.helpers).toEqual([{"id": "sample_number_helper"}, {"id": "sample_image_helper"}]);
 	});
 
 });
@@ -466,6 +481,8 @@ describe("render content", function(){
 
 		renderer.contents = { "negotiateContent": spyNegotiateContent };
 		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
+
+		spyOn(renderer, "getHelpers");
 	
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
@@ -483,6 +500,8 @@ describe("render content", function(){
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
+
+		spyOn(renderer, "getHelpers");
 
 		renderer.contents = { "negotiateContent": spyNegotiateContent };
 		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
@@ -504,6 +523,8 @@ describe("render content", function(){
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
+		spyOn(renderer, "getHelpers");
+
 		renderer.contents = { "negotiateContent": spyNegotiateContent };
 		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
 	
@@ -524,6 +545,8 @@ describe("render content", function(){
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
+
+		spyOn(renderer, "getHelpers");
 
 		spyNegotiateContent.andCallFake(function(path, content_type, options, callback) {
 			return callback(null, { "key": "value" }, new Date(2012, 6, 17), {});
@@ -551,6 +574,8 @@ describe("render content", function(){
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
+		spyOn(renderer, "getHelpers");
+
 		spyNegotiateContent.andCallFake(function(path, content_type, options, callback){
 			return callback("content error", null, {});
 		});
@@ -577,6 +602,8 @@ describe("render content", function(){
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
+		spyOn(renderer, "getHelpers");
+
 		spyNegotiateTemplate.andCallFake(function(path, output_extension, template_extension, options, callback) {
 			return callback(null, "template output", new Date(2012, 6, 17), {});
 		});
@@ -601,6 +628,8 @@ describe("render content", function(){
 		var spyNegotiateContent = jasmine.createSpy();
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
+
+		spyOn(renderer, "getHelpers");
 
 		spyNegotiateTemplate.andCallFake(function(path, output_extension, template_extension, options, callback) {
 			return callback("template error", null, {});
@@ -627,6 +656,8 @@ describe("render content", function(){
 		var spyNegotiateTemplate = jasmine.createSpy();
 		var spyGetPartials = jasmine.createSpy();
 
+		spyOn(renderer, "getHelpers");
+
 		spyGetPartials.andCallFake(function(path, extension, options, callback) {
 			return callback(null, { "partial": "partial output" }, new Date(2012, 6, 17), {});
 		});
@@ -640,5 +671,67 @@ describe("render content", function(){
 		expect(spySetPartials).toHaveBeenCalledWith({ "partial": "partial output" }, new Date(2012, 6, 17));
 	});
 
+	it("fetch and set helpers for the given path", function() {
+		var spyEvenListener = jasmine.createSpy();
+		var spySetHelpers = jasmine.createSpy();
+
+		spyOn(renderer, "createTemplateEngine").andCallFake(function() {
+			return { "on": spyEvenListener, "setHelpers": spySetHelpers };
+		});
+
+		var spyNegotiateContent = jasmine.createSpy();
+		var spyNegotiateTemplate = jasmine.createSpy();
+		var spyGetPartials = jasmine.createSpy();
+
+		renderer.contents = { "negotiateContent": spyNegotiateContent };
+		renderer.templates = { "negotiateTemplate": spyNegotiateTemplate, "getPartials": spyGetPartials };
+
+		var spyHelperObj = jasmine.createSpy();
+		var spyHelperOptions = jasmine.createSpy();
+		spyOn(renderer, "getHelpers").andCallFake(function(basepath, extension, options, callback) {
+			return callback(null, spyHelperObj, spyHelperOptions);	
+		});
+
+		var spyCallback = jasmine.createSpy();
+		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);	
+
+		expect(spySetHelpers).toHaveBeenCalledWith(spyHelperObj);
+	});
+
 });
 
+describe("get helpers", function() {
+
+	it("call the helper with all given arguments", function(){
+		var spyHelperGet = jasmine.createSpy();
+
+		renderer.helpers = [{ "get": spyHelperGet }];
+
+		var spyCallback = jasmine.createSpy();
+		var spyOptions = jasmine.createSpy();
+		renderer.getHelpers("path/test", "html", spyOptions, spyCallback);	
+
+		expect(spyHelperGet).toHaveBeenCalledWith("path/test", "html", spyOptions, jasmine.any(Function));
+	});
+
+	it("call the callback with all content collected by helpers", function(){
+		var spyHelperGet1 = jasmine.createSpy();
+		spyHelperGet1.andCallFake(function(path, content_type, options, callback){
+			return callback(null, { "key1": "value1" }, { "opt1": "value" });	
+		});
+
+		var spyHelperGet2 = jasmine.createSpy();
+		spyHelperGet2.andCallFake(function(path, content_type, options, callback){
+			return callback(null, { "key2": "value2" }, { "opt2": "value" });	
+		});
+
+		renderer.helpers = [{ "get": spyHelperGet1 }, { "get": spyHelperGet2 }];
+
+		var spyCallback = jasmine.createSpy();
+		var spyOptions = jasmine.createSpy();
+		renderer.getHelpers("path/test", "html", spyOptions, spyCallback);	
+
+		expect(spyCallback).toHaveBeenCalledWith(null, { "key1": "value1", "key2": "value2" }, { "opt1": "value", "opt2": "value" });
+	});
+
+});
