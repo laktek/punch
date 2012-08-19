@@ -256,7 +256,7 @@ describe("prepare a bundle", function() {
 		asset_bundler.minifiers = {".js": {}};
 
 		spyOn(asset_bundler, "compileAndMinify").andCallFake(function(template, compiler, minifier, callback) {
-			return callback(null, "(a())");	
+			return callback(null, "(a());");	
 		});
 
 		var spyCallback = jasmine.createSpy();

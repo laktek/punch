@@ -18,13 +18,13 @@ describe("calling minify", function() {
 		});
 
 		spyOn(pro, "gen_code").andCallFake(function(input){
-			return "compiled output";	
+			return "{ function(){} };";	
 		});
 
 		var spyCallback = jasmine.createSpy();
 		uglify_minifier.minify("test", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(undefined, "compiled output");
+		expect(spyCallback).toHaveBeenCalledWith(undefined, "{ function(){} };");
 	});
 
 	it("calls the callback with the error", function(){
