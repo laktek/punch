@@ -576,7 +576,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(spyCacheGet.mostRecentCall.args.slice(0, 3)).toEqual([ "404", ".html", { "Content-Type": 'text/html' } ]);
+		expect(spyCacheGet.mostRecentCall.args.slice(0, 3)).toEqual([ "/404", ".html", { "Content-Type": 'text/html' } ]);
 	});
 
 	it("render a page if no page was found in cache", function(){
@@ -593,7 +593,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(page_renderer.render.mostRecentCall.args.slice(0, 3)).toEqual(["404", ".html", null]);
+		expect(page_renderer.render.mostRecentCall.args.slice(0, 3)).toEqual(["/404", ".html", null]);
 	
 	});
 
@@ -615,7 +615,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(spyCacheUpdate.mostRecentCall.args.slice(0, 3)).toEqual(["404", ".html", "rendered page"]);
+		expect(spyCacheUpdate.mostRecentCall.args.slice(0, 3)).toEqual(["/404", ".html", "rendered page"]);
 	
 	});
 

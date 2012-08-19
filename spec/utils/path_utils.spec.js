@@ -27,10 +27,11 @@ describe("get the basename", function() {
 	});
 
 	it("don't change the paths without the extension", function() {
-		expect(path_utils.getBasename("path/sub_html/test", ".html")).toEqual("path/sub_html/test");	
+		expect(path_utils.getBasename("path/sub_html/api", ".html")).toEqual("path/sub_html/api");	
 	});
 
 	it("set the root path to index", function() {
 		expect(path_utils.getBasename("/", ".html")).toEqual("/index");	
 	});
+
 });

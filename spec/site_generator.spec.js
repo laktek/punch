@@ -185,6 +185,32 @@ describe("generate site", function() {
 		expect(site_generator.buildBundles).toHaveBeenCalled();
 	});
 
+	it("call generator hooks with completed flag set", function() {
+		var sample_paths = ["path/test", "path/test1"];
+		spyOn(site_generator, "clearCache").andCallFake(function(callback) {
+			return callback();	
+		});
+
+		spyOn(site_generator, "collectPaths").andCallFake(function(callback) {
+			return callback(sample_paths);	
+		});
+
+		spyOn(site_generator, "renderEachPath").andCallFake(function(paths, callback) {
+			return callback();	
+		});
+
+		spyOn(site_generator, "buildBundles").andCallFake(function(callback) {
+			return callback();	
+		});
+
+		spyOn(site_generator, "runGeneratorHooks");
+
+		var spyCallback = jasmine.createSpy();
+		site_generator.generate(spyCallback);
+
+		expect(site_generator.runGeneratorHooks).toHaveBeenCalledWith(null, true, spyCallback);
+	});
+
 	it("call the user provided callback", function() {
 		var sample_paths = ["path/test", "path/test1"];
 		spyOn(site_generator, "clearCache").andCallFake(function(callback) {
@@ -200,6 +226,10 @@ describe("generate site", function() {
 		});
 
 		spyOn(site_generator, "buildBundles").andCallFake(function(callback) {
+			return callback();	
+		});
+
+		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, completed, callback) {
 			return callback();	
 		});
 
@@ -570,7 +600,7 @@ describe("render each path", function() {
 			return callback();	
 		});
 
-		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, callback) {
+		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, completed, callback) {
 			return callback();	
 		});
 
@@ -587,7 +617,7 @@ describe("render each path", function() {
 			return callback(path);	
 		});
 
-		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, callback) {
+		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, completed, callback) {
 			return callback();	
 		});
 
@@ -604,7 +634,7 @@ describe("render each path", function() {
 			return callback(path);	
 		});
 
-		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, callback) {
+		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, completed, callback) {
 			return callback();	
 		});
 
@@ -637,22 +667,21 @@ describe("run generator hooks", function() {
 		site_generator.generatorHooks = [ { "run": spyGeneratorHook }, { "run": spyGeneratorHook2 } ];
 	
 		var spyCallback = jasmine.createSpy();
-		site_generator.runGeneratorHooks("path/test", spyCallback);
+		site_generator.runGeneratorHooks("path/test", false, spyCallback);
 
-		expect(spyGeneratorHook2).toHaveBeenCalledWith("path/test", jasmine.any(Function));
+		expect(spyGeneratorHook2).toHaveBeenCalledWith("path/test", false, jasmine.any(Function));
 	});
 
 	it("call the callback after running each generator hook", function() {
 		var spyGeneratorHook = jasmine.createSpy();
-		spyGeneratorHook.andCallFake(function(path, callback) {
+		spyGeneratorHook.andCallFake(function(path, completed, callback) {
 			return callback();
 		});
 		site_generator.generatorHooks = [ { "run": spyGeneratorHook }, { "run": spyGeneratorHook } ];
 	
 		var spyCallback = jasmine.createSpy();
-		site_generator.runGeneratorHooks("path/test", spyCallback);
+		site_generator.runGeneratorHooks("path/test", false, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalled();
-
 	});
 });
