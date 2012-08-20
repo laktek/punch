@@ -139,6 +139,44 @@ describe("get content", function(){
 
 	});
 
+	it("send an error if there's no JSON file or extended content", function() {
+		spyOn(fs, "stat").andCallFake(function(path, callback){
+			return callback("error", null);	
+		});
+
+		spyOn(default_handler, "parseExtendedContent").andCallFake(function(path, callback){
+			return callback("error", null, null);	
+		});
+
+		default_handler.contentDir = "content_dir";
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.getContent("path/test", spyCallback);	
+
+		expect(spyCallback).toHaveBeenCalledWith("[Error] No content found", null, null);
+	});
+
+	it("send an empty object if the JSON file empty and extended content doesn't exist", function() {
+		spyOn(fs, "stat").andCallFake(function(path, callback){
+			return callback(null, {"mtime": new Date(2012, 6, 17)});	
+		});
+
+		spyOn(fs, "readFile").andCallFake(function(path, callback){
+			return callback(null, new Buffer( "" ));	
+		});
+
+		spyOn(default_handler, "parseExtendedContent").andCallFake(function(path, callback){
+			return callback("error", null);	
+		});
+
+		default_handler.contentDir = "content_dir";
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.getContent("path/test", spyCallback);	
+
+		expect(spyCallback).toHaveBeenCalledWith(null, {}, new Date(2012, 6, 17));
+	});
+
 });
 
 describe("parse extended content", function(){
