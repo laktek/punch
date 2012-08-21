@@ -67,7 +67,7 @@ describe("set cache expiry headers", function() {
 		var header = {};
 		var cache_settings = { "public": true, "no_cache": true, "proxy_revalidate": false };
 
-		page_server.setCacheExpiryHeaders(cache_settings, header);
+		page_server.setCacheExpiryHeaders(header, cache_settings);
 
 		expect(header["Cache-Control"]).toEqual("public, no-cache, max-age=0");
 	});
@@ -76,7 +76,7 @@ describe("set cache expiry headers", function() {
 		var header = {};
 		var cache_settings = { "max_age": 3600 };
 
-		page_server.setCacheExpiryHeaders(cache_settings, header);
+		page_server.setCacheExpiryHeaders(header, cache_settings);
 
 		expect(header["Cache-Control"]).toEqual("max-age=3600");
 	});
@@ -86,9 +86,37 @@ describe("set cache expiry headers", function() {
 		var cache_settings = { "max_age": 86400 };
 		var tomorrow = new Date().getTime() + (86400 * 1000);
 
-		page_server.setCacheExpiryHeaders(cache_settings, header);
+		page_server.setCacheExpiryHeaders(header, cache_settings);
 
 		expect( Date.parse(header["Expires"]) - tomorrow ).toBeLessThan(1000);
+	});
+
+});
+
+describe("set content type header", function() {
+	
+	it("use the given preset", function() {
+		var header = {};
+
+		page_server.setContentType(header, ".json", "application/json");
+
+		expect(header["Content-Type"]).toEqual("application/json");
+	});
+
+	it("set only the mime type for non-text types", function() {
+		var header = {};
+
+		page_server.setContentType(header, ".jpg");
+
+		expect(header["Content-Type"]).toEqual("image/jpeg");
+	});
+
+	it("set mime type and charset for text types", function() {
+		var header = {};
+
+		page_server.setContentType(header, ".html");
+
+		expect(header["Content-Type"]).toEqual("text/html; charset=utf-8");
 	});
 
 });
@@ -352,7 +380,7 @@ describe("handle bundle request", function() {
 
 		page_server.handleBundleRequest(dummy_request, dummy_response, "/path/all", ".js", {});
 		
-		expect(page_server.setCacheExpiryHeaders).toHaveBeenCalledWith(spyCache, spyHeader);
+		expect(page_server.setCacheExpiryHeaders).toHaveBeenCalledWith(spyHeader, spyCache);
 	});
 
 	it("send response if the bundled object is modified", function() {
@@ -433,7 +461,7 @@ describe("prepare rendered response", function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.prepareRenderedResponse(spyResponse, "/path/test", ".css", { "body": "test", "modified": true });
 
-		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 200, { "Content-Type": 'text/css', "Expires": jasmine.any(String), "Cache-Control": jasmine.any(String) }, "test");
+		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 200, { "Content-Type": 'text/css; charset=utf-8', "Expires": jasmine.any(String), "Cache-Control": jasmine.any(String) }, "test");
 	});
 
 	it("serve a status page if it is not a successful response", function(){
@@ -442,7 +470,7 @@ describe("prepare rendered response", function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.prepareRenderedResponse(spyResponse, "/path/test", ".html", { "body": "test", "modified": true, "options": { "status": 404 } });
 
-		expect(page_server.getStatusPage).toHaveBeenCalledWith(spyResponse, 404, ".html", { "Content-Type": 'text/html', "Expires": jasmine.any(String), "Cache-Control": jasmine.any(String) });
+		expect(page_server.getStatusPage).toHaveBeenCalledWith(spyResponse, 404, ".html", { "Content-Type": 'text/html; charset=utf-8', "Expires": jasmine.any(String), "Cache-Control": jasmine.any(String) });
 	});
 
 });
@@ -467,7 +495,7 @@ describe("prepare cached response", function() {
 		var spyResponse = jasmine.createSpy();
 		page_server.prepareCachedResponse(spyResponse, "/path/test", ".html", { "body": null, "modified": false });
 
-		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 200, { "Content-Length": cache_body.length, "Content-Type": 'text/html',
+		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 200, { "Content-Length": cache_body.length, "Content-Type": 'text/html; charset=utf-8',
 		 																																					"Expires": jasmine.any(String), "Cache-Control": jasmine.any(String), 
 		 																																					"ETag": "00-00001", "Last-Modified": "Thu, 09 Aug 2012 09:12:41 GMT" 
 																																						}, cache_body);
@@ -575,7 +603,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(spyCacheGet.mostRecentCall.args.slice(0, 3)).toEqual([ "/404", ".html", { "Content-Type": 'text/html' } ]);
+		expect(spyCacheGet.mostRecentCall.args.slice(0, 3)).toEqual([ "/404", ".html", { "Content-Type": 'text/html; charset=UTf-8' } ]);
 	});
 
 	it("render a page if no page was found in cache", function(){
@@ -640,7 +668,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 404, { "Content-Length": 13, "Content-Type": "text/html" }, "rendered page");
+		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 404, { "Content-Length": 13, "Content-Type": "text/html; charset=utf-8" }, "rendered page");
 	});
 
 	it("send a blank response (without caching) if no result was rendered", function(){
@@ -660,7 +688,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 404, { "Content-Length": 0, "Content-Type": "text/html" }, "");
+		expect(page_server.sendResponse).toHaveBeenCalledWith(spyResponse, 404, { "Content-Length": 0, "Content-Type": "text/html; charset=utf-8" }, "");
 	});
 
 });
