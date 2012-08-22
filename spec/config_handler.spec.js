@@ -151,7 +151,7 @@ describe("read the config from a directory", function() {
 		});
 
 		spyOn(config_handler, "readConfigFile").andCallFake(function(config_file, callback){
-			if (config_file === "plugins.json") {
+			if (config_file === "path/config_dir/plugins.json") {
 				return callback(null, { "plugin_name": "plugin_path" });
 			} else {
 				return callback(null, { "strategy": "" });
@@ -170,9 +170,9 @@ describe("read the config from a directory", function() {
 		});
 
 		spyOn(config_handler, "readConfigFile").andCallFake(function(config_file, callback){
-			if (config_file === "main.json") {
+			if (config_file === "path/config_dir/main.json") {
 				return callback(null, { "main_key": "main_value" });
-			} else if (config_file === "plugins.json") {
+			} else if (config_file === "path/config_dir/plugins.json") {
 				return callback(null, { "plugin_name": "plugin_path" });
 			} else {
 				return callback(null, { "strategy": "" });
@@ -184,8 +184,6 @@ describe("read the config from a directory", function() {
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "main_key": "main_value", "plugins": { "plugin_name": "plugin_path" }, "publish": { "strategy": "" } });
 	});
-	
-
 	
 });
 

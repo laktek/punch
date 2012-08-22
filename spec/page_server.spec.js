@@ -603,7 +603,7 @@ describe('get status page', function(){
 		var spyResponse = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {});
 
-		expect(spyCacheGet.mostRecentCall.args.slice(0, 3)).toEqual([ "/404", ".html", { "Content-Type": 'text/html; charset=UTf-8' } ]);
+		expect(spyCacheGet.mostRecentCall.args.slice(0, 3)).toEqual([ "/404", ".html", { "Content-Type": 'text/html; charset=utf-8' } ]);
 	});
 
 	it("render a page if no page was found in cache", function(){
