@@ -182,7 +182,7 @@ describe("handle request", function() {
 	it("extract options from the request", function() {
 		var spyCookies = jasmine.createSpy();
 		var spyAuthorization = jasmine.createSpy();
-		var dummy_request = { "url": "/path/test?foo=bar", "cookies": spyCookies, "headers": { "authorization": spyAuthorization, "host": "sub.example.com" } };
+		var dummy_request = { "url": "/path/test?foo=bar", "cookies": spyCookies, "headers": { "authorization": spyAuthorization, "host": "sub.example.com", "http_x_requested_with": 'xmlhttprequest' } };
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
@@ -192,7 +192,7 @@ describe("handle request", function() {
 	
 		page_server.handle(dummy_request, {}, function(){});
 
-		expect(page_server.handlePageRequest).toHaveBeenCalledWith(dummy_request, {}, "/path/test", ".html", { "query": { "foo": "bar" }, "host": "sub.example.com", "cookies": spyCookies, "authorization": spyAuthorization });
+		expect(page_server.handlePageRequest).toHaveBeenCalledWith(dummy_request, {}, "/path/test", ".html", { "query": { "foo": "bar" }, "host": "sub.example.com", "cookies": spyCookies, "authorization": spyAuthorization, "xhr": true, "header": { "authorization": spyAuthorization, "host": "sub.example.com", "http_x_requested_with": 'xmlhttprequest' } });
 	});
 
 	it("handle bundle requests", function() {

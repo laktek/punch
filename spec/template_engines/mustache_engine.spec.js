@@ -42,6 +42,22 @@ describe("calling render", function(){
 		expect(Mustache.render).toHaveBeenCalledWith("template", { "content_key": "content_value", "tag_helper": "tag_helper_value", "block_helper": jasmine.any(Function) }, {});
 	});
 
+	it("re-attempt a helper function after rendering for the context, if it throws an error", function() {
+		spyOn(Mustache, "render").andCallFake( function(template, content, partials) {
+			return content.dummy_helper()("helper text", function(text){ return text });	
+		});
 
+		var dummy_helper = function() {
+			if (arguments.length > 1) {
+				throw "Error"
+			}	else {
+				return arguments[0];	
+			}
+		};
+
+		var render_output = mustache_renderer.renderFunction("", {}, {}, {"tag_helpers": {}, "block_helpers": { "dummy_helper": dummy_helper }})
+
+		expect(render_output).toEqual("helper text");
+	});
 
 });

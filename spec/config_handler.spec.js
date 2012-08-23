@@ -74,7 +74,7 @@ describe("read the config form a file", function() {
 		var spyCallback = jasmine.createSpy();
 		config_handler.readConfigFile("path/config", spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith(null, sample_json);
+		expect(spyCallback).toHaveBeenCalledWith(undefined, sample_json);
 	});
 
 	it("call the callback with the error if an error occurrs when reading the file", function() {
@@ -103,7 +103,7 @@ describe("read the config form a file", function() {
 		var spyCallback = jasmine.createSpy();
 		config_handler.readConfigFile("path/config", spyCallback);	
 		
-		expect(spyCallback).toHaveBeenCalledWith("error", null);
+		expect(spyCallback).toHaveBeenCalledWith("error", undefined);
 	});
 
 });
