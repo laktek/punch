@@ -1,10 +1,10 @@
-var mustache_renderer = require("../../lib/template_engines/mustache_engine.js");
+var MustacheEngine = require("../../lib/template_engines/mustache_engine.js");
 var Mustache = require("mustache");
 
 describe("creating a new instance", function(){
 
 	it("set the extension as mustache", function(){
-    var mustache_instance = new mustache_renderer(); 
+    var mustache_instance = new MustacheEngine();
 		expect(mustache_instance.extension).toEqual(".mustache");
 	});
 
@@ -15,7 +15,7 @@ describe("calling render", function(){
 	it("call Mustache's render function", function(){
     spyOn(Mustache, "render");
 
-    var mustache_instance = new mustache_renderer(); 
+    var mustache_instance = new MustacheEngine();
 		mustache_instance.template = "template";
 		mustache_instance.content = {};
 		mustache_instance.partials = {};
@@ -30,7 +30,7 @@ describe("calling render", function(){
 	it("extend contents with helpers", function() {
 		spyOn(Mustache, "render");
 
-    var mustache_instance = new mustache_renderer(); 
+    var mustache_instance = new MustacheEngine();
 		mustache_instance.template = "template";
 		mustache_instance.content = { "content_key": "content_value" };
 		mustache_instance.partials = {};
@@ -44,18 +44,18 @@ describe("calling render", function(){
 
 	it("re-attempt a helper function after rendering for the context, if it throws an error", function() {
 		spyOn(Mustache, "render").andCallFake( function(template, content, partials) {
-			return content.dummy_helper()("helper text", function(text){ return text });	
+			return content.dummy_helper()("helper text", function(text){ return text });
 		});
 
 		var dummy_helper = function() {
 			if (arguments.length > 1) {
-				throw "Error"
+				throw "Error";
 			}	else {
-				return arguments[0];	
+				return arguments[0];
 			}
 		};
 
-		var render_output = mustache_renderer.renderFunction("", {}, {}, {"tag_helpers": {}, "block_helpers": { "dummy_helper": dummy_helper }})
+		var render_output = MustacheEngine.renderFunction("", {}, {}, {"tag_helpers": {}, "block_helpers": { "dummy_helper": dummy_helper }});
 
 		expect(render_output).toEqual("helper text");
 	});

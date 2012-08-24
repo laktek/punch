@@ -1,7 +1,5 @@
 var cli = require("../lib/cli.js");
 
-var fs = require("fs");
-
 var setup = require("../lib/setup.js");
 var server = require("../lib/server.js");
 var generator = require("../lib/site_generator.js");
@@ -11,7 +9,7 @@ var config_handler = require("../lib/config_handler.js");
 describe("init", function() {
 
 	it("pass arguments to the called command", function() {
-		spyOn(cli, "server");	
+		spyOn(cli, "server");
 
 		cli.init(["server", "3009"]);
 
@@ -19,13 +17,13 @@ describe("init", function() {
 	});
 
 	it("call commands by short code", function() {
-		spyOn(cli, "server");	
+		spyOn(cli, "server");
 
 		cli.init(["s", "3009"]);
 
 		expect(cli.server).toHaveBeenCalledWith(["3009"]);
 	});
-	
+
 	it("return help for invalid commands", function() {
 		spyOn(cli, "help");
 
@@ -39,7 +37,7 @@ describe("init", function() {
 describe("setup a new site", function() {
 
 	it("call to create a bare structure with the target path", function() {
-		spyOn(setup, "bare_structure");	
+		spyOn(setup, "bare_structure");
 
 		cli.setup(["path/target"]);
 
@@ -54,13 +52,13 @@ describe("start the server", function() {
 		spyOn(config_handler, "getConfig");
 
 		cli.server(["custom_config.json"]);
-	
+
 		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
 	});
 
 	it("start the server with the port given in arguments", function() {
 		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
-			return callback({ "server": { "port": 9009 } });	
+			return callback({ "server": { "port": 9009 } });
 		});
 
 		spyOn(server, "startServer");
@@ -78,7 +76,7 @@ describe("generate a site", function() {
 		spyOn(config_handler, "getConfig");
 
 		cli.generate(["custom_config.json"]);
-	
+
 		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
 	});
 
@@ -90,7 +88,7 @@ describe("generate a site", function() {
 		spyOn(generator, "generate");
 
 		cli.generate(["--blank"]);
-	
+
 		expect(generator.setup).toHaveBeenCalledWith({ "generator": { "blank": true }, "plugins": { "generator_hooks": { "console_output": jasmine.any(String) } } });
 	});
 
@@ -102,7 +100,7 @@ describe("generate a site", function() {
 		spyOn(generator, "generate");
 
 		cli.generate([]);
-	
+
 		expect(generator.setup).toHaveBeenCalledWith({ "generator": { "blank": false }, "plugins": { "generator_hooks": { "console_output": jasmine.any(String), "sample_hook": {} } } });
 
 	});
@@ -117,7 +115,7 @@ describe("generate a site", function() {
 		spyOn(generator, "generate");
 
 		cli.generate(["custom_config.json"]);
-	
+
 		expect(generator.setup).toHaveBeenCalledWith(dummy_config);
 	});
 
@@ -131,7 +129,7 @@ describe("generate a site", function() {
 		spyOn(generator, "generate");
 
 		cli.generate(["custom_config.json"]);
-	
+
 		expect(generator.generate).toHaveBeenCalledWith(jasmine.any(Function));
 	});
 
@@ -145,7 +143,7 @@ describe("publish a site", function() {
 		spyOn(publisher, "publish");
 
 		cli.publish(["custom_config.json"]);
-	
+
 		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
 	});
 
@@ -153,7 +151,7 @@ describe("publish a site", function() {
 		var spyConfigObj = jasmine.createSpy();
 
 		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
-			return callback(spyConfigObj);	
+			return callback(spyConfigObj);
 		});
 
 		spyOn(publisher, "publish");

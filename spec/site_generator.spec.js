@@ -14,22 +14,22 @@ describe("setup", function(){
 			template_engine: "sample_template_engine",
 			cache_store: "sample_cache_store",
 			compilers: {
-				".js": "sample_js_compiler",	
-				".css": "sample_css_compiler"	
+				".js": "sample_js_compiler",
+				".css": "sample_css_compiler"
 			},
 			generator_hooks: {
-				"sample": "sample_hook"	
+				"sample": "sample_hook"
 			}
 		},
 		generator: {
 			blank: true,
 			skip_paths: [ "path/ignore/page1", "path/ignore/page1" ]
 		}
-	}
+	};
 
 	it("set the blank state flag", function() {
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+			return {"id": id};
 		});
 
 		site_generator.setup(sample_config);
@@ -38,7 +38,7 @@ describe("setup", function(){
 
 	it("set the paths to skip", function() {
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+			return {"id": id};
 		});
 
 		site_generator.setup(sample_config);
@@ -47,7 +47,7 @@ describe("setup", function(){
 
 	it("setup the templates handler", function(){
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+			return {"id": id};
 		});
 
 		site_generator.setup(sample_config);
@@ -56,7 +56,7 @@ describe("setup", function(){
 
 	it("setup the contents handler", function(){
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+			return {"id": id};
 		});
 
 		site_generator.setup(sample_config);
@@ -65,7 +65,7 @@ describe("setup", function(){
 
 	it("setup the template engine", function(){
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+			return {"id": id};
 		});
 
 		site_generator.setup(sample_config);
@@ -75,7 +75,7 @@ describe("setup", function(){
 
 	it("setup the cache store", function(){
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+			return {"id": id};
 		});
 
 		site_generator.setup(sample_config);
@@ -87,10 +87,10 @@ describe("setup", function(){
 		var sample_config = {"plugins": {"cache_store": "./sample_cache_store" }};
 
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return 	{}
+			return {};
 		});
 
-		spyOn(site_generator, "setup");	
+		spyOn(site_generator, "setup");
 
 		site_generator.setup(sample_config);
 		expect(site_generator.setup).toHaveBeenCalledWith(sample_config);
@@ -98,7 +98,7 @@ describe("setup", function(){
 
 	it("setup each compiler", function(){
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+			return {"id": id};
 		});
 
 		site_generator.setup(sample_config);
@@ -110,7 +110,7 @@ describe("setup", function(){
 		site_generator.generatorHooks = [];
 
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};	
+			return {"id": id};
 		});
 
 		site_generator.setup(sample_config);
@@ -132,7 +132,7 @@ describe("generate site", function() {
 
 	it("collect all paths", function() {
 		spyOn(site_generator, "clearCache").andCallFake(function(callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "collectPaths");
@@ -147,11 +147,11 @@ describe("generate site", function() {
 		var sample_paths = ["path/test", "path/test1"];
 
 		spyOn(site_generator, "clearCache").andCallFake(function(callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "collectPaths").andCallFake(function(callback) {
-			return callback(sample_paths);	
+			return callback(sample_paths);
 		});
 
 		spyOn(site_generator, "renderEachPath");
@@ -166,15 +166,15 @@ describe("generate site", function() {
 		var sample_paths = ["path/test", "path/test1"];
 
 		spyOn(site_generator, "clearCache").andCallFake(function(callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "collectPaths").andCallFake(function(callback) {
-			return callback(sample_paths);	
+			return callback(sample_paths);
 		});
 
 		spyOn(site_generator, "renderEachPath").andCallFake(function(paths, callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "buildBundles");
@@ -188,19 +188,19 @@ describe("generate site", function() {
 	it("call generator hooks with completed flag set", function() {
 		var sample_paths = ["path/test", "path/test1"];
 		spyOn(site_generator, "clearCache").andCallFake(function(callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "collectPaths").andCallFake(function(callback) {
-			return callback(sample_paths);	
+			return callback(sample_paths);
 		});
 
 		spyOn(site_generator, "renderEachPath").andCallFake(function(paths, callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "buildBundles").andCallFake(function(callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "runGeneratorHooks");
@@ -214,23 +214,23 @@ describe("generate site", function() {
 	it("call the user provided callback", function() {
 		var sample_paths = ["path/test", "path/test1"];
 		spyOn(site_generator, "clearCache").andCallFake(function(callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "collectPaths").andCallFake(function(callback) {
-			return callback(sample_paths);	
+			return callback(sample_paths);
 		});
 
 		spyOn(site_generator, "renderEachPath").andCallFake(function(paths, callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "buildBundles").andCallFake(function(callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, completed, callback) {
-			return callback();	
+			return callback();
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -244,10 +244,10 @@ describe("generate site", function() {
 describe("clear cache", function() {
 
 	it("call to clear cache if blank state is set", function() {
-		spyClearCache = jasmine.createSpy();
+		var spyClearCache = jasmine.createSpy();
 		site_generator.cacheStore = { "clear": spyClearCache };
 
-		site_generator.blankState = true;	
+		site_generator.blankState = true;
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.clearCache(spyCallback);
@@ -256,7 +256,7 @@ describe("clear cache", function() {
 	});
 
 	it("proceed with callback if blank state is not set", function() {
-		site_generator.blankState = false;	
+		site_generator.blankState = false;
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.clearCache(spyCallback);
@@ -266,13 +266,13 @@ describe("clear cache", function() {
 	});
 
 	it("call the callback after clearing cache", function() {
-		spyClearCache = jasmine.createSpy();
+		var spyClearCache = jasmine.createSpy();
 		spyClearCache.andCallFake(function(callback) {
-			return callback();	
+			return callback();
 		});
 		site_generator.cacheStore = { "clear": spyClearCache };
 
-		site_generator.blankState = true;	
+		site_generator.blankState = true;
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.clearCache(spyCallback);
@@ -296,7 +296,7 @@ describe("collect sections", function() {
 	it("collect the sections from the contents", function(){
 		var spyTemplates = jasmine.createSpy();
 		spyTemplates.andCallFake(function(callback){
-			return callback([]);	
+			return callback([]);
 		});
 		site_generator.templates = {"getSections": spyTemplates};
 
@@ -312,13 +312,13 @@ describe("collect sections", function() {
 	it("call the callback with the union of both template and content sections", function(){
 		var spyTemplates = jasmine.createSpy();
 		spyTemplates.andCallFake(function(callback){
-			return callback(["about", "assets", "contact"]);	
+			return callback(["about", "assets", "contact"]);
 		});
 		site_generator.templates = {"getSections": spyTemplates};
 
 		var spyContents = jasmine.createSpy();
 		spyContents.andCallFake(function(callback){
-			return callback(["about", "contact", "blog", "other"]);	
+			return callback(["about", "contact", "blog", "other"]);
 		});
 		site_generator.contents = {"getSections": spyContents};
 
@@ -346,11 +346,11 @@ describe("get static and compilable templates", function(){
 		var spyGetTemplates = jasmine.createSpy();
 		spyGetTemplates.andCallFake(function(path, callback){
 			return callback(null, [{"full_path": "path/sub_dir/test.html", "last_modified": new Date(2012, 6, 16)},
-												  	 {"full_path": "path/sub_dir/test.mustache", "last_modified": new Date(2012, 6, 16)},
-												  	 {"full_path": "path/sub_dir/_layout.mustache", "last_modified": new Date(2012, 6, 16)},
-												  	 {"full_path": "path/sub_dir/_header.mustache", "last_modified": new Date(2012, 6, 16)},
-												  	 {"full_path": "path/sub_dir/image.png", "last_modified": new Date(2012, 6, 16)}
-											]);	
+														 {"full_path": "path/sub_dir/test.mustache", "last_modified": new Date(2012, 6, 16)},
+														 {"full_path": "path/sub_dir/_layout.mustache", "last_modified": new Date(2012, 6, 16)},
+														 {"full_path": "path/sub_dir/_header.mustache", "last_modified": new Date(2012, 6, 16)},
+														 {"full_path": "path/sub_dir/image.png", "last_modified": new Date(2012, 6, 16)}
+														]);
 		});
 		site_generator.templates = {"getTemplates": spyGetTemplates};
 		site_generator.templateEngine = {"extension": ".mustache"};
@@ -365,11 +365,11 @@ describe("get static and compilable templates", function(){
 		var spyGetTemplates = jasmine.createSpy();
 		spyGetTemplates.andCallFake(function(path, callback){
 			return callback(null, [{"full_path": "path/sub_dir/test.html", "last_modified": new Date(2012, 6, 16)},
-												  	 {"full_path": "path/sub_dir/test.mustache", "last_modified": new Date(2012, 6, 16)},
-												  	 {"full_path": "path/sub_dir/_layout.mustache", "last_modified": new Date(2012, 6, 16)},
-												  	 {"full_path": "path/sub_dir/script.coffee", "last_modified": new Date(2012, 6, 16)},
-												  	 {"full_path": "path/sub_dir/styles.less", "last_modified": new Date(2012, 6, 16)}
-											]);	
+														 {"full_path": "path/sub_dir/test.mustache", "last_modified": new Date(2012, 6, 16)},
+														 {"full_path": "path/sub_dir/_layout.mustache", "last_modified": new Date(2012, 6, 16)},
+														 {"full_path": "path/sub_dir/script.coffee", "last_modified": new Date(2012, 6, 16)},
+														 {"full_path": "path/sub_dir/styles.less", "last_modified": new Date(2012, 6, 16)}
+											]);
 		});
 		site_generator.templates = {"getTemplates": spyGetTemplates};
 		site_generator.templateEngine = {"extension": ".mustache"};
@@ -392,7 +392,7 @@ describe("collect paths for section", function() {
 
 	it("collect content paths for the section", function() {
 		var spyGetContents = jasmine.createSpy();
-		site_generator.contents = {"getContents": spyGetContents}
+		site_generator.contents = { "getContents": spyGetContents };
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.collectPathsForSection("path/test", spyCallback);
@@ -403,9 +403,9 @@ describe("collect paths for section", function() {
 	it("collect template paths for section", function(){
 		var spyGetContents = jasmine.createSpy();
 		spyGetContents.andCallFake(function(section, callback){
-			return callback(null, []);	
+			return callback(null, []);
 		});
-		site_generator.contents = {"getContents": spyGetContents}
+		site_generator.contents = { "getContents": spyGetContents };
 
 		spyOn(site_generator, "getStaticAndCompilableTemplates");
 
@@ -418,12 +418,12 @@ describe("collect paths for section", function() {
 	it("call the callback with both contents and templates paths", function(){
 		var spyGetContents = jasmine.createSpy();
 		spyGetContents.andCallFake(function(section, callback){
-			return callback(null, ["path/test/page1", "path/test/page2"]);	
+			return callback(null, ["path/test/page1", "path/test/page2"]);
 		});
-		site_generator.contents = {"getContents": spyGetContents}
+		site_generator.contents = { "getContents": spyGetContents };
 
 		spyOn(site_generator, "getStaticAndCompilableTemplates").andCallFake(function(section, callback){
-			return callback(null, ["path/test/image.jpg", "path/test/styles.css"]);	
+			return callback(null, ["path/test/image.jpg", "path/test/styles.css"]);
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -449,11 +449,11 @@ describe("collect paths", function() {
 
 	it("collect paths for each section", function() {
 		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
-			return callback(null, [ "path1", "path2" ]);	
+			return callback(null, [ "path1", "path2" ]);
 		});
 
 		spyOn(site_generator, "collectPathsForSection").andCallFake(function(section, callback) {
-			return callback(null, [ ]);	
+			return callback(null, [ ]);
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -466,11 +466,11 @@ describe("collect paths", function() {
 		site_generator.pathsToSkip = [ "/path/sub*" ];
 
 		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
-			return callback(null, [ "/path/sub", "/path/sub/subsub", "/path/other" ]);	
+			return callback(null, [ "/path/sub", "/path/sub/subsub", "/path/other" ]);
 		});
 
 		spyOn(site_generator, "collectPathsForSection").andCallFake(function(section, callback) {
-			return callback(null, [ ]);	
+			return callback(null, [ ]);
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -481,11 +481,11 @@ describe("collect paths", function() {
 
 	it("call the callback with collected paths", function() {
 		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
-			return callback(null, [ "path1", "path2" ]);	
+			return callback(null, [ "path1", "path2" ]);
 		});
 
 		spyOn(site_generator, "collectPathsForSection").andCallFake(function(section, callback) {
-			return callback(null, [ "path/test1", "path/test2" ]);	
+			return callback(null, [ "path/test1", "path/test2" ]);
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -498,14 +498,14 @@ describe("collect paths", function() {
 		site_generator.pathsToSkip = [ "path/test1", "path/test3" ];
 
 		spyOn(site_generator, "collectSections").andCallFake(function(callback) {
-			return callback(null, [ "path1", "path2" ]);	
+			return callback(null, [ "path1", "path2" ]);
 		});
 
 		spyOn(site_generator, "collectPathsForSection").andCallFake(function(section, callback) {
 			if (section === "path1") {
-				return callback(null, [ "path/test1", "path/test2" ]);	
+				return callback(null, [ "path/test1", "path/test2" ]);
 			} else {
-				return callback(null, [ "path/test3", "path/test4" ]);	
+				return callback(null, [ "path/test3", "path/test4" ]);
 			}
 		});
 
@@ -520,7 +520,7 @@ describe("collect paths", function() {
 describe("render path", function() {
 
 	it("get the last updated date from the cache", function() {
-		var spyCacheStat = jasmine.createSpy();	
+		var spyCacheStat = jasmine.createSpy();
 		site_generator.cacheStore = { "stat": spyCacheStat };
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
@@ -532,9 +532,9 @@ describe("render path", function() {
 	});
 
 	it("call to render method of renderer", function() {
-		var spyCacheStat = jasmine.createSpy();	
+		var spyCacheStat = jasmine.createSpy();
 		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
-			return callback(null, { "mtime": new Date(2012, 6, 27) });	
+			return callback(null, { "mtime": new Date(2012, 6, 27) });
 		});
 		site_generator.cacheStore = { "stat": spyCacheStat };
 
@@ -549,19 +549,19 @@ describe("render path", function() {
 	});
 
 	it("update the cache with the modified output", function() {
-		var spyCacheStat = jasmine.createSpy();	
+		var spyCacheStat = jasmine.createSpy();
 		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
-			return callback(null, { "mtime": new Date(2012, 6, 27) });	
+			return callback(null, { "mtime": new Date(2012, 6, 27) });
 		});
 
-		var spyCacheUpdate = jasmine.createSpy();	
+		var spyCacheUpdate = jasmine.createSpy();
 
 		site_generator.cacheStore = { "stat": spyCacheStat, "update": spyCacheUpdate };
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
 		spyOn(page_renderer, "render").andCallFake(function(request_path, file_extension, cache_last_updated, options, callback){
-			return callback({"modified": true, "body": "rendered output"});	
+			return callback({"modified": true, "body": "rendered output"});
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -571,16 +571,16 @@ describe("render path", function() {
 	});
 
 	it("call the callback directly if output is not modified", function() {
-		var spyCacheStat = jasmine.createSpy();	
+		var spyCacheStat = jasmine.createSpy();
 		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
-			return callback(null, { "mtime": new Date(2012, 6, 27) });	
+			return callback(null, { "mtime": new Date(2012, 6, 27) });
 		});
 		site_generator.cacheStore = { "stat": spyCacheStat };
 
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
 		spyOn(page_renderer, "render").andCallFake(function(request_path, file_extension, cache_last_updated, options, callback) {
-			return callback({ "modified": false, "body": null });	
+			return callback({ "modified": false, "body": null });
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -597,11 +597,11 @@ describe("render each path", function() {
 		var sample_paths = [ "path/test1", "path/test2" ];
 
 		spyOn(site_generator, "renderPath").andCallFake(function(section, callback) {
-			return callback();	
+			return callback();
 		});
 
 		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, completed, callback) {
-			return callback();	
+			return callback();
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -614,11 +614,11 @@ describe("render each path", function() {
 		var sample_paths = [ "path/test1", "path/test2" ];
 
 		spyOn(site_generator, "renderPath").andCallFake(function(path, callback) {
-			return callback(path);	
+			return callback(path);
 		});
 
 		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, completed, callback) {
-			return callback();	
+			return callback();
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -631,11 +631,11 @@ describe("render each path", function() {
 		var sample_paths = [ "path/test1", "path/test2" ];
 
 		spyOn(site_generator, "renderPath").andCallFake(function(path, callback) {
-			return callback(path);	
+			return callback(path);
 		});
 
 		spyOn(site_generator, "runGeneratorHooks").andCallFake(function(path, completed, callback) {
-			return callback();	
+			return callback();
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -651,7 +651,7 @@ describe("build bundles", function() {
 	it("call touch bundles method with callbacks", function() {
 		spyOn(asset_bundler, "touchBundles");
 
-		var spyCallback = jasmine.createSpy();	
+		var spyCallback = jasmine.createSpy();
 		site_generator.buildBundles(spyCallback);
 
 		expect(asset_bundler.touchBundles).toHaveBeenCalledWith(jasmine.any(Function), spyCallback);
@@ -660,12 +660,12 @@ describe("build bundles", function() {
 });
 
 describe("run generator hooks", function() {
-	
+
 	it("call each generator hook with given path", function() {
 		var spyGeneratorHook = jasmine.createSpy();
 		var spyGeneratorHook2 = jasmine.createSpy();
 		site_generator.generatorHooks = [ { "run": spyGeneratorHook }, { "run": spyGeneratorHook2 } ];
-	
+
 		var spyCallback = jasmine.createSpy();
 		site_generator.runGeneratorHooks("path/test", false, spyCallback);
 
@@ -678,7 +678,7 @@ describe("run generator hooks", function() {
 			return callback();
 		});
 		site_generator.generatorHooks = [ { "run": spyGeneratorHook }, { "run": spyGeneratorHook } ];
-	
+
 		var spyCallback = jasmine.createSpy();
 		site_generator.runGeneratorHooks("path/test", false, spyCallback);
 

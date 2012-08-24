@@ -10,18 +10,18 @@ describe("start server", function(){
   it("extend the default config with supplied config", function() {
     var supplied_config = { server: { port: 4000 } };
 		spyOn(connect, "call").andCallFake(function() {
-			return {"use": function(){}, "listen": function(){} }	
+			return {"use": function(){}, "listen": function(){} };
 		});
 
 		spyOn(pageServer, "setup");
 
     server.startServer(supplied_config);
     expect(server.config.server.port).toEqual(4000);
-  }); 
+  });
 
 	it("setup page server with extended config", function() {
 		spyOn(connect, "call").andCallFake(function() {
-			return {"use": function(middleware){}, "listen": function(){} }	
+			return {"use": function(middleware){}, "listen": function(){} };
 		});
 
 		spyOn(pageServer, "setup");

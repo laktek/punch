@@ -5,7 +5,7 @@ describe("calling compile", function() {
 
 	it("calls the callback with the result", function(){
 		spyOn(coffee_script, "compile").andCallFake(function(input, options){
-			return "rendered file";	
+			return "rendered file";
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -16,7 +16,7 @@ describe("calling compile", function() {
 
 	it("calls the callback with the error", function(){
 		spyOn(coffee_script, "compile").andCallFake(function(input, callback){
-			throw "error"
+			throw "error";
 		});
 
 		var spyCallback = jasmine.createSpy();

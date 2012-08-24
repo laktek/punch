@@ -6,19 +6,19 @@ describe("calling minify", function() {
 
 	it("calls the callback with the result", function(){
 		spyOn(jsp, "parse").andCallFake(function(input){
-			return "initial ast";	
+			return "initial ast";
 		});
 
 		spyOn(pro, "ast_mangle").andCallFake(function(input){
-			return "initial ast";	
+			return "initial ast";
 		});
 
 		spyOn(pro, "ast_squeeze").andCallFake(function(input){
-			return "initial ast";	
+			return "initial ast";
 		});
 
 		spyOn(pro, "gen_code").andCallFake(function(input){
-			return "{ function(){} };";	
+			return "{ function(){} };";
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -29,7 +29,7 @@ describe("calling minify", function() {
 
 	it("calls the callback with the error", function(){
 		spyOn(jsp, "parse").andCallFake(function(input){
-			throw "error"
+			throw "error";
 		});
 
 		var spyCallback = jasmine.createSpy();

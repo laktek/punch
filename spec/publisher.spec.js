@@ -16,7 +16,7 @@ describe("calling publish", function() {
 		spyOn(site_generator, "setup");
 		spyOn(site_generator, "generate");
 
-		publisher.publish(supplied_config, "dummy");	
+		publisher.publish(supplied_config, "dummy");
 
 		expect(publisher.config.foo).toEqual("bar");
 	});
@@ -30,8 +30,8 @@ describe("calling publish", function() {
 		spyOn(site_generator, "setup");
 		spyOn(site_generator, "generate");
 
-		publisher.publish(supplied_config, "s3");	
-	
+		publisher.publish(supplied_config, "s3");
+
 		expect(publisher.requireStrategy).toHaveBeenCalledWith("s3");
 	});
 
@@ -44,14 +44,14 @@ describe("calling publish", function() {
 		spyOn(site_generator, "setup");
 		spyOn(site_generator, "generate");
 
-		publisher.publish(supplied_config, null);	
-	
+		publisher.publish(supplied_config, null);
+
 		expect(publisher.requireStrategy).toHaveBeenCalledWith("sftp");
 	});
 
 	it("throws an error if no publishing strategy available in config", function(){
 		var supplied_config = { "foo": {"sftp": {} } };
-		var error = "No publishing settings found. Specify the publish settings in the config file."
+		var error = "No publishing settings found. Specify the publish settings in the config file.";
 
 		expect(function(){publisher.publish(supplied_config, null)}).toThrow(error);
 	});
@@ -66,7 +66,7 @@ describe("calling publish", function() {
 		spyOn(site_generator, "setup");
 		spyOn(site_generator, "generate");
 
-		publisher.publish(supplied_config, "s3");	
+		publisher.publish(supplied_config, "s3");
 
 		expect(publisher.getLastPublishedDate).toHaveBeenCalled();
 	});
@@ -81,7 +81,7 @@ describe("calling publish", function() {
 		spyOn(site_generator, "setup");
 		spyOn(site_generator, "generate");
 
-		publisher.publish(supplied_config, "s3");	
+		publisher.publish(supplied_config, "s3");
 
 		expect(site_generator.generate).toHaveBeenCalled();
 	});
@@ -97,11 +97,11 @@ describe("calling publish", function() {
 
 		spyOn(site_generator, "setup");
 		spyOn(site_generator, "generate").andCallFake(function(callback){
-			return callback();	
+			return callback();
 		});
 
-		publisher.publish(supplied_config, "s3");	
-	
+		publisher.publish(supplied_config, "s3");
+
 		expect(publisher.delegatedPublish).toHaveBeenCalledWith(strategy_obj);
 	});
 
@@ -110,19 +110,19 @@ describe("calling publish", function() {
 describe("require strategy", function() {
 
 	it("throw an error if the strategy is not available", function() {
-		var error = "s3 isn't available as a publishing strategy."
+		var error = "s3 isn't available as a publishing strategy.";
 		publisher.config = { "plugins": {"publishers": {}} };
 
 		expect(function(){ publisher.requireStrategy("s3") }).toThrow(error);
 
-	});	
+	});
 
 	it("require the given strategy", function() {
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
-			return { "id": id };	
+			return { "id": id };
 		});
 
-		publisher.config =  {"plugins": {"publishers": {"sample": "sample_publisher"}} }		
+		publisher.config =  {"plugins": {"publishers": {"sample": "sample_publisher"}} };
 
 		expect(publisher.requireStrategy("sample").id).toEqual("sample_publisher");
 	});
@@ -153,7 +153,7 @@ describe("set last published date", function() {
 
 	it("parse and set the output of timestamp file as the last published date", function() {
 		spyOn(fs, "readFileSync").andCallFake(function() {
-			return "1343691639943"	
+			return "1343691639943";
 		});
 
 		publisher.config = { "publish": {} };
@@ -166,7 +166,7 @@ describe("set last published date", function() {
 
 	it("set last published date to null if an error occurrs when reading the timestamp file", function() {
 		spyOn(fs, "readFileSync").andCallFake(function() {
-			throw "error"
+			throw "error";
 		});
 
 		publisher.config = { "publish": {} };
@@ -189,7 +189,7 @@ describe("delegate publish", function(){
 		});
 
 		it("throws an error if the strategy object's publish propetry is not a function", function() {
-			
+
 			var strategy_obj = { "publish": null };
 			var error = "Publish property not defined or it's not a function.";
 
@@ -205,7 +205,7 @@ describe("delegate publish", function(){
 			publisher.config = sample_config;
 			publisher.lastPublishedDate = new Date(2012, 7, 1);
 
-			publisher.delegatedPublish(strategy_obj);		
+			publisher.delegatedPublish(strategy_obj);
 
 			expect(publishCallback).toHaveBeenCalledWith(sample_config, new Date(2012, 7, 1), jasmine.any(Function));
 		});
@@ -217,7 +217,7 @@ describe("after publish", function(){
 		spyOn(publisher, "setLastPublishedDate");
 
 		publisher.afterPublish();
-		
-		expect(publisher.setLastPublishedDate).toHaveBeenCalled();	
+
+		expect(publisher.setLastPublishedDate).toHaveBeenCalled();
 	});
 });

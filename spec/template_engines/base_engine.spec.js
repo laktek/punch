@@ -1,9 +1,9 @@
-var base_renderer = require("../../lib/template_engines/base_engine.js");
+var BaseEngine = require("../../lib/template_engines/base_engine.js");
 
 describe("creating a new instance", function(){
 
 	it("accept last rendered date as an option", function(){
-		var base_instance = new base_renderer({"lastRender": new Date(2012, 6, 18)}); 
+		var base_instance = new BaseEngine({"lastRender": new Date(2012, 6, 18)});
 		expect(base_instance.lastRender).toEqual(new Date(2012, 6, 18));
 	});
 
@@ -13,7 +13,7 @@ describe("setting template", function() {
 
 	it("set the template", function(){
 
-		var base_instance = new base_renderer(); 
+		var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setTemplate("template", new Date(2012, 6, 18));
@@ -22,8 +22,8 @@ describe("setting template", function() {
 	});
 
 	it("update the last modified date", function(){
-	
-    var base_instance = new base_renderer(); 
+
+    var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setTemplate("template", new Date(2012, 6, 18));
@@ -33,7 +33,7 @@ describe("setting template", function() {
 
  it("call render", function(){
 
-    var base_instance = new base_renderer(); 
+    var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setTemplate("template", new Date(2012, 6, 18));
@@ -47,7 +47,7 @@ describe("setting content", function() {
 
 	it("set the content", function(){
 
-		var base_instance = new base_renderer(); 
+		var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setContent({"key": "value"}, new Date(2012, 6, 18));
@@ -56,8 +56,8 @@ describe("setting content", function() {
 	});
 
 	it("update the last modified date", function(){
-	
-    var base_instance = new base_renderer(); 
+
+    var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setContent({"key": "value"}, new Date(2012, 6, 18));
@@ -67,7 +67,7 @@ describe("setting content", function() {
 
 	it("call render", function(){
 
-    var base_instance = new base_renderer(); 
+    var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setContent({"key": "value"}, new Date(2012, 6, 18));
@@ -81,7 +81,7 @@ describe("setting partials", function() {
 
 	it("set partials", function(){
 
-		var base_instance = new base_renderer(); 
+		var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setPartials({"partial": "template"}, new Date(2012, 6, 18));
@@ -90,8 +90,8 @@ describe("setting partials", function() {
 	});
 
 	it("update the last modified date", function(){
-	
-    var base_instance = new base_renderer(); 
+
+    var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setPartials({"partial": "template"}, new Date(2012, 6, 18));
@@ -101,7 +101,7 @@ describe("setting partials", function() {
 
 	it("call render", function(){
 
-    var base_instance = new base_renderer(); 
+    var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setPartials({"partial": "template"}, new Date(2012, 6, 18));
@@ -114,7 +114,7 @@ describe("setting partials", function() {
 describe("setting helpers", function() {
 
 	it("set helpers", function(){
-		var base_instance = new base_renderer(); 
+		var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setHelpers({ "tag_helpers": { "sample_tag_helper": "helper" }, "block_helpers": { "sample_tag_helper": "helper" } }, { "option": "value" });
@@ -124,7 +124,7 @@ describe("setting helpers", function() {
 
 	it("call render", function(){
 
-    var base_instance = new base_renderer(); 
+    var base_instance = new BaseEngine();
     spyOn(base_instance, "render");
 
 		base_instance.setHelpers({ "sample_helper": "helper" }, { "option": "value" });
@@ -137,7 +137,7 @@ describe("setting helpers", function() {
 describe("cancel render", function() {
 
 	it("do nothing if rendering already canceled", function() {
-		var base_instance = new base_renderer(); 
+		var base_instance = new BaseEngine();
 		base_instance.rendering_canceled = true;
 		spyOn(base_instance, "emit");
 
@@ -146,7 +146,7 @@ describe("cancel render", function() {
 	});
 
 	it("set rendering cancled flag", function() {
-		var base_instance = new base_renderer(); 
+		var base_instance = new BaseEngine();
 		spyOn(base_instance, "emit");
 
 		base_instance.cancelRender("error");
@@ -154,7 +154,7 @@ describe("cancel render", function() {
 	});
 
 	it("emit renderCanceled event", function() {
-		var base_instance = new base_renderer(); 
+		var base_instance = new BaseEngine();
 		spyOn(base_instance, "emit");
 
 		base_instance.cancelRender("error");
@@ -166,7 +166,7 @@ describe("cancel render", function() {
 describe("calling render", function(){
 
 	it("call the render function if template, content, partials and helpers are ready", function(){
-    var base_instance = new base_renderer(); 
+    var base_instance = new BaseEngine();
 		base_instance.template = "template";
 		base_instance.content = {};
 		base_instance.partials = {};
@@ -181,7 +181,7 @@ describe("calling render", function(){
 	});
 
 	it("don't call render if rendereding canceled", function(){
-    var base_instance = new base_renderer(); 
+    var base_instance = new BaseEngine();
 		base_instance.template = "template";
 		base_instance.content = {};
 		base_instance.partials = {};
@@ -196,7 +196,7 @@ describe("calling render", function(){
 	});
 
 	it("don't call render if not modified", function(){
-    var base_instance = new base_renderer({"lastRender": new Date(2012, 6, 18)}); 
+    var base_instance = new BaseEngine({"lastRender": new Date(2012, 6, 18)});
 		base_instance.template = "template";
 		base_instance.content = {};
 		base_instance.partials = {};
@@ -211,7 +211,7 @@ describe("calling render", function(){
 	});
 
 	it("emit render complete event", function(){
-		var base_instance = new base_renderer({"lastRender": new Date(2012, 6, 18)}); 
+		var base_instance = new BaseEngine({"lastRender": new Date(2012, 6, 18)});
 		base_instance.template = "template";
 		base_instance.content = {};
 		base_instance.partials = {};
@@ -219,7 +219,7 @@ describe("calling render", function(){
 		base_instance.lastModified = new Date(2012, 6, 20);
 
 		spyOn(base_instance, "renderFunction").andCallFake(function(template, content, partials, helpers){
-			return "rendered output";	
+			return "rendered output";
 		});
 
 		spyOn(base_instance, "emit");
@@ -229,7 +229,7 @@ describe("calling render", function(){
 	});
 
 	it("emit render canceled event if rendering error occurres", function(){
-    var base_instance = new base_renderer({"lastRender": new Date(2012, 6, 18)}); 
+    var base_instance = new BaseEngine({"lastRender": new Date(2012, 6, 18)});
 		base_instance.template = "template";
 		base_instance.content = {};
 		base_instance.partials = {};
@@ -237,9 +237,8 @@ describe("calling render", function(){
 		base_instance.lastModified = new Date(2012, 6, 20);
 
 		spyOn(base_instance, "renderFunction").andCallFake(function(template, content, partials, helpers){
-			throw "error"
+			throw "error";
 		});
-
 
 		spyOn(base_instance, "emit");
 

@@ -7,7 +7,7 @@ describe("parsing given content", function() {
 		spyOn(marked, "setOptions");
 
 		spyOn(marked, "parse").andCallFake(function(input){
-			return "parsed file";	
+			return "parsed file";
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -21,7 +21,7 @@ describe("parsing given content", function() {
 		spyOn(marked, "setOptions");
 
 		spyOn(marked, "parse").andCallFake(function(input){
-			throw "error"
+			throw "error";
 		});
 
 		var spyCallback = jasmine.createSpy();

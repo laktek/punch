@@ -8,7 +8,7 @@ describe("stylesheet bundle tag", function(){
 		var spyCallback = jasmine.createSpy();
 		asset_bundle_helper_obj.get( "/path/test", ".html", { "host": "" }, spyCallback);
 
-		expect(asset_bundle_helper.stylesheet_bundle("/assets/all.css")).toEqual('<link rel="stylesheet" type="text/css" media="screen" href="/assets/all.css">');	
+		expect(asset_bundle_helper.stylesheet_bundle("/assets/all.css")).toEqual("<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/all.css\">");
 	});
 
 	it("output tags for individual files in bundle when host is a local", function(){
@@ -16,7 +16,7 @@ describe("stylesheet bundle tag", function(){
 		var spyCallback = jasmine.createSpy();
 		asset_bundle_helper_obj.get( "/path/test", ".html", { "host": "localhost:9009" }, spyCallback);
 
-		expect(asset_bundle_helper.stylesheet_bundle("/assets/all.css")).toEqual('<link rel="stylesheet" type="text/css" media="screen" href="/assets/initial.css">\n<link rel="stylesheet" type="text/css" media="screen" href="/assets/site.css">');	
+		expect(asset_bundle_helper.stylesheet_bundle("/assets/all.css")).toEqual("<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/initial.css\">\n<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/site.css\">");
 	});
 
 });
@@ -28,7 +28,7 @@ describe("javascript bundle tag", function(){
 		var spyCallback = jasmine.createSpy();
 		asset_bundle_helper_obj.get( "/path/test", ".html", { "host": undefined }, spyCallback);
 
-		expect(asset_bundle_helper.javascript_bundle("/assets/all.js")).toEqual('<script src="/assets/all.js"></script>');	
+		expect(asset_bundle_helper.javascript_bundle("/assets/all.js")).toEqual("<script src=\"/assets/all.js\"></script>");
 	});
 
 	it("output tags for individual files in bundle when host is a local", function(){
@@ -36,7 +36,7 @@ describe("javascript bundle tag", function(){
 		var spyCallback = jasmine.createSpy();
 		asset_bundle_helper_obj.get( "/path/test", ".html", { "host": "localhost:9009" }, spyCallback);
 
-		expect(asset_bundle_helper.javascript_bundle("/assets/all.js")).toEqual('<script src="/assets/jquery.js"></script>\n<script src="/assets/site.js"></script>');	
+		expect(asset_bundle_helper.javascript_bundle("/assets/all.js")).toEqual("<script src=\"/assets/jquery.js\"></script>\n<script src=\"/assets/site.js\"></script>");
 	});
 
 });

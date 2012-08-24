@@ -4,19 +4,19 @@ var list_helper = list_helper_obj.directAccess()["block_helpers"];
 describe("format list", function(){
 
 	it("return empty strings for null values", function(){
-		expect(list_helper.format_list(null)).toEqual("");	
+		expect(list_helper.format_list(null)).toEqual("");
 	});
 
 	it("return the given string if it's not an array literal", function(){
-		expect(list_helper.format_list("hello")).toEqual("hello");	
+		expect(list_helper.format_list("hello")).toEqual("hello");
 	});
 
 	it("return a formatted string for an array literal", function(){
-		expect(list_helper.format_list([ "Peter", "John", "Andrew" ])).toEqual("Peter, John &amp; Andrew");	
+		expect(list_helper.format_list([ "Peter", "John", "Andrew" ])).toEqual("Peter, John &amp; Andrew");
 	});
 
 	it("return a formatted string for an array literal as a string", function(){
-		expect(list_helper.format_list('Peter,John,Andrew')).toEqual("Peter, John &amp; Andrew");	
+		expect(list_helper.format_list("Peter,John,Andrew")).toEqual("Peter, John &amp; Andrew");
 	});
 
 });
@@ -24,19 +24,19 @@ describe("format list", function(){
 describe("first item of the list", function(){
 
 	it("return empty strings for null values", function(){
-		expect(list_helper.first(null)).toEqual("");	
+		expect(list_helper.first(null)).toEqual("");
 	});
 
 	it("return the given string if it's not an array literal", function(){
-		expect(list_helper.first("hello")).toEqual("hello");	
+		expect(list_helper.first("hello")).toEqual("hello");
 	});
 
 	it("return a formatted string for an array literal", function(){
-		expect(list_helper.first(["Peter", "John", "Andrew"])).toEqual("Peter");	
+		expect(list_helper.first(["Peter", "John", "Andrew"])).toEqual("Peter");
 	});
 
 	it("return a formatted string for an array literal as a string", function(){
-		expect(list_helper.first('Peter,John,Andrew')).toEqual("Peter");	
+		expect(list_helper.first("Peter,John,Andrew")).toEqual("Peter");
 	});
 
 });
@@ -44,19 +44,19 @@ describe("first item of the list", function(){
 describe("last item of the list", function(){
 
 	it("return empty strings for null values", function(){
-		expect(list_helper.last(null)).toEqual("");	
+		expect(list_helper.last(null)).toEqual("");
 	});
 
 	it("return the given string if it's not an array literal", function(){
-		expect(list_helper.last("hello")).toEqual("hello");	
+		expect(list_helper.last("hello")).toEqual("hello");
 	});
 
 	it("return a formatted string for an array literal", function(){
-		expect(list_helper.last(["Peter", "John", "Andrew"])).toEqual("Andrew");	
+		expect(list_helper.last(["Peter", "John", "Andrew"])).toEqual("Andrew");
 	});
 
 	it("return a formatted string for an array literal as a string", function(){
-		expect(list_helper.last('Peter,John,Andrew')).toEqual("Andrew");	
+		expect(list_helper.last("Peter,John,Andrew")).toEqual("Andrew");
 	});
 
 });

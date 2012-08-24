@@ -8,12 +8,12 @@ describe("calling publish", function() {
 
 		var supplied_config = { "output_dir": "public/" };
 
-		spyOn(s3_publisher, "retrieveOptions");	
-		spyOn(knox, "createClient"); 
-		spyOn(s3_publisher, "fetchAndCopyFiles");	
+		spyOn(s3_publisher, "retrieveOptions");
+		spyOn(knox, "createClient");
+		spyOn(s3_publisher, "fetchAndCopyFiles");
 
 		s3_publisher.publish(supplied_config);
-		
+
 		expect(s3_publisher.retrieveOptions).toHaveBeenCalledWith(supplied_config);
 
 	});
@@ -22,12 +22,12 @@ describe("calling publish", function() {
 		var supplied_config = { "output_dir": "public/" };
 		var s3_config = { "key": "somekey", "secret": "somesecret", "bucket": "somebucket" };
 
-		spyOn(s3_publisher, "retrieveOptions").andReturn(s3_config);	
-		spyOn(knox, "createClient"); 
-		spyOn(s3_publisher, "fetchAndCopyFiles");	
+		spyOn(s3_publisher, "retrieveOptions").andReturn(s3_config);
+		spyOn(knox, "createClient");
+		spyOn(s3_publisher, "fetchAndCopyFiles");
 
 		s3_publisher.publish(supplied_config);
-		
+
 		expect(knox.createClient).toHaveBeenCalledWith(s3_config);
  });
 
@@ -63,7 +63,7 @@ describe("check if a file is modified", function() {
 	it("return true if file modified date is newer than last published date", function() {
 		s3_publisher.lastPublishedDate = new Date(2012, 6, 25);
 
-		expect(s3_publisher.isModified(new Date(2012, 6, 30))).toEqual(true);	
+		expect(s3_publisher.isModified(new Date(2012, 6, 30))).toEqual(true);
 	});
 
 });
@@ -74,8 +74,8 @@ describe("copy a file to s3 bucket", function() {
 		var spy_callback = jasmine.createSpy();
 
 		spyOn(fs, "readFile");
-		
-		s3_publisher.copyFile("output_dir/file.html", spy_callback);	
+
+		s3_publisher.copyFile("output_dir/file.html", spy_callback);
 
 		expect(fs.readFile.mostRecentCall.args[0]).toEqual("output_dir/file.html");
 	});
@@ -84,16 +84,16 @@ describe("copy a file to s3 bucket", function() {
 		var spy_callback = jasmine.createSpy();
 
 		spyOn(fs, "readFile").andCallFake(function(path, callback) {
-			callback(null, new Buffer("sample"));	
+			callback(null, new Buffer("sample"));
 		});
 
-		var dummy_req_obj = { "on": function() { }, "end": function() { } }
+		var dummy_req_obj = { "on": function() { }, "end": function() { } };
 
 		s3_publisher.client = { "put": function() { } };
 
 		spyOn(s3_publisher.client, "put").andReturn(dummy_req_obj);
-		
-		s3_publisher.copyFile("output_dir/sub/file.html", "sub/file.html", spy_callback);	
+
+		s3_publisher.copyFile("output_dir/sub/file.html", "sub/file.html", spy_callback);
 
 		expect(s3_publisher.client.put.mostRecentCall.args[0]).toEqual("sub/file.html");
 	});

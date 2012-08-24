@@ -6,7 +6,7 @@ describe("creating a bare structure", function() {
 
 	it("create the site directory if needed", function() {
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			return callback("error", null);	
+			return callback("error", null);
 		});
 
 		spyOn(fs, "mkdir");
@@ -19,57 +19,57 @@ describe("creating a bare structure", function() {
 
 	it("create the structure if site directory already exists", function() {
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			return callback(null, { "isDirectory": function() { return true } });	
+			return callback(null, { "isDirectory": function() { return true } });
 		});
 
 		spyOn(fs, "mkdir").andCallFake(function(path, callback) {
-			return callback(null);	
+			return callback(null);
 		});
 
 		setup.bare_structure("site_path");
 
 		expect(fs.mkdir).toHaveBeenCalledWith("site_path/templates", jasmine.any(Function));
-	});	
+	});
 
 	it("don't create the structure if site directory creation fails", function() {
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			return callback("error", null);	
+			return callback("error", null);
 		});
 
 		spyOn(fs, "mkdir").andCallFake(function(path, callback) {
 			if (path === "site_path") {
-				return callback("error");	
+				return callback("error");
 			}
 
-			return callback(null);	
+			return callback(null);
 		});
 
 		setup.bare_structure("site_path");
 
 		expect(fs.mkdir).not.toHaveBeenCalledWith("site_path/templates", jasmine.any(Function));
-	});	
+	});
 
 	it("create the templates directory in the given path", function() {
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			return callback(null, { "isDirectory": function() { return false } });	
+			return callback(null, { "isDirectory": function() { return false } });
 		});
 
 		spyOn(fs, "mkdir").andCallFake(function(path, callback) {
-			return callback(null);	
+			return callback(null);
 		});
 
 		setup.bare_structure("site_path");
 
 		expect(fs.mkdir).toHaveBeenCalledWith("site_path/templates", jasmine.any(Function));
-	});	
+	});
 
 	it("create the contents directory in the given path", function() {
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			return callback(null, { "isDirectory": function() { return false } });	
+			return callback(null, { "isDirectory": function() { return false } });
 		});
 
 		spyOn(fs, "mkdir").andCallFake(function(path, callback) {
-			return callback(null);	
+			return callback(null);
 		});
 
 		setup.bare_structure("site_path");
@@ -79,14 +79,14 @@ describe("creating a bare structure", function() {
 
 	it("create the config file in the given path", function() {
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			return callback(null, { "isDirectory": function() { return false } });	
+			return callback(null, { "isDirectory": function() { return false } });
 		});
 
 		spyOn(fs, "mkdir").andCallFake(function(path, callback) {
-			return callback(null);	
+			return callback(null);
 		});
 
-		var config_file = '{\n\"template_dir": "templates",\n\"content_dir": "contents",\n\"output_dir": "public",\n\"server": {\n\  "port": 9009\n\ }\n\}';
+		var config_file = "{\n  \"template_dir\": \"templates\",\n  \"content_dir\": \"contents\",\n  \"output_dir\": \"public\",\n  \"server\": {\n    \"port\": 9009\n  }\n}";
 		spyOn(fs, "writeFile");
 
 		setup.bare_structure("site_path");
@@ -116,5 +116,5 @@ describe("creating a bare structure", function() {
 
 // TODO
 describe("creating from a template", function() {
-	
+
 });

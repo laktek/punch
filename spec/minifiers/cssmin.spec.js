@@ -5,7 +5,7 @@ describe("calling minify", function() {
 
 	it("calls the callback with the result", function(){
 		spyOn(cssminPkg, "cssmin").andCallFake(function(input){
-			return "compiled output";	
+			return "compiled output";
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -16,7 +16,7 @@ describe("calling minify", function() {
 
 	it("calls the callback with the error", function(){
 		spyOn(cssminPkg, "cssmin").andCallFake(function(input){
-			throw "error"
+			throw "error";
 		});
 
 		var spyCallback = jasmine.createSpy();
