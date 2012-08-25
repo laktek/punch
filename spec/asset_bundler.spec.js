@@ -90,6 +90,39 @@ describe("setup", function(){
 
 });
 
+describe("get the stat of a bundle", function() {
+
+	it("call the callback with an error if there's no bundle for the given path", function() {
+		asset_bundler.bundles = { };
+
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.statBundle("path/all", ".js", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("[Error: There's no Bundle for the given path]", null);
+	});
+
+	it("call the callback with the latest mtime of the bundled files", function() {
+		var bundle = [ "file1.js", "file2.js" ];
+		asset_bundler.bundles = { "path/all.js": bundle };
+
+		var spyGetTemplate = jasmine.createSpy();
+		spyGetTemplate.andCallFake(function(template_path, callback) {
+			if (template_path === "file2.js") {
+				return callback(null, { "last_modified": new Date(2012, 7, 25) });
+			} else {
+				return callback(null, { "last_modified": new Date(2012, 7, 13) });
+			}
+		});
+		asset_bundler.templates = { "getTemplate": spyGetTemplate };
+
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.statBundle("path/all", ".js", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, { "mtime": new Date(2012, 7, 25).getTime() });
+	});
+
+});
+
 describe("get a bundle", function() {
 
 	it("call the callback with an error if there's no bundle for the given path", function() {
