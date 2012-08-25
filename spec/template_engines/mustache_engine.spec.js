@@ -34,7 +34,7 @@ describe("calling render", function(){
 		mustache_instance.template = "template";
 		mustache_instance.content = { "content_key": "content_value" };
 		mustache_instance.partials = {};
-		mustache_instance.helpers = { "tag_helpers": { "tag_helper": "tag_helper_value" }, "block_helpers": { "block_helper": "block_helper_value" }};
+		mustache_instance.helpers = { "tag": { "tag_helper": "tag_helper_value" }, "block": { "block_helper": "block_helper_value" }};
 		mustache_instance.lastModified = new Date(2012, 6, 18);
 		spyOn(mustache_instance, "emit");
 
@@ -55,7 +55,7 @@ describe("calling render", function(){
 			}
 		};
 
-		var render_output = MustacheEngine.renderFunction("", {}, {}, {"tag_helpers": {}, "block_helpers": { "dummy_helper": dummy_helper }});
+		var render_output = MustacheEngine.renderFunction("", {}, {}, {"tag": {}, "block": { "dummy_helper": dummy_helper }});
 
 		expect(render_output).toEqual("helper text");
 	});

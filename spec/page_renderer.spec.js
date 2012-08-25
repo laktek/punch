@@ -689,13 +689,13 @@ describe("render content", function(){
 		var spyHelperObj = jasmine.createSpy();
 		var spyHelperOptions = jasmine.createSpy();
 		spyOn(renderer, "getHelpers").andCallFake(function(basepath, extension, options, callback) {
-			return callback(null, spyHelperObj, spyHelperOptions);
+			return callback(null, spyHelperObj, spyHelperOptions, new Date(2012, 7, 25));
 		});
 
 		var spyCallback = jasmine.createSpy();
 		renderer.renderContent("path/test.html", ".html", new Date(2012, 6, 18), {}, spyCallback);
 
-		expect(spySetHelpers).toHaveBeenCalledWith(spyHelperObj, spyHelperOptions);
+		expect(spySetHelpers).toHaveBeenCalledWith(spyHelperObj, new Date(2012, 7, 25));
 	});
 
 });
@@ -717,12 +717,12 @@ describe("get helpers", function() {
 	it("call the callback with all content collected by helpers", function(){
 		var spyHelperGet1 = jasmine.createSpy();
 		spyHelperGet1.andCallFake(function(path, content_type, options, callback){
-			return callback(null, { "tag_helper1": "value" }, { "block_helper1": "value"}, { "opt1": "value" });
+			return callback(null, { "tag": { "tag_helper1": "value" }, "block": { "block_helper1": "value"} }, { "opt1": "value" }, new Date(2012, 7, 25));
 		});
 
 		var spyHelperGet2 = jasmine.createSpy();
 		spyHelperGet2.andCallFake(function(path, content_type, options, callback){
-			return callback(null, { "tag_helper2": "value" }, { "block_helper2": "value"}, { "opt2": "value" });
+			return callback(null, { "tag": { "tag_helper2": "value" }, "block": { "block_helper2": "value"} }, { "opt2": "value" }, new Date(2012, 7, 27));
 		});
 
 		renderer.helpers = [{ "get": spyHelperGet1 }, { "get": spyHelperGet2 }];
@@ -731,7 +731,7 @@ describe("get helpers", function() {
 		var spyOptions = jasmine.createSpy();
 		renderer.getHelpers("path/test", "html", spyOptions, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, { "tag_helpers": { "tag_helper1": "value", "tag_helper2": "value" }, "block_helpers": { "block_helper1": "value", "block_helper2": "value" } }, { "opt1": "value", "opt2": "value" });
+		expect(spyCallback).toHaveBeenCalledWith(null, { "tag": { "tag_helper1": "value", "tag_helper2": "value" }, "block": { "block_helper1": "value", "block_helper2": "value" } }, { "opt1": "value", "opt2": "value" }, new Date(2012, 7, 27));
 	});
 
 });

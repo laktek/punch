@@ -118,7 +118,7 @@ describe("get the stat of a bundle", function() {
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.statBundle("path/all", ".js", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, { "mtime": new Date(2012, 7, 25).getTime() });
+		expect(spyCallback).toHaveBeenCalledWith(null, { "mtime": new Date(2012, 7, 25) });
 	});
 
 });

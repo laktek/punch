@@ -333,7 +333,7 @@ describe("negotiate content", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, { "content_key": "content_value", "shared_key": "shared_value" }, new Date(2012, 6, 18), {});
+		expect(spyCallback).toHaveBeenCalledWith(null, { "content_key": "content_value", "shared_key": "shared_value" }, {}, new Date(2012, 6, 18));
 	});
 
 	it("call the callback with an error object, if content for path doesn't exist", function(){
@@ -416,4 +416,5 @@ describe("get contents", function(){
 
 		expect(spyCallback).toHaveBeenCalledWith("error", []);
 	});
+
 });
