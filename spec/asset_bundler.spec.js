@@ -23,7 +23,7 @@ describe("setup", function(){
 			"assets/css/global.css": [ "assets/css/initial.js", "assets/css/form.css"],
 			"assets/css/layouts.css": [ "assets/css/header.css", "assets/css/body.css"]
 		},
-		bundle_options: {
+		asset_bundling: {
 			"header": {},
 			"cache": {}
 		}
@@ -85,7 +85,7 @@ describe("setup", function(){
 
 		asset_bundler.setup(sample_config);
 
-		expect(asset_bundler.bundleOptions).toEqual(sample_config.bundle_options);
+		expect(asset_bundler.bundleOptions).toEqual(sample_config.asset_bundling);
 	});
 
 });

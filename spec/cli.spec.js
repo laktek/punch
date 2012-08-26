@@ -89,20 +89,7 @@ describe("generate a site", function() {
 
 		cli.generate(["--blank"]);
 
-		expect(generator.setup).toHaveBeenCalledWith({ "generator": { "blank": true }, "plugins": { "generator_hooks": { "console_output": jasmine.any(String) } } });
-	});
-
-	it("extend generator hooks with console output hook", function() {
-		spyOn(config_handler, "getConfig").andCallFake(function(path, callback) {
-			callback({ "generator": { "blank": false }, "plugins": { "generator_hooks": { "sample_hook": {} } } });
-		});
-		spyOn(generator, "setup");
-		spyOn(generator, "generate");
-
-		cli.generate([]);
-
-		expect(generator.setup).toHaveBeenCalledWith({ "generator": { "blank": false }, "plugins": { "generator_hooks": { "console_output": jasmine.any(String), "sample_hook": {} } } });
-
+		expect(generator.setup).toHaveBeenCalledWith({ "generator": { "blank": true }, "plugins": { "generator_hooks": {} } });
 	});
 
 	it("setup the generator with the supplied config", function() {

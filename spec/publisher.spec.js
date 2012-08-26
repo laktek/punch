@@ -7,49 +7,19 @@ var module_utils = require("../lib/utils/module_utils.js");
 
 describe("calling publish", function() {
 
-	it("extends the default config with the supplied config", function() {
-		var supplied_config = { "foo": "bar" };
-
-		spyOn(publisher, "requireStrategy").andCallFake(function(strategy) { return {"publish": function(){} } } );
-
-		spyOn(publisher, "getLastPublishedDate");
-		spyOn(site_generator, "setup");
-		spyOn(site_generator, "generate");
-
-		publisher.publish(supplied_config, "dummy");
-
-		expect(publisher.config.foo).toEqual("bar");
-	});
+	var config = { "publish": { "strategy": "s3" } };
 
 	it("require the selected strategy", function() {
-		var supplied_config = { "foo": "bar" };
-
 		spyOn(publisher, "requireStrategy");
 		spyOn(publisher, "getLastPublishedDate");
+		spyOn(publisher, "delegatedPublish");
 
-		spyOn(site_generator, "setup");
-		spyOn(site_generator, "generate");
-
-		publisher.publish(supplied_config, "s3");
+		publisher.publish(config);
 
 		expect(publisher.requireStrategy).toHaveBeenCalledWith("s3");
 	});
 
-	it("require the strategy specified in config, if theres no explicselected strategy", function() {
-		var supplied_config = { "publish": { "strategy": "sftp", "options": {} } };
-
-		spyOn(publisher, "requireStrategy");
-		spyOn(publisher, "getLastPublishedDate");
-
-		spyOn(site_generator, "setup");
-		spyOn(site_generator, "generate");
-
-		publisher.publish(supplied_config, null);
-
-		expect(publisher.requireStrategy).toHaveBeenCalledWith("sftp");
-	});
-
-	it("throws an error if no publishing strategy available in config", function(){
+	it("throw an error if no publishing strategy available in config", function(){
 		var supplied_config = { "foo": {"sftp": {} } };
 		var error = "No publishing settings found. Specify the publish settings in the config file.";
 
@@ -57,22 +27,18 @@ describe("calling publish", function() {
 	});
 
 	it("read the timestamp file and set the last published date", function(){
-		var supplied_config = { "foo": "bar" };
 		var strategy_obj = { "publish": {} };
-
 		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
 		spyOn(publisher, "getLastPublishedDate");
+		spyOn(publisher, "delegatedPublish");
 
-		spyOn(site_generator, "setup");
-		spyOn(site_generator, "generate");
-
-		publisher.publish(supplied_config, "s3");
+		publisher.publish(config);
 
 		expect(publisher.getLastPublishedDate).toHaveBeenCalled();
 	});
 
-	it("generates the site before publishing", function(){
-		var supplied_config = { "foo": "bar" };
+	it("generate the site before publishing if generate flag is set", function(){
+		var supplied_config = { "publish": { "strategy": "s3", "generate": true } };
 		var strategy_obj = { "publish": {} };
 
 		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
@@ -81,26 +47,19 @@ describe("calling publish", function() {
 		spyOn(site_generator, "setup");
 		spyOn(site_generator, "generate");
 
-		publisher.publish(supplied_config, "s3");
+		publisher.publish(supplied_config);
 
 		expect(site_generator.generate).toHaveBeenCalled();
 	});
 
-	it("passes the strategy object to deleagated publish method", function(){
-		var supplied_config = { "foo": "bar" };
+	it("pass the strategy object to deleagated publish method", function(){
 		var strategy_obj = { "publish": {} };
 
 		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
 		spyOn(publisher, "getLastPublishedDate");
+		spyOn(publisher, "delegatedPublish");
 
-		spyOn(publisher, "delegatedPublish").andCallFake(function(strategy_obj){ });
-
-		spyOn(site_generator, "setup");
-		spyOn(site_generator, "generate").andCallFake(function(callback){
-			return callback();
-		});
-
-		publisher.publish(supplied_config, "s3");
+		publisher.publish(config);
 
 		expect(publisher.delegatedPublish).toHaveBeenCalledWith(strategy_obj);
 	});
