@@ -148,7 +148,7 @@ describe("update", function(){
 			return callback(null);
 		});
 
-		spyOn(cache_store, "stat").andCallFake(function(file_path, file_ext, callback) {
+		spyOn(cache_store, "stat").andCallFake(function(file_path, file_ext, options, callback) {
 			return callback(null, {"mtime": new Date(2012, 6, 21), "size": 527});
 		});
 

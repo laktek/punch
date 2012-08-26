@@ -462,7 +462,7 @@ describe("prepare rendered response", function(){
 		var spyOptions = jasmine.createSpy();
 		page_server.prepareRenderedResponse(spyResponse, "/path/test", ".html", { "body": "test", "modified": true }, spyOptions);
 
-		expect(spyCacheUpdate).toHaveBeenCalledWith("/path/test", ".html", { "body": "test", "modified": true }, spyOptions, jasmine.any(Function));
+		expect(spyCacheUpdate).toHaveBeenCalledWith("/path/test", ".html", { "body": "test", "options": { "header": jasmine.any(Object) } }, spyOptions, jasmine.any(Function));
 	});
 
 	it("send response after caching", function() {
@@ -640,7 +640,7 @@ describe("get status page", function(){
 		var spyOptions = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {}, spyOptions);
 
-		expect(spyCacheGet).toHaveBeenCalledWith("/404", ".html", { "options": { "header": { "Content-Type": "text/html; charset=utf-8" } } }, spyOptions, jasmine.any(Function));
+		expect(spyCacheGet).toHaveBeenCalledWith("/404", ".html", { "body": null, "options": { "header": { "Content-Type": "text/html; charset=utf-8" } } }, spyOptions, jasmine.any(Function));
 	});
 
 	it("render a page if no page was found in cache", function(){
@@ -680,7 +680,7 @@ describe("get status page", function(){
 		var spyOptions = jasmine.createSpy();
 		page_server.getStatusPage(spyResponse, 404, ".html", {}, spyOptions);
 
-		expect(spyCacheUpdate).toHaveBeenCalledWith("/404", ".html", { "body": "rendered page", "modified": true, "options": { "header": jasmine.any(Object) } }, spyOptions, jasmine.any(Function));
+		expect(spyCacheUpdate).toHaveBeenCalledWith("/404", ".html", { "body": "rendered page", "options": { "header": jasmine.any(Object) } }, spyOptions, jasmine.any(Function));
 	});
 
 	it("send the rendered result as the response", function(){
