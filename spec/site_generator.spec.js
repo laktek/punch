@@ -528,12 +528,12 @@ describe("render path", function() {
 		var spyCallback = jasmine.createSpy();
 		site_generator.renderPath("path/test.html", spyCallback);
 
-		expect(spyCacheStat).toHaveBeenCalledWith("path/test", ".html", jasmine.any(Function));
+		expect(spyCacheStat).toHaveBeenCalledWith("path/test", ".html", {}, jasmine.any(Function));
 	});
 
 	it("call to render method of renderer", function() {
 		var spyCacheStat = jasmine.createSpy();
-		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
+		spyCacheStat.andCallFake(function(request_path, file_extension, options, callback) {
 			return callback(null, { "mtime": new Date(2012, 6, 27) });
 		});
 		site_generator.cacheStore = { "stat": spyCacheStat };
@@ -550,7 +550,7 @@ describe("render path", function() {
 
 	it("update the cache with the modified output", function() {
 		var spyCacheStat = jasmine.createSpy();
-		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
+		spyCacheStat.andCallFake(function(request_path, file_extension, options, callback) {
 			return callback(null, { "mtime": new Date(2012, 6, 27) });
 		});
 
@@ -561,18 +561,18 @@ describe("render path", function() {
 		spyOn(path_utils, "getExtension").andReturn(".html");
 
 		spyOn(page_renderer, "render").andCallFake(function(request_path, file_extension, cache_last_updated, options, callback){
-			return callback({"modified": true, "body": "rendered output"});
+			return callback({"modified": true, "body": "rendered output", "options": {} });
 		});
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.renderPath("path/test.html", spyCallback);
 
-		expect(spyCacheUpdate).toHaveBeenCalledWith("path/test", ".html", "rendered output", {}, jasmine.any(Function));
+		expect(spyCacheUpdate).toHaveBeenCalledWith("path/test", ".html", { "body": "rendered output", "modified": true, "options": {} }, {}, jasmine.any(Function));
 	});
 
 	it("call the callback directly if output is not modified", function() {
 		var spyCacheStat = jasmine.createSpy();
-		spyCacheStat.andCallFake(function(request_path, file_extension, callback) {
+		spyCacheStat.andCallFake(function(request_path, file_extension, options, callback) {
 			return callback(null, { "mtime": new Date(2012, 6, 27) });
 		});
 		site_generator.cacheStore = { "stat": spyCacheStat };

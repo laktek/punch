@@ -25,7 +25,7 @@ describe("stat", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.stat("path/test", ".html", spyCallback);
+		cache_store.stat("path/test", ".html", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "mtime": new Date(2012, 6, 21), "size": 527 });
 	});
@@ -39,7 +39,7 @@ describe("stat", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.stat("path/test", ".html", spyCallback);
+		cache_store.stat("path/test", ".html", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error");
 
@@ -62,9 +62,9 @@ describe("get", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.get("path/test", ".html", {}, spyCallback);
+		cache_store.get("path/test", ".html", { "options": { "header": { "custom-key": "custom-value" } } }, {}, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, { "body": cached_content, "options": { "header": { "Content-Length": 14, "ETag": "\"567-1342809000000\"", "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
+		expect(spyCallback).toHaveBeenCalledWith(null, { "body": cached_content, "options": { "header": { "Content-Length": 14, "ETag": "\"567-1342809000000\"", "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT", "custom-key": "custom-value" } } });
 
 	});
 
@@ -79,7 +79,7 @@ describe("get", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.get("path/test", ".html", {}, spyCallback);
+		cache_store.get("path/test", ".html", { "options": { "header": {} } }, {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error", { "body": null, "options": { "header": { "Content-Length": 0, "ETag": "\"567-1342809000000\"", "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
 
@@ -103,7 +103,7 @@ describe("update", function(){
 		cache_store.outputDir = "output_dir";
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.update("path/subdir/test", ".html", "test", {}, spyCallback);
+		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
 
 		expect(fs.mkdir.callCount).toEqual(3);
 
@@ -117,9 +117,9 @@ describe("update", function(){
 		spyOn(fs, "writeFile");
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.update("path/test", ".html", "test", {}, spyCallback);
+		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
 
-		expect(fs.writeFile.mostRecentCall.args.splice(0, 2)).toEqual(["output_dir/path/test.html", "test"]);
+		expect(fs.writeFile.mostRecentCall.args.splice(0, 2)).toEqual(["output_dir/path/subdir/test.html", "test"]);
 
 	});
 
@@ -133,7 +133,7 @@ describe("update", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.update("path/test", ".html", "test", {}, spyCallback);
+		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error");
 	});
@@ -153,10 +153,9 @@ describe("update", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cache_store.update("path/test", ".html", "test", { "Content-Type": "text/css", "Cache-Control": "public, max-age=0" }, spyCallback);
+		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": { "Content-Type": "text/css", "Cache-Control": "public, max-age=0" } } }, {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "test", "options": { "header": { "Content-Type": "text/css", "Cache-Control": "public, max-age=0", "Content-Length": 4, "ETag": "\"527-1342809000000\"", "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
-
 	});
 
 });

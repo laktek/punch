@@ -129,7 +129,8 @@ describe("get a bundle", function() {
 		asset_bundler.bundles = { };
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all", ".js", spyCallback);
+		var spyOptions = jasmine.createSpy();
+		asset_bundler.getBundle("path/all", ".js", spyOptions, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("[Error: There's no Bundle for the given path]", null);
 	});
@@ -139,7 +140,7 @@ describe("get a bundle", function() {
 		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
-		spyCacheStoreStat.andCallFake(function(path, ext, callback){
+		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
 			return callback("error", null);
 		});
 		asset_bundler.cacheStore = { "stat": spyCacheStoreStat };
@@ -147,7 +148,8 @@ describe("get a bundle", function() {
 		spyOn(asset_bundler, "prepareBundle");
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all", ".js", spyCallback);
+		var spyOptions = jasmine.createSpy();
+		asset_bundler.getBundle("path/all", ".js", spyOptions, spyCallback);
 
 		expect(asset_bundler.prepareBundle).toHaveBeenCalledWith(bundle, ".js", jasmine.any(Function));
 	});
@@ -157,7 +159,7 @@ describe("get a bundle", function() {
 		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
-		spyCacheStoreStat.andCallFake(function(path, ext, callback){
+		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
 			return callback(null, { "mtime": new Date(2012, 7, 10).getTime() });
 		});
 		asset_bundler.cacheStore = { "stat": spyCacheStoreStat };
@@ -171,7 +173,7 @@ describe("get a bundle", function() {
 		spyOn(asset_bundler, "prepareBundle");
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all", ".js", spyCallback);
+		asset_bundler.getBundle("path/all", ".js", {}, spyCallback);
 
 		expect(asset_bundler.prepareBundle).toHaveBeenCalledWith(bundle, ".js", jasmine.any(Function));
 	});
@@ -181,13 +183,11 @@ describe("get a bundle", function() {
 		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
-		spyCacheStoreStat.andCallFake(function(path, ext, callback){
+		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
 			return callback(null, { "mtime": new Date(2012, 7, 10).getTime() });
 		});
 		var spyCacheStoreUpdate = jasmine.createSpy();
-		spyCacheStoreUpdate.andCallFake(function(basename, ext, output, header, callback){
-			return callback(null, { "body": output, "options": { "header": header }});
-		});
+
 		asset_bundler.cacheStore = { "stat": spyCacheStoreStat, "update": spyCacheStoreUpdate };
 
 		var spyGetTemplate = jasmine.createSpy();
@@ -201,9 +201,10 @@ describe("get a bundle", function() {
 		});
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all-1221", ".js", spyCallback);
+		var spyOptions = jasmine.createSpy();
+		asset_bundler.getBundle("path/all-1221", ".js", spyOptions, spyCallback);
 
-		expect(spyCacheStoreUpdate).toHaveBeenCalledWith("path/all", ".js", "prepared bundle", {}, jasmine.any(Function));
+		expect(spyCacheStoreUpdate).toHaveBeenCalledWith("path/all", ".js", { "body": "prepared bundle", "options": { "header": {} } }, spyOptions, jasmine.any(Function));
 	});
 
 	it("serve the prepared bundle", function() {
@@ -211,18 +212,18 @@ describe("get a bundle", function() {
 		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
-		spyCacheStoreStat.andCallFake(function(path, ext, callback){
-			return callback(null, { "mtime": new Date(2012, 7, 10).getTime() });
+		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
+			return callback(null, { "mtime": new Date(2012, 7, 10) });
 		});
 		var spyCacheStoreUpdate = jasmine.createSpy();
-		spyCacheStoreUpdate.andCallFake(function(basename, ext, output, header, callback){
-			return callback(null, { "body": output, "options": { "header": header }});
+		spyCacheStoreUpdate.andCallFake(function(basename, ext, rendered_obj, options, callback){
+			return callback(null, { "body": rendered_obj.body, "options": { "header": rendered_obj.options.header }});
 		});
 		asset_bundler.cacheStore = { "stat": spyCacheStoreStat, "update": spyCacheStoreUpdate };
 
 		var spyGetTemplate = jasmine.createSpy();
 		spyGetTemplate.andCallFake(function(template_path, callback) {
-			return callback(null, { "last_modified": new Date(2012, 7, 13).getTime() });
+			return callback(null, { "last_modified": new Date(2012, 7, 13) });
 		});
 		asset_bundler.templates = { "getTemplate": spyGetTemplate };
 
@@ -233,7 +234,8 @@ describe("get a bundle", function() {
 		asset_bundler.bundleOptions = { "cache": {}, "header": { "key": "value" }};
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all-1221", ".js", spyCallback);
+		var spyOptions = jasmine.createSpy();
+		asset_bundler.getBundle("path/all-1221", ".js", spyOptions, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "prepared bundle", "modified": true, "options": { "cache": {}, "header": { "key": "value" } } });
 	});
@@ -243,25 +245,26 @@ describe("get a bundle", function() {
 		asset_bundler.bundles = { "path/all.js": bundle };
 
 		var spyCacheStoreStat = jasmine.createSpy();
-		spyCacheStoreStat.andCallFake(function(path, ext, callback){
-			return callback(null, { "mtime": new Date(2012, 7, 10).getTime() });
+		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
+			return callback(null, { "mtime": new Date(2012, 7, 10) });
 		});
 		var spyCacheStoreGet  = jasmine.createSpy();
-		spyCacheStoreGet.andCallFake(function(basename, ext, header, callback) {
+		spyCacheStoreGet.andCallFake(function(basename, ext, rendered_obj, options, callback) {
 			return callback(null, { "body": "cached bundle", "options": { "header": { "last-modified": "utc-string" } } });
 		});
 		asset_bundler.cacheStore = { "stat": spyCacheStoreStat, "get": spyCacheStoreGet };
 
 		var spyGetTemplate = jasmine.createSpy();
 		spyGetTemplate.andCallFake(function(template_path, callback) {
-			return callback(null, { "last_modified": new Date(2012, 7, 8).getTime() });
+			return callback(null, { "last_modified": new Date(2012, 7, 8) });
 		});
 		asset_bundler.templates = { "getTemplate": spyGetTemplate };
 
 		asset_bundler.bundleOptions = { "cache": {}, "header": { "key": "value" }};
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.getBundle("path/all-1221", ".js", spyCallback);
+		var spyOptions = jasmine.createSpy();
+		asset_bundler.getBundle("path/all-1221", ".js", spyOptions, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "cached bundle", "modified": false, "options": { "cache": {}, "header": { "last-modified": "utc-string" } } });
 	});
@@ -421,7 +424,7 @@ describe("touch bundles", function() {
 	it("use correct basename and type when calling a bundle", function() {
 		asset_bundler.bundles = sample_bundles;
 
-		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, options, callback) {
 			return callback(null, { "modified": true, "body": "" });
 		});
 
@@ -432,13 +435,13 @@ describe("touch bundles", function() {
 		var spyComplete = jasmine.createSpy();
 		asset_bundler.touchBundles(spyAfter, spyComplete);
 
-		expect(asset_bundler.getBundle).toHaveBeenCalledWith("assets/css/global", ".css", jasmine.any(Function));
+		expect(asset_bundler.getBundle).toHaveBeenCalledWith("assets/css/global", ".css", {}, jasmine.any(Function));
 	});
 
 	it("touch all defined bundles", function() {
 		asset_bundler.bundles = sample_bundles;
 
-		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, options, callback) {
 			return callback(null, { "modified": true, "body": "" });
 		});
 
@@ -455,7 +458,7 @@ describe("touch bundles", function() {
 	it("call the after callback with the touched bundle path", function() {
 		asset_bundler.bundles = sample_bundles;
 
-		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, options, callback) {
 			return callback(null, { "modified": true, "body": "" });
 		});
 
@@ -470,7 +473,7 @@ describe("touch bundles", function() {
 	});
 
 	it("call the complete callback after touching all bundles", function() {
-		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, callback) {
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, options, callback) {
 			return callback(null, { "modified": true, "body": "" });
 		});
 
