@@ -26,7 +26,7 @@ describe("stylesheet bundle tag", function(){
 			return callback(null, { "mtime": new Date(2012, 7, 25) });
 		});
 
-		asset_bundle_helper_obj.setup( { "skip_asset_bundling": ["localhost", "127.0.0.1", ".local"], "bundles": { "/assets/all.css": [ "/assets/initial.css", "/assets/site.css" ]} });
+		asset_bundle_helper_obj.setup( { "skip_asset_bundling": ["localhost", "127.0.0.1", ".local"], "bundles": { "/assets/all.css": [ "/assets/initial.css", "/assets/site.less" ]} });
 		var spyCallback = jasmine.createSpy();
 		asset_bundle_helper_obj.get( "/path/test", ".html", { "host": "localhost:9009" }, spyCallback);
 
@@ -58,7 +58,7 @@ describe("javascript bundle tag", function(){
 			return callback(null, { "mtime": new Date(2012, 7, 25) });
 		});
 
-		asset_bundle_helper_obj.setup( { "skip_asset_bundling": ["localhost", "127.0.0.1", ".local"], "bundles": { "/assets/all.js": [ "/assets/jquery.js", "/assets/site.js" ]} });
+		asset_bundle_helper_obj.setup( { "skip_asset_bundling": ["localhost", "127.0.0.1", ".local"], "bundles": { "/assets/all.js": [ "/assets/jquery.js", "/assets/site.coffee" ]} });
 		var spyCallback = jasmine.createSpy();
 		asset_bundle_helper_obj.get( "/path/test", ".html", { "host": "localhost:9009" }, spyCallback);
 
