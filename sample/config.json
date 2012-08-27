@@ -1,0 +1,32 @@
+{
+        "template_dir" : "templates"
+      , "content_dir" : "contents"
+      , "output_dir" : "public"
+
+			, "publish" : {
+					"strategy" : "s3", 
+					"options" : {
+					  "key" : "key"
+					, "secret" : "secret"
+					, "bucket" : "bucketname"
+					}
+			},
+
+			"generator" : {
+				"blank" : false,
+				"skip_paths" : [ "/assets/less*" ]
+			},
+
+			"bundles" : {
+				"/assets/all.js" : [
+					"/assets/js/jquery.1.8.js",
+					"/assets/js/site.js",
+					"/assets/js/sample.coffee"	
+				],
+
+				"/assets/all.css" : [
+					"/assets/styles.less",
+					"/assets/syntax.css"	
+				]
+			}
+}

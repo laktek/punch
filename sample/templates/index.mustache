@@ -1,0 +1,18 @@
+{{> header }}
+
+	This is the index layout 
+  <h1>{{ title }}</h1>
+
+	<p>
+  {{{ content }}}
+	</p>
+
+  <p>{{ global }}</p>
+
+	<p>{{#format_list}}{{fruits}}{{/format_list}}</p>
+
+	<h3>{{#humanize}}show-this-as-a-title{{/humanize}}</h3>
+
+	<p>Last Updated: {{#date}}{{last_updated}}{{/date}}</p>
+
+{{> footer }}
