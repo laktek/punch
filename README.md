@@ -1,7 +1,7 @@
 # Punch 
 ## A Fun and Easy Way to Build Modern Websites  
 
-Punch is a framework designed to cater the modern web development needs. No matter whether you are a beginner or an expert, a designer or a developer, prototyping a simple idea or buidling a complex web application, Punch can make your workflow productive and joyful.  
+Punch is a framework designed to cater the modern web development needs. It doesn't matter whether you are a novice developer prototyping a hobby project or an expert designer creating a complex web architecture, Punch can make your workflow more productive and joyful.  
 
 ### With Punch you can...
 
