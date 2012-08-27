@@ -5,20 +5,20 @@ Punch is a framework designed to cater the modern web development needs. It does
 
 ### With Punch you can...
 
-* Write minimal templates using Mustache.
-* Use inheritable layouts and partials to create any site structure.
+* Write minimal templates with Mustache.
+* Create flexible site structures with inheritable layouts and partials.
 * Define page contents in JSON.
-* Create formatted content using Markdown.
+* Use Markdown to write formatted content.
 * Use CoffeeScript and LESS instead of JavaScript and CSS.
 * Minify and bundle assets before serving.
 * Preview changes on the fly, while you develop.
 * Set cache headers and compress responses. (play nice with CDNs)
 * Easily publish to Amazon S3 or to a custom server with SFTP.
 
-### Cast your own spells...
+### Wait, There's more...
 
-* Fetch content from any source (eg. SQL databases, key-value stores or REST APIs).
-* Use a template engine of your choice. 
+* Content can be fetched from any data source (eg. SQL databases, key-value stores or REST APIs).
+* Don't like Mustache? Switch to a template engine of your choice. 
 * Write helpers to spice up the templates.
 * Add custom content parsers, pre-compilers, minifiers and publishers.
 * Add hooks to run after generating a page or site.
