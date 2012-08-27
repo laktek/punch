@@ -7,7 +7,7 @@ Punch is a framework designed to cater the modern web development needs. No matt
 
 * Write minimal templates using Mustache.
 * Use inheritable layouts and partials to create any site structure.
-* Structure page contents in JSON.
+* Define page contents in JSON.
 * Create formatted content using Markdown.
 * Use CoffeeScript and LESS instead of JavaScript and CSS.
 * Minify and bundle assets before serving.
