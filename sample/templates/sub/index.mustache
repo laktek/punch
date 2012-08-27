@@ -1,13 +1,9 @@
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
-<head>
-  <title>{{ title }} | CurdBee</title>
-</head>
+{{> header }}
 
-<body>
-  <h1>{{> header }}</h1>
+	This is the index layout in sub.
+  <h1>{{ title }}</h1>
+  <h2>{{ global }}</h2>
 
   {{{ content }}}
-</body>
-</html>
 
+{{> footer }}

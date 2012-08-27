@@ -1,8 +1,14 @@
 {
     "name": "punch"
+<<<<<<< HEAD
   , "description": "A Fun and easy way to build modern websites"
   , "keywords": ["static", "sites", "mustache", "json", "markdown"]
   , "version": "0.3.6"
+=======
+  , "description": "A fun and easy way to build modern websites"
+  , "keywords": ["static site", "generator", "minfier", "server", "mustache", "json", "markdown"]
+  , "version": "0.4.0"
+>>>>>>> generator_refactor
   , "homepage": "https://github.com/laktek/punch"
   , "author": "Lakshan Perera <lakshan@web2media.net> (http://laktek.com)"
   , "licenses": "MIT"
@@ -10,15 +16,22 @@
       "type": "git"
     , "url": "https://github.com/laktek/punch.git"
   }
-  , "main": "./lib/generator.js"
+  , "main": "./lib/index.js"
   , "bin"           : "bin/punch"
   , "dependencies"  : {
-                         "underscore" : ">= 1.3.1"
-											 , "knox"       : ">= 0.0.9"
-                       , "marked"     : ">= 0.2.3"
-                       , "mime"       : ">= 1.2.5"
-											 , "fstream" 		: ">= 0.1.18"
-                       , "mustache"   : "git://github.com/janl/mustache.js"
-											 , "sftp"  			: "git://github.com/laktek/node-sftp.git"
+											   "coffee-script" : ">= 1.3.3"
+											 , "connect" : ">= 2.4.4"
+											 , "cssmin" : ">= 0.3.1"
+											 , "fresh" : ">= 0.1.0"
+											 , "fstream" : ">= 0.1.18"
+											 , "http-accept" : ">= 0.1.1-3"
+											 , "knox" : ">= 0.0.9"
+											 , "less" : ">= 1.3.0"
+                       , "marked" : ">= 0.2.3"
+                       , "mime" : ">= 1.2.5"
+                       , "mustache" : ">= 0.5.2"
+											 , "sftp" : "git://github.com/laktek/node-sftp.git"
+                       , "uglify-js" : ">= 1.3.3"
+                       , "underscore" : ">= 1.3.1"
                       }
 }
