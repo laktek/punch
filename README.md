@@ -15,7 +15,7 @@ Punch is a framework designed to cater the modern web development needs. It does
 * Set cache headers and compress responses. (play nice with CDNs)
 * Easily publish to Amazon S3 or to a custom server with SFTP.
 
-### Don't stop there, go beyond the defaults...
+### Cast your own spells...
 
 * Fetch content from any source (eg. SQL databases, key-value stores or REST APIs).
 * Use a template engine of your choice. 
