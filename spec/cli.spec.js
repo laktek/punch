@@ -36,12 +36,36 @@ describe("init", function() {
 
 describe("setup a new site", function() {
 
-	it("call to create a bare structure with the target path", function() {
-		spyOn(setup, "bare_structure");
+	it("create a site in target path with default template", function() {
+		spyOn(setup, "createStructure");
 
 		cli.setup(["path/target"]);
 
-		expect(setup.bare_structure).toHaveBeenCalledWith("path/target");
+		expect(setup.createStructure).toHaveBeenCalledWith("path/target");
+	});
+
+	it("create a site in target path with given template", function() {
+		spyOn(setup, "createStructure");
+
+		cli.setup(["--template", "path/to/template", "path/target"]);
+
+		expect(setup.createStructure).toHaveBeenCalledWith("path/target", "path/to/template");
+	});
+
+	it("create a site in current path with given template", function() {
+		spyOn(setup, "createStructure");
+
+		cli.setup(["-t", "path/to/template"]);
+
+		expect(setup.createStructure).toHaveBeenCalledWith(undefined, "path/to/template");
+	});
+
+	it("create a site in current path with default template", function() {
+		spyOn(setup, "createStructure");
+
+		cli.setup([]);
+
+		expect(setup.createStructure).toHaveBeenCalledWith(undefined);
 	});
 
 });

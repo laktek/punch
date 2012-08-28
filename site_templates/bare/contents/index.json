@@ -1,0 +1,5 @@
+{
+	"content": "Start creating the site by changing the default layout at <em>templates/_layout.mustache</em>. To change the content shown in this page, edit <em>contents/index.json</em>.",
+
+	"footer-text": "For detailed instructions on how to get started, follow this <a href=\"https://github.com/laktek/punch/wiki/Quick-tutorial\">Quick Tutorial</a>."
+}
