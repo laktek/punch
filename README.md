@@ -9,7 +9,7 @@ Punch is a framework designed to cater the modern web development needs. It does
 * Create flexible site structures with inheritable layouts and partials.
 * Define page contents in JSON.
 * Use Markdown to write formatted content.
-* Use CoffeeScript and LESS instead of JavaScript and CSS.
+* Use CoffeeScript and LESS if those are your taste.
 * Minify and bundle assets before serving.
 * Preview changes on the fly, while you develop.
 * Set cache headers and compress responses. (play nice with CDNs)
