@@ -65,7 +65,7 @@ describe("set cache expiry headers", function() {
 
 	it("set only the given directives", function() {
 		var header = {};
-		var cache_settings = { "public": true, "no_cache": true, "proxy_revalidate": false };
+		var cache_settings = { "directives": [ "public", "no-cache" ] };
 
 		page_server.setCacheExpiryHeaders(header, cache_settings);
 
@@ -74,7 +74,7 @@ describe("set cache expiry headers", function() {
 
 	it("set the given max age", function() {
 		var header = {};
-		var cache_settings = { "max_age": 3600 };
+		var cache_settings = { "max_age": 3600, "directives": [] };
 
 		page_server.setCacheExpiryHeaders(header, cache_settings);
 
@@ -83,7 +83,7 @@ describe("set cache expiry headers", function() {
 
 	it("set the expires header", function() {
 		var header = {};
-		var cache_settings = { "max_age": 86400 };
+		var cache_settings = { "max_age": 86400, "directives": [] };
 		var tomorrow = new Date().getTime() + (86400 * 1000);
 
 		page_server.setCacheExpiryHeaders(header, cache_settings);
