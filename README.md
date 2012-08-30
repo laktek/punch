@@ -5,7 +5,7 @@ Punch is a framework designed to cater the modern web development needs. It does
 
 ### With Punch you can...
 
-* Easily, setup a site using boilerplates.
+* Use boilerplates to quickly setup a site. 
 * Write minimal templates with Mustache.
 * Create flexible site structures with inheritable layouts and partials.
 * Define page contents in JSON.
