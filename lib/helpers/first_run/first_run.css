@@ -1,0 +1,17 @@
+#punch-help-box {
+	background-color: #F8F8F2;
+	border: 1px solid #b3b3b3;
+ 	border-radius: 4px;
+	margin-top: 1em;
+	padding: 0 1em;
+}
+
+#punch-help-box code {
+	background-color: #EBEDB9;
+}
+
+#punch-help-box span {
+	display: block;
+	font-size: 0.8em;
+	margin-bottom: 1em;
+}
