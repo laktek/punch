@@ -25,23 +25,25 @@ Punch is a framework designed to cater the modern web development needs. It does
 * Add hooks to run after generating a page or site.
 * Define your own caching strategy.
 
-### Installation
+### Getting Started 
 
 * You will need to download and install Node.js. http://nodejs.org/#download 
 
-* Then, run `npm install -g punch`
+* To install Punch, run `npm install -g punch`
 
 **Note**: If you experience any issues in installing Punch on Windows, please [read this guide](https://github.com/laktek/punch/wiki/Windows).
 
-### Quick Tutorial
+* You can create your first site by running: `punch setup mysite`
 
-Here's a quick tutorial to get started:
+* Then, go to the `mysite` directory and start the server: `cd mysite; punch s`
 
-https://github.com/laktek/punch/wiki/Tutorial
+* Open your browser and visit: http://localhost:9009
+
+* Follow the quick hands-on tutorial.
 
 ### Documentation
 
-For complete documentation on usage, please check [Punch's Wiki](https://github.com/laktek/punch/wiki)
+For complete documentation on usage & features, please check [Punch Guide](https://github.com/laktek/punch/wiki)
 
 ### Licence
 

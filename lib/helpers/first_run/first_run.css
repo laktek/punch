@@ -6,6 +6,16 @@
 	padding: 0 1em;
 }
 
+#punch-help-box a {
+	color: #4183C4;
+	text-decoration: none;
+}
+
+#punch-help-box a[href="#show_help"] {
+	font-size: 1.2em;
+	font-weight: bold;
+}
+
 #punch-help-box code {
 	background-color: #EBEDB9;
 }
