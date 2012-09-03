@@ -37,7 +37,7 @@ Punch is a framework designed to cater the modern web development needs. It does
 
 * Open your browser and visit: http://localhost:9009
 
-* Follow the quick hands-on tutorial.
+* Follow the steps in hands-on tutorial presented to you.
 
 **Note**: If you experience any issues in installing Punch on Windows, please [read this guide](https://github.com/laktek/punch/wiki/Windows).
 
