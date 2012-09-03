@@ -344,7 +344,7 @@ describe("negotiate content", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith("[Error: path/test.html not found]", null, null, {});
+		expect(spyCallback).toHaveBeenCalledWith("[Error: Content for path/test.html not found]", null, null, {});
 	});
 
 });
