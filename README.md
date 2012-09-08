@@ -1,7 +1,7 @@
 # Punch 
 ## A Fun and Easy Way to Build Modern Websites  
 
-Punch is a framework designed to cater the modern web development needs. It doesn't matter whether you are a novice developer prototyping a hobby project or an seasoned designer creating a complex web architecture, Punch can make your workflow more productive and joyful.  
+Punch is a framework designed to cater the modern web development needs. It doesn't matter whether you are a novice developer prototyping a hobby project or an seasoned designer creating a complex web architecture, Punch can make your workflow more productive and joyful.
 
 ### With Punch you can...
 
@@ -10,7 +10,7 @@ Punch is a framework designed to cater the modern web development needs. It does
 * Create flexible site structures with inheritable layouts and partials.
 * Define page contents in JSON.
 * Use Markdown to write formatted content.
-* Use CoffeeScript and LESS if those are your taste.
+* Use CoffeeScript and LESS if that's your thing.
 * Minify and bundle assets before serving.
 * Preview changes on the fly, while you develop.
 * Set cache headers and compress responses. (play nice with CDNs)
@@ -19,7 +19,7 @@ Punch is a framework designed to cater the modern web development needs. It does
 ### Wait, There's more...
 
 * Content can be fetched from any data source (eg. SQL databases, key-value stores or REST APIs).
-* Don't like Mustache? Switch to a template engine of your choice. 
+* Don't like Mustache? Switch to a different template engine of your choice. 
 * Write helpers to spice up the templates.
 * Add custom content parsers, pre-compilers, minifiers and publishers.
 * Add hooks to run after generating a page or site.
@@ -37,7 +37,7 @@ Punch is a framework designed to cater the modern web development needs. It does
 
 * Open your browser and visit: http://localhost:9009
 
-* Follow the steps in hands-on tutorial presented to you.
+* Follow the steps in hands-on tutorial.
 
 **Note**: If you experience any issues in installing Punch on Windows, please [read this guide](https://github.com/laktek/punch/wiki/Windows).
 
