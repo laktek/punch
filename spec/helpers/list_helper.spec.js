@@ -12,11 +12,11 @@ describe("format list", function(){
 	});
 
 	it("return a formatted string for an array literal", function(){
-		expect(list_helper.format_list([ "Peter", "John", "Andrew" ])).toEqual("Peter, John &amp; Andrew");
+		expect(list_helper.format_list([ "Peter", "John", "Andrew" ])).toEqual("Peter, John, &amp; Andrew");
 	});
 
 	it("return a formatted string for an array literal as a string", function(){
-		expect(list_helper.format_list("Peter,John,Andrew")).toEqual("Peter, John &amp; Andrew");
+		expect(list_helper.format_list("Peter,John,Andrew")).toEqual("Peter, John, &amp; Andrew");
 	});
 
 });
@@ -31,11 +31,11 @@ describe("first item of the list", function(){
 		expect(list_helper.first("hello")).toEqual("hello");
 	});
 
-	it("return a formatted string for an array literal", function(){
+	it("return the first item for an array literal", function(){
 		expect(list_helper.first(["Peter", "John", "Andrew"])).toEqual("Peter");
 	});
 
-	it("return a formatted string for an array literal as a string", function(){
+	it("return the first item for an array literal as a string", function(){
 		expect(list_helper.first("Peter,John,Andrew")).toEqual("Peter");
 	});
 
@@ -51,11 +51,11 @@ describe("last item of the list", function(){
 		expect(list_helper.last("hello")).toEqual("hello");
 	});
 
-	it("return a formatted string for an array literal", function(){
+	it("return the last item for an array literal", function(){
 		expect(list_helper.last(["Peter", "John", "Andrew"])).toEqual("Andrew");
 	});
 
-	it("return a formatted string for an array literal as a string", function(){
+	it("return the last item for an array literal as a string", function(){
 		expect(list_helper.last("Peter,John,Andrew")).toEqual("Andrew");
 	});
 
