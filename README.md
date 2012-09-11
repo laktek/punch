@@ -1,7 +1,7 @@
 # Punch 
 ## A Fun and Easy Way to Build Modern Websites  
 
-Punch is a framework designed to cater the modern web development needs. It doesn't matter whether you are a novice developer prototyping a hobby project or an seasoned designer creating a complex web architecture, Punch can make your workflow more productive and joyful.
+Punch is a web publishing framework created to cater the modern requirements. It's simple, intuitive and pleasure to use for both designers and developers.
 
 ### With Punch you can...
 
@@ -18,16 +18,16 @@ Punch is a framework designed to cater the modern web development needs. It does
 
 ### Wait, There's more...
 
-* Content can be fetched from any data source (eg. SQL databases, key-value stores or REST APIs).
+* Use any data source for content (eg. SQL databases, key-value stores or REST APIs).
 * Don't like Mustache? Switch to a different template engine of your choice. 
-* Write helpers to spice up the templates.
+* Write helpers to add interesting behaviour.
 * Add custom content parsers, pre-compilers, minifiers and publishers.
 * Add hooks to run after generating a page or site.
-* Define your own caching strategy.
+* Define your own publishing strategy.
 
 ### Getting Started 
 
-* You will need to download and install Node.js. http://nodejs.org/#download 
+* Download and install Node.js. http://nodejs.org/#download 
 
 * To install Punch, run `npm install -g punch`
 
@@ -43,9 +43,8 @@ Punch is a framework designed to cater the modern web development needs. It does
 
 ### Documentation
 
-For complete documentation on usage & features, please check [Punch Guide](https://github.com/laktek/punch/wiki)
+For complete documentation on usage & customizations, check the [Punch Guide](https://github.com/laktek/punch/wiki)
 
 ### Licence
 
 [MIT LICENSE](https://github.com/laktek/punch/blob/master/LICENSE)
-
