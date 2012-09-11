@@ -4,7 +4,11 @@
 
 
 $(document).ready(function(){
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> e0f18b2e38e7277c5788fc2de1d4e6202ed999ac
 	// Run Matt Kersley's jQuery Responsive menu plugin (see plugins.js)
 	if ($.fn.mobileMenu) {
 		$('ol#id').mobileMenu({
