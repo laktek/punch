@@ -19,7 +19,7 @@
 
     "install_steps": [
       "<a href=\"http://nodejs.org/#download\">Download</a> and Install Node.js.",
-      "Install npm - <code>curl http://npmjs.org/install.sh | sh</code>",
-      "Finally, run <code>npm install -g punch</code>"
+      "Install Punch <code>npm install -g punch</code>",
+			"Create your site - <code>punch setup mysite</code>"
     ]
 }
