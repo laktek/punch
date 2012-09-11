@@ -18,9 +18,9 @@ Punch is a web publishing framework created to cater the modern requirements. It
 
 ### Wait, There's more...
 
-* Use any data source for content (eg. SQL databases, key-value stores or REST APIs).
+* Use any data source for content (eg. Relational databases, Document stores or REST APIs).
 * Don't like Mustache? Switch to a different template engine of your choice. 
-* Write helpers to add interesting behaviour.
+* Write helpers to add run-time behaviour.
 * Add custom content parsers, pre-compilers, minifiers and publishers.
 * Add hooks to run after generating a page or site.
 * Define your own publishing strategy.
