@@ -1,0 +1,70 @@
+{{> header }}
+
+		<div class="l-content content" role="main">
+			<!-- <div class="section" id="introduction">
+				<div class="l-wrapper">
+					
+					<div class="intro centered">
+						<h1 class="site-title">{{title}}</h1>
+						<h2 class="section-title site-tagline">{{tagline}}</h2>
+						<p>{{{description_html}}}</p>
+					</div>
+					
+				</div>
+			</div> -->
+			<div class="section divider" id="screencast">
+				<div class="l-wrapper">
+					
+					<h2 class="section-title">Watch a quick Screencast</h2>
+					<div class="embedded-media">
+						<div class="media video">
+							{{{screencast_html}}}
+						</div>
+					</div>
+				
+				</div>
+			</div>
+			<div class="section" id="about">
+				<div class="l-wrapper l-readable">
+					<h2 class="section-title">Why Punch?</h2>
+					<ul>
+						{{#why_punch}}
+						<li>{{{.}}}</li>
+						{{/why_punch}}
+					</ul>
+					<h2 class="section-title">Install</h2>
+					<ul>
+						{{#install_steps}}
+						<li>{{{.}}}</li>
+						{{/install_steps}}
+					</ul>
+				</div>
+			</div>
+			<div class="section" id="more">
+				<div class="l-wrapper">
+					
+					<ul class="hlist centered action-list" role="actions">
+						<li class="hlist-item action-item"><a href="https://github.com/laktek/punch/wiki">User Guide</a></li>
+						<li class="hlist-item action-item"><a href="http://laktek.com/tag/punch">Blog Posts</a></li>
+						<li class="hlist-item action-item"><a href="{{github_url}}">Source Code</a></li>
+					</ul>
+					
+				</div>
+			</div>
+			<div class="section" id="testimonials">
+				<div class="l-wrapper">
+					
+					<h2 class="section-title">Testimonials</h2>
+					{{#testimonials}}
+					<div class="two-col">
+						<aside class="testimonial">
+							<p class="quote">{{quote}}</p>
+							<footer class="quote-meta"><a class="quote-cite" href="{{link}}">{{author}}</a></footer>
+						</aside>
+					</div>
+					{{/testimonials}}
+				</div>
+			</div>
+		</div>
+
+{{> footer }}

@@ -1,0 +1,16 @@
+{
+  "template_dir": "templates",
+  "content_dir": "contents",
+  "output_dir": ".",
+
+	"bundles": {
+		"/css/style.css": [
+			"/css/base.css",
+			"/css/layout.css",
+			"/css/module.css",
+			"/css/theme.css",
+			"/css/state.css"
+		]	
+	}
+	
+}

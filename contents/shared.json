@@ -1,0 +1,24 @@
+{
+  "title": "Punch",
+  "tagline": "A Fun and Easy Way to Build Modern Websites",
+
+  "description": "Punch is a web publishing framework created for the modern requirements. It's simple, intuitive and pleasure to use for both designers and developers.",
+  
+  "site_url": "http://laktek.github.com/punch", 
+
+  "github_url": "http://github.com/laktek/punch",
+
+  "testimonials":
+  [
+    {
+	  "quote": "This is a pretty nice alternative to Jekyll. It looks 10x easier to use and setup",
+	  "author": "Oscar Godson",
+	  "link": "https://twitter.com/oscargodson/status/204954247618498560"
+    },
+    {
+	  "quote": "Best static site generator I've found yet",
+	  "author": "Collin Olan",
+	  "link": "https://twitter.com/collinolan/status/205359248559972352"
+    }
+  ]
+}
