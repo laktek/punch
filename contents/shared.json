@@ -2,10 +2,8 @@
   "title": "Punch",
   "tagline": "A Fun and Easy Way to Build Modern Websites",
 
-  "description": "Punch is a simple tool to generate HTML documents from Mustache templates and content stored in JSON & Markdown format.",
+  "description": "Punch is a web publishing framework created for the modern requirements. It's simple, intuitive and pleasure to use for both designers and developers.",
   
-  "description_html": "Punch is a simple tool to generate HTML documents from <a href=\"http://mustache.github.com/\">Mustache</a> templates and content stored in <a href=\"http://json.org\">JSON</a> &amp; <a href=\"daringfireball.net/projects/markdown/\">Markdown</a> format.",
-
   "site_url": "http://laktek.github.com/punch", 
 
   "github_url": "http://github.com/laktek/punch",

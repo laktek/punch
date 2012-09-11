@@ -6,8 +6,7 @@
     "why_punch": [
 			"Clear seperation between content and templates (structure)",
       "Instant previews for development",
-			"Easy to publish (using S3, SFTP or Git)",
-      "Supports <em>client-side rendering</em>."
+			"Easy to publish (using S3, SFTP or Git)"
     ],
 
     "install_steps": [
