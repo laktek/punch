@@ -4,9 +4,17 @@
     "screencast_html": "<iframe src=\"http://player.vimeo.com/video/44990180?color=e13738\" width=\"704\" height=\"396\" frameborder=\"0\" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>",
 
     "why_punch": [
-			"Clear seperation between content and templates (structure)",
-      "Instant previews for development",
-			"Easy to publish (using S3, SFTP or Git)"
+			"Use boilerplates to quickly setup a site.",
+			"Write minimal templates with Mustache.",
+			"Create flexible site structures with inheritable layouts and partials.",
+			"Define page contents in JSON.",
+			"Use Markdown to write formatted content.",
+			"Use CoffeeScript and LESS if that's your thing.",
+			"Minify and bundle assets before serving.",
+			"Preview changes on the fly, while you develop.",
+			"Set cache headers and compress responses. (play nice with CDNs)",
+			"Easily publish to Amazon S3 or to a custom server with SFTP.",
+			"And More.."
     ],
 
     "install_steps": [
