@@ -10,9 +10,9 @@
 5. **Make your changes.** (It helps a lot if you write tests first.)
 6. Verify that tests still pass:
     `jasmine-node spec`
-7. Run JSHint and make sure you're code didn't bring in any inconsistencies (you can ignore the existing ones):
+7. Run JSHint and make sure you're code didn't bring in any inconsistencies:
 		`jshint lib/*`
-8. **Commit your changes**. (repeat 5-8 till you are done with the feature.)
-9. Push to your fork:
+8. Push to your fork:
     `git push -u YOUR_USER feature`
-10. Send a [pull request](https://github.com/laktek/punch/pulls) describing your changes. 
+9. Send a [pull request](https://github.com/laktek/punch/pulls) describing your changes. 
+10. If possible, make sure [Punch Guide](https://github.com/laktek/punch/wiki) is up to date, after your changes were merged.
