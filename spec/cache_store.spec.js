@@ -119,8 +119,20 @@ describe("update", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
 
-		expect(fs.writeFile.mostRecentCall.args.splice(0, 2)).toEqual(["output_dir/path/subdir/test.html", "test"]);
+		expect(fs.writeFile).toHaveBeenCalledWith("output_dir/path/subdir/test.html", "test", "utf8", jasmine.any(Function));
+	});
 
+	it("set the correct encoding", function(){
+		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
+			return callback(null, {"isDirectory": function(){ return true }});
+		});
+
+		spyOn(fs, "writeFile");
+
+		var spyCallback = jasmine.createSpy();
+		cache_store.update("path/subdir/test", ".jpg", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
+
+		expect(fs.writeFile).toHaveBeenCalledWith("output_dir/path/subdir/test.jpg", "test", "binary", jasmine.any(Function));
 	});
 
 	it("call the callback with the error if there's an error in writing the file", function(){
