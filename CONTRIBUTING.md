@@ -14,7 +14,7 @@
 
     `git checkout -b feature`
 
-5. Read the [Coding Style Guide](https://github.com/laktek/punch/wiki/Coding-Style-Guide)
+5. Read the [Code Style Guide](https://github.com/laktek/punch/wiki/Code-Style-Guide)
 
 6. **Make your changes.** (It helps a lot if you write tests first.)
 
