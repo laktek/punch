@@ -1,41 +1,53 @@
 {
-    "name": "punch"
-  , "description": "A fun and easy way to build modern websites"
-  , "keywords": ["static site", "framework", "web publishing", "generator", "minfier", "server", "mustache", "json", "markdown"]
-  , "version": "0.4.9"
-  , "homepage": "https://github.com/laktek/punch"
-  , "author": "Lakshan Perera <lakshan@web2media.net> (http://laktek.com)"
-  , "licenses": "MIT"
-	, "bugs": { "url" : "http://github.com/laktek/punch/issues" } 
-  , "repository": {
-											"type": "git"
-										, "url": "https://github.com/laktek/punch.git"
-									}
-  , "main": "./lib/index.js"
-  , "bin": "bin/punch"
-  , "dependencies": {
-												"coffee-script" : ">= 1.3.3"
-											, "connect" : ">= 2.4.4"
-											, "cssmin" : ">= 0.3.1"
-											, "fresh" : ">= 0.1.0"
-											, "fstream" : ">= 0.1.18"
-											, "http-accept" : ">= 0.1.1-3"
-											, "knox" : ">= 0.0.9"
-											, "less" : ">= 1.3.0"
-											, "marked" : ">= 0.2.5"
-											, "mime" : ">= 1.2.5"
-											, "mustache" : ">0.7.0 || >=0.5.2 <0.7.0"
-											, "sftp" : "git://github.com/laktek/node-sftp.git"
-											, "uglify-js" : ">= 1.3.3"
-											, "underscore" : ">= 1.3.1"
-										}
-		, "devDependencies": {
-												 		"jasmine-node": ">= 1.0.26"		
-													, "jshint": ">= 0.9.1"
-												 }
-		, "scripts": {
-										"test": "jasmine-node spec"	
-									, "prepublish": "sh misc/prepublish.sh"
-								 }
-		, "preferGlobal": true
+  "name": "punch",
+  "description": "A fun and easy way to build modern websites",
+  "keywords": [
+    "static site",
+    "framework",
+    "web publishing",
+    "generator",
+    "minfier",
+    "server",
+    "mustache",
+    "json",
+    "markdown"
+  ],
+  "version": "0.4.10",
+  "homepage": "https://github.com/laktek/punch",
+  "author": "Lakshan Perera <lakshan@web2media.net> (http://laktek.com)",
+  "licenses": "MIT",
+  "bugs": {
+    "url": "http://github.com/laktek/punch/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/laktek/punch.git"
+  },
+  "main": "./lib/index.js",
+  "bin": "bin/punch",
+  "dependencies": {
+    "coffee-script": ">= 1.3.3",
+    "connect": ">= 2.4.4",
+    "cssmin": ">= 0.3.1",
+    "fresh": ">= 0.1.0",
+    "fstream": ">= 0.1.18",
+    "http-accept": ">= 0.1.1-3",
+    "knox": ">= 0.0.9",
+    "less": ">= 1.3.0",
+    "marked": ">= 0.2.5",
+    "mime": ">= 1.2.5",
+    "mustache": ">0.7.0 || >=0.5.2 <0.7.0",
+    "sftp": "git://github.com/laktek/node-sftp.git",
+    "uglify-js": ">= 1.3.3",
+    "underscore": ">= 1.3.1"
+  },
+  "devDependencies": {
+    "jasmine-node": ">= 1.0.26",
+    "jshint": ">= 0.9.1"
+  },
+  "scripts": {
+    "test": "jasmine-node spec",
+    "prepublish": "sh misc/prepublish.sh"
+  },
+  "preferGlobal": true
 }
