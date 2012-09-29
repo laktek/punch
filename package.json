@@ -38,5 +38,4 @@
 									, "prepublish": "sh misc/prepublish.sh"
 								 }
 		, "preferGlobal": true
-
 }
