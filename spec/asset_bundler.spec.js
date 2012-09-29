@@ -273,11 +273,27 @@ describe("get a bundle", function() {
 
 describe("prepare a bundle", function() {
 
-	it("minify and compile each file in bundle", function() {
+	it("get the bundle if it's a bundle path", function() {
 		asset_bundler.compilers = {".js": {}};
 		asset_bundler.minifiers = {".js": {}};
 
-		spyOn(asset_bundler, "compileAndMinify").andCallFake(function(template, compiler, minifier, callback) {
+		spyOn(asset_bundler, "isBundlePath").andReturn(true);
+
+		spyOn(asset_bundler, "getBundle");
+
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.prepareBundle(["/assets/file1.js", "file2.js"], ".js", spyCallback);
+
+		expect(asset_bundler.getBundle).toHaveBeenCalledWith("/assets/file1", ".js", {}, jasmine.any(Function));
+	});
+
+	it("minify and compile file if it's not a bundle path", function() {
+		asset_bundler.compilers = {".js": {}};
+		asset_bundler.minifiers = {".js": {}};
+
+		spyOn(asset_bundler, "isBundlePath").andReturn(false);
+
+		spyOn(asset_bundler, "compileAndMinify").andCallFake(function(template_path, extension, compiler, minifier, callback) {
 			return callback(null, "");
 		});
 
@@ -291,14 +307,26 @@ describe("prepare a bundle", function() {
 		asset_bundler.compilers = {".js": {}};
 		asset_bundler.minifiers = {".js": {}};
 
-		spyOn(asset_bundler, "compileAndMinify").andCallFake(function(template, compiler, minifier, callback) {
-			return callback(null, "(a());");
+		spyOn(asset_bundler, "isBundlePath").andCallFake(function(basename, extension) {
+			if(basename === "file1") {
+				return true
+			}	else {
+				return false
+			}
+		});
+
+		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, extension, options, callback) {
+			return callback(null, { "body" : "(a());", "modified": true, "options": {} });
+		});
+
+		spyOn(asset_bundler, "compileAndMinify").andCallFake(function(template, extension, compiler, minifier, callback) {
+			return callback(null, "(b());");
 		});
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.prepareBundle(["file1.js", "file2.js"], ".js", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith("(a());(a());");
+		expect(spyCallback).toHaveBeenCalledWith("(a());(b());");
 	});
 
 });
@@ -307,7 +335,7 @@ describe("compile and minify", function() {
 
 	it("call the callback with an error if no minifier found", function() {
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.compileAndMinify("path/test.js", {}, null, spyCallback);
+		asset_bundler.compileAndMinify("path/test.js", ".js", {}, null, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("No minifier found", null);
 	});
@@ -317,7 +345,7 @@ describe("compile and minify", function() {
 		asset_bundler.templates = { "readTemplate": spyReadTemplate };
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.compileAndMinify("path/test.js", {}, {}, spyCallback);
+		asset_bundler.compileAndMinify("path/test.js", ".js", {}, {}, spyCallback);
 
 		expect(spyReadTemplate).toHaveBeenCalledWith("path/test.js", jasmine.any(Function));
 	});
@@ -330,7 +358,7 @@ describe("compile and minify", function() {
 		asset_bundler.templates = { "readTemplate": spyReadTemplate };
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.compileAndMinify("path/test.js", {}, {}, spyCallback);
+		asset_bundler.compileAndMinify("path/test.js", ".js", {}, {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error", null);
 	});
@@ -346,7 +374,7 @@ describe("compile and minify", function() {
 		asset_bundler.templates = { "readTemplate": spyReadTemplate, "templateDir": "templates" };
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.compileAndMinify("path/test.coffee", dummy_compiler, {}, spyCallback);
+		asset_bundler.compileAndMinify("path/test.coffee", ".coffee", dummy_compiler, {}, spyCallback);
 
 		expect(spyCompile).toHaveBeenCalledWith("template output", "templates/path/test.coffee", jasmine.any(Function));
 	});
@@ -365,7 +393,7 @@ describe("compile and minify", function() {
 		asset_bundler.templates = { "readTemplate": spyReadTemplate, "templateDir": "templates" };
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.compileAndMinify("path/test.coffee", dummy_compiler, {}, spyCallback);
+		asset_bundler.compileAndMinify("path/test.coffee", ".coffee", dummy_compiler, {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("compile error", null);
 	});
@@ -387,7 +415,7 @@ describe("compile and minify", function() {
 		asset_bundler.templates = { "readTemplate": spyReadTemplate, "templateDir": "templates" };
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.compileAndMinify("path/test.coffee", dummy_compiler, dummy_minifier, spyCallback);
+		asset_bundler.compileAndMinify("path/test.coffee", ".coffee", dummy_compiler, dummy_minifier, spyCallback);
 
 		expect(spyMinify).toHaveBeenCalledWith("compiled output", spyCallback);
 	});
@@ -405,7 +433,7 @@ describe("compile and minify", function() {
 		asset_bundler.templates = { "readTemplate": spyReadTemplate, "templateDir": "templates" };
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.compileAndMinify("path/test.js", dummy_compiler, dummy_minifier, spyCallback);
+		asset_bundler.compileAndMinify("path/test.js", ".js", dummy_compiler, dummy_minifier, spyCallback);
 
 		expect(spyMinify).toHaveBeenCalledWith("template output", spyCallback);
 	});
