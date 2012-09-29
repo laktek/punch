@@ -1,5 +1,7 @@
 var cli = require("../lib/cli.js");
 
+var child_process = require('child_process');
+
 var project_creator = require("../lib/project_creator.js");
 var server = require("../lib/server.js");
 var generator = require("../lib/site_generator.js");
@@ -37,6 +39,7 @@ describe("init", function() {
 describe("setup a new site", function() {
 
 	it("create a site in target path with default template", function() {
+		spyOn(cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
 		spyOn(project_creator, "createStructure");
 
 		cli.setup(["path/target"]);
@@ -45,6 +48,7 @@ describe("setup a new site", function() {
 	});
 
 	it("create a site in target path with given template", function() {
+		spyOn(cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
 		spyOn(project_creator, "createStructure");
 
 		cli.setup(["--template", "path/to/template", "path/target"]);
@@ -53,6 +57,7 @@ describe("setup a new site", function() {
 	});
 
 	it("create a site in current path with given template", function() {
+		spyOn(cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
 		spyOn(project_creator, "createStructure");
 
 		cli.setup(["-t", "path/to/template"]);
@@ -61,6 +66,7 @@ describe("setup a new site", function() {
 	});
 
 	it("create a site in current path with default template", function() {
+		spyOn(cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
 		spyOn(project_creator, "createStructure");
 
 		cli.setup([]);
@@ -170,6 +176,21 @@ describe("publish a site", function() {
 		cli.publish(["custom_config.json"]);
 
 		expect(publisher.publish).toHaveBeenCalledWith(spyConfigObj);
+	});
+
+});
+
+describe("notify if outdated", function() {
+
+	it("call the callback", function() {
+		spyOn(child_process, "exec").andCallFake(function(cmd, cb) {
+			return cb(null, "outdated message");
+		});
+
+		var spyCallback = jasmine.createSpy();
+		cli.notifyIfOutdated(spyCallback);
+
+		expect(spyCallback).toHaveBeenCalled();
 	});
 
 });
