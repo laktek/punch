@@ -1,5 +1,7 @@
 var asset_bundler = require("../lib/asset_bundler.js");
 
+var fs = require("fs");
+
 var module_utils = require("../lib/utils/module_utils.js");
 
 describe("setup", function(){
@@ -93,7 +95,9 @@ describe("setup", function(){
 describe("get the stat of a bundle", function() {
 
 	it("call the callback with an error if there's no bundle for the given path", function() {
-		asset_bundler.bundles = { };
+		spyOn(asset_bundler, "getContainedFilesInBundle").andCallFake(function(bundle_name, extension, cb) {
+			return cb("[Error: There's no Bundle for the given path]", null);
+		});
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.statBundle("path/all", ".js", spyCallback);
@@ -102,8 +106,9 @@ describe("get the stat of a bundle", function() {
 	});
 
 	it("call the callback with the latest mtime of the bundled files", function() {
-		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "path/all.js": bundle };
+		spyOn(asset_bundler, "getContainedFilesInBundle").andCallFake(function(bundle_name, extension, cb) {
+			return cb(null, [ "file1.js", "file2.js" ]);
+		});
 
 		var spyGetTemplate = jasmine.createSpy();
 		spyGetTemplate.andCallFake(function(template_path, callback) {
@@ -126,7 +131,9 @@ describe("get the stat of a bundle", function() {
 describe("get a bundle", function() {
 
 	it("call the callback with an error if there's no bundle for the given path", function() {
-		asset_bundler.bundles = { };
+		spyOn(asset_bundler, "getContainedFilesInBundle").andCallFake(function(bundle_name, extension, cb) {
+			return cb("[Error: There's no Bundle for the given path]", null);
+		});
 
 		var spyCallback = jasmine.createSpy();
 		var spyOptions = jasmine.createSpy();
@@ -137,7 +144,9 @@ describe("get a bundle", function() {
 
 	it("prepare bundle if there's no cached bundle file", function() {
 		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "path/all.js": bundle };
+		spyOn(asset_bundler, "getContainedFilesInBundle").andCallFake(function(bundle_name, extension, cb) {
+			return cb(null, bundle);
+		});
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
@@ -156,7 +165,9 @@ describe("get a bundle", function() {
 
 	it("prepare bundle if any included file in the cached bundle is modified", function() {
 		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "path/all.js": bundle };
+		spyOn(asset_bundler, "getContainedFilesInBundle").andCallFake(function(bundle_name, extension, cb) {
+			return cb(null, bundle);
+		});
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
@@ -179,8 +190,9 @@ describe("get a bundle", function() {
 	});
 
 	it("update the cache with prepared bundle", function() {
-		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "path/all.js": bundle };
+		spyOn(asset_bundler, "getContainedFilesInBundle").andCallFake(function(bundle_name, extension, cb) {
+			return cb(null, [ "file1.js", "file2.js" ]);
+		});
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
@@ -208,8 +220,9 @@ describe("get a bundle", function() {
 	});
 
 	it("serve the prepared bundle", function() {
-		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "path/all.js": bundle };
+		spyOn(asset_bundler, "getContainedFilesInBundle").andCallFake(function(bundle_name, extension, cb) {
+			return cb(null, [ "file1.js", "file2.js" ]);
+		});
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
@@ -241,8 +254,9 @@ describe("get a bundle", function() {
 	});
 
 	it("serve from cache if non of included files in the cached bundle is modified", function() {
-		var bundle = [ "file1.js", "file2.js" ];
-		asset_bundler.bundles = { "path/all.js": bundle };
+		spyOn(asset_bundler, "getContainedFilesInBundle").andCallFake(function(bundle_name, extension, cb) {
+			return cb(null, [ "file1.js", "file2.js" ]);
+		});
 
 		var spyCacheStoreStat = jasmine.createSpy();
 		spyCacheStoreStat.andCallFake(function(path, ext, options, callback){
@@ -271,27 +285,55 @@ describe("get a bundle", function() {
 
 });
 
-describe("prepare a bundle", function() {
+describe("get contained files in a bundle", function() {
 
-	it("get the bundle if it's a bundle path", function() {
-		asset_bundler.compilers = {".js": {}};
-		asset_bundler.minifiers = {".js": {}};
-
-		spyOn(asset_bundler, "isBundlePath").andReturn(true);
-
-		spyOn(asset_bundler, "getBundle");
+	it("call the callback with an error if there isn't a matching bundle", function() {
+		asset_bundler.bundles = {};
 
 		var spyCallback = jasmine.createSpy();
-		asset_bundler.prepareBundle(["/assets/file1.js", "file2.js"], ".js", spyCallback);
+		asset_bundler.getContainedFilesInBundle("path/all", ".js", spyCallback);
 
-		expect(asset_bundler.getBundle).toHaveBeenCalledWith("/assets/file1", ".js", {}, jasmine.any(Function));
+		expect(spyCallback).toHaveBeenCalledWith("[Error: There's no Bundle for the given path]", null);
 	});
 
-	it("minify and compile file if it's not a bundle path", function() {
+	it("resolve nested bundles", function() {
+		asset_bundler.bundles = {
+			"/sub.js": [ "/sub/file1.js", "/sub/file2.js" ],
+			"/all.js": [ "/file1.js", "/file2.js", "/sub.js" ]
+		};
+
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.getContainedFilesInBundle("/all", ".js", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, [ "/file1.js", "/file2.js", "/sub/file1.js", "/sub/file2.js" ]);
+	});
+
+	it("resolve wildcard paths", function() {
+		asset_bundler.bundles = {
+			"/sub.js": [ "/sub/*.js" ],
+			"/all.js": [ "/file1.js", "/file2.js", "/sub.js" ]
+		};
+
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(dirpath, cb) {
+			return cb(null, [ {"full_path": "/sub/file1.js"}, {"full_path": "/sub/file2.js"}, {"full_path": "/sub/file3.coffee"}, {"full_path": "/sub/other.css"} ])
+		});
+		asset_bundler.templates = { "getTemplates": spyGetTemplates };
+
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.getContainedFilesInBundle("/all", ".js", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, [ "/file1.js", "/file2.js", "/sub/file1.js", "/sub/file2.js" ]);
+
+	});
+
+});
+
+describe("prepare a bundle", function() {
+
+	it("minify and compile files", function() {
 		asset_bundler.compilers = {".js": {}};
 		asset_bundler.minifiers = {".js": {}};
-
-		spyOn(asset_bundler, "isBundlePath").andReturn(false);
 
 		spyOn(asset_bundler, "compileAndMinify").andCallFake(function(template_path, extension, compiler, minifier, callback) {
 			return callback(null, "");
@@ -307,26 +349,14 @@ describe("prepare a bundle", function() {
 		asset_bundler.compilers = {".js": {}};
 		asset_bundler.minifiers = {".js": {}};
 
-		spyOn(asset_bundler, "isBundlePath").andCallFake(function(basename, extension) {
-			if(basename === "file1") {
-				return true
-			}	else {
-				return false
-			}
-		});
-
-		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, extension, options, callback) {
-			return callback(null, { "body" : "(a());", "modified": true, "options": {} });
-		});
-
 		spyOn(asset_bundler, "compileAndMinify").andCallFake(function(template, extension, compiler, minifier, callback) {
-			return callback(null, "(b());");
+			return callback(null, "(a());");
 		});
 
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.prepareBundle(["file1.js", "file2.js"], ".js", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith("(a());(b());");
+		expect(spyCallback).toHaveBeenCalledWith("(a());(a());");
 	});
 
 });
