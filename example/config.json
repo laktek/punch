@@ -13,7 +13,7 @@
 			},
 
 			"generator" : {
-				"blank" : false,
+				"blank" : true,
 				"skip_paths" : [ "/assets/less*" ]
 			},
 

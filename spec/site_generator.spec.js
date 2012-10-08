@@ -648,7 +648,7 @@ describe("render each path", function() {
 
 describe("build bundles", function() {
 
-	it("call touch bundles method with callbacks", function() {
+	it("pass the user provided complete callback when touching bundles", function() {
 		spyOn(asset_bundler, "touchBundles");
 
 		var spyCallback = jasmine.createSpy();
