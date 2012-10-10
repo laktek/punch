@@ -49,6 +49,23 @@ describe("stat", function(){
 
 describe("get", function(){
 
+	it("read the file with the correct encoding", function() {
+		var cached_content = new Buffer("cached content");
+
+		cache_store.outputDir = "output_dir";
+
+		spyOn(fs, "stat").andCallFake(function(file_path, callback){
+			return callback(null, { "mtime": new Date(2012, 6, 21), "size": 567 });
+		});
+
+		spyOn(fs, "readFile");
+
+		var spyCallback = jasmine.createSpy();
+		cache_store.get("path/test", ".html", { "options": { "header": { "custom-key": "custom-value" } } }, {}, spyCallback);
+
+		expect(fs.readFile).toHaveBeenCalledWith("output_dir/path/test.html", "utf8", jasmine.any(Function));
+	});
+
 	it("call the callback with file content", function(){
 
 		var cached_content = new Buffer("cached content");
