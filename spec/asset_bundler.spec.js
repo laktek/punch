@@ -537,6 +537,7 @@ describe("touch bundles", function() {
 	});
 
 	it("fingerprint bundle with the touched bundle path", function() {
+		asset_bundler.bundleOptions.fingerprint = true;
 		asset_bundler.bundles = sample_bundles;
 
 		spyOn(asset_bundler, "getBundle").andCallFake(function(basename, type, options, callback) {
@@ -575,26 +576,13 @@ describe("touch bundles", function() {
 describe("fingerprint a bundle", function() {
 
 	it("halt if no bundle path given", function() {
-		asset_bundler.bundleOptions.fingerprint = true;
-
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.fingerprintBundle(null, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalled();
 	});
 
-	it("halt if fingerprinting option is not enabled", function() {
-		asset_bundler.bundleOptions.fingerprint = false;
-
-		var spyCallback = jasmine.createSpy();
-		asset_bundler.fingerprintBundle("path/test.js", spyCallback);
-
-		expect(spyCallback).toHaveBeenCalled();
-	});
-
 	it("take the stat of the bundle", function() {
-		asset_bundler.bundleOptions.fingerprint = true;
-
 		spyOn(asset_bundler, "statBundle");
 
 		var spyCallback = jasmine.createSpy();
@@ -604,8 +592,6 @@ describe("fingerprint a bundle", function() {
 	});
 
 	it("get the bundle from the cache", function() {
-		asset_bundler.bundleOptions.fingerprint = true;
-
 		spyOn(asset_bundler, "statBundle").andCallFake(function(basename, extension, callback) {
 			return callback(null, { "mtime": new Date(2012, 10, 8) });
 		});
@@ -620,8 +606,6 @@ describe("fingerprint a bundle", function() {
 	});
 
 	it("add the fingereprinted bundle to the cache", function() {
-		asset_bundler.bundleOptions.fingerprint = true;
-
 		var spyBundleContent = jasmine.createSpy();
 
 		spyOn(asset_bundler, "statBundle").andCallFake(function(basename, extension, callback) {
@@ -642,8 +626,6 @@ describe("fingerprint a bundle", function() {
 	});
 
 	it("call the callback function with the fingerprinted bundle path", function() {
-		asset_bundler.bundleOptions.fingerprint = true;
-
 		var spyBundleContent = jasmine.createSpy();
 
 		spyOn(asset_bundler, "statBundle").andCallFake(function(basename, extension, callback) {
