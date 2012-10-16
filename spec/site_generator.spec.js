@@ -392,7 +392,7 @@ describe("collect paths for section", function() {
 
 	it("collect content paths for the section", function() {
 		var spyGetContents = jasmine.createSpy();
-		site_generator.contents = { "getContents": spyGetContents };
+		site_generator.contents = { "getContentPaths": spyGetContents };
 
 		var spyCallback = jasmine.createSpy();
 		site_generator.collectPathsForSection("path/test", spyCallback);
@@ -405,7 +405,7 @@ describe("collect paths for section", function() {
 		spyGetContents.andCallFake(function(section, callback){
 			return callback(null, []);
 		});
-		site_generator.contents = { "getContents": spyGetContents };
+		site_generator.contents = { "getContentPaths": spyGetContents };
 
 		spyOn(site_generator, "getStaticAndCompilableTemplates");
 
@@ -420,7 +420,7 @@ describe("collect paths for section", function() {
 		spyGetContents.andCallFake(function(section, callback){
 			return callback(null, ["path/test/page1", "path/test/page2"]);
 		});
-		site_generator.contents = { "getContents": spyGetContents };
+		site_generator.contents = { "getContentPaths": spyGetContents };
 
 		spyOn(site_generator, "getStaticAndCompilableTemplates").andCallFake(function(section, callback){
 			return callback(null, ["path/test/image.jpg", "path/test/styles.css"]);

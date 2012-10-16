@@ -381,7 +381,7 @@ describe("get sections", function(){
 
 });
 
-describe("get contents", function(){
+describe("get content paths", function(){
 
 	it("collect all content files (except shared file)", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
@@ -389,7 +389,7 @@ describe("get contents", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContents("path/test", spyCallback);
+		default_handler.getContentPaths("path/test", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/page1", "path/test/page2"]);
 	});
@@ -400,7 +400,7 @@ describe("get contents", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContents("path/test", spyCallback);
+		default_handler.getContentPaths("path/test", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/another_page"]);
 
@@ -412,7 +412,7 @@ describe("get contents", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContents("path/not_exist", spyCallback);
+		default_handler.getContentPaths("path/not_exist", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error", []);
 	});
