@@ -3,10 +3,36 @@ var path = require("path");
 
 var cache_store = require("../lib/cache_store.js");
 
+var module_utils = require("../lib/utils/module_utils.js");
+
 describe("setup", function(){
 
+	it("setup the templates handler", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+			return { "id": id };
+		});
+
+		cache_store.setup({ "plugins": { "template_handler": "sample_template_handler" } });
+
+		expect(cache_store.templates.id).toEqual("sample_template_handler");
+	});
+
+	it("setup the contents handler", function() {
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+			return { "id": id };
+		});
+
+		cache_store.setup({ "plugins": { "content_handler": "sample_content_handler" } });
+
+		expect(cache_store.contents.id).toEqual("sample_content_handler");
+	});
+
 	it("set the output directory", function(){
-		cache_store.setup({"output_dir": "output_dir"});
+		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+			return { "id": id };
+		});
+
+		cache_store.setup({ "output_dir": "output_dir", "plugins": {} });
 		expect(cache_store.outputDir).toEqual("output_dir");
 	});
 
@@ -15,6 +41,11 @@ describe("setup", function(){
 describe("stat", function(){
 
 	it("call the callback with the file's modified time", function(){
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
 
 		cache_store.outputDir = "output_dir";
 
@@ -31,6 +62,11 @@ describe("stat", function(){
 	});
 
 	it("call the callback with an error if file doesn't exist", function(){
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
 
 		cache_store.outputDir = "output_dir";
 
@@ -49,8 +85,31 @@ describe("stat", function(){
 
 describe("get", function(){
 
+	it("correct the given path if it's a section", function() {
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(true);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
+
+		cache_store.outputDir = "output_dir";
+
+		spyOn(fs, "stat");
+
+		var spyCallback = jasmine.createSpy();
+		cache_store.get("path/test", ".html", { "options": {} }, {}, spyCallback);
+
+		expect(fs.stat).toHaveBeenCalledWith("output_dir/path/test/index.html", jasmine.any(Function));
+	});
+
 	it("read the file with the correct encoding", function() {
 		var cached_content = new Buffer("cached content");
+
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
 
 		cache_store.outputDir = "output_dir";
 
@@ -70,6 +129,12 @@ describe("get", function(){
 
 		var cached_content = new Buffer("cached content");
 
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
+
 		spyOn(fs, "stat").andCallFake(function(file_path, callback){
 			return callback(null, { "mtime": new Date(2012, 6, 21), "size": 567 });
 		});
@@ -86,6 +151,12 @@ describe("get", function(){
 	});
 
 	it("call the callback with the error if there's an error reading the file", function(){
+
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
 
 		spyOn(fs, "stat").andCallFake(function(file_path, callback){
 			return callback(null, { "mtime": new Date(2012, 6, 21), "size": 567 });
@@ -107,6 +178,12 @@ describe("get", function(){
 describe("update", function(){
 
 	it("create missing directories", function(){
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
+
 		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
 			return callback(null, {"isDirectory": function(){ return false }});
 		});
@@ -127,6 +204,12 @@ describe("update", function(){
 	});
 
 	it("write file to the correct path", function(){
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
+
 		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
 			return callback(null, {"isDirectory": function(){ return true }});
 		});
@@ -139,7 +222,34 @@ describe("update", function(){
 		expect(fs.writeFile).toHaveBeenCalledWith("output_dir/path/subdir/test.html", "test", "utf8", jasmine.any(Function));
 	});
 
+	it("correct the given path if it's a section", function() {
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(true);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
+
+		cache_store.outputDir = "output_dir";
+
+		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
+			return callback(null, {"isDirectory": function(){ return true }});
+		});
+
+		spyOn(fs, "writeFile");
+
+		var spyCallback = jasmine.createSpy();
+		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
+
+		expect(fs.writeFile).toHaveBeenCalledWith("output_dir/path/subdir/test/index.html", "test", "utf8", jasmine.any(Function));
+	});
+
 	it("set the correct encoding", function(){
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
+
 		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
 			return callback(null, {"isDirectory": function(){ return true }});
 		});
@@ -153,6 +263,12 @@ describe("update", function(){
 	});
 
 	it("call the callback with the error if there's an error in writing the file", function(){
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
+
 		spyOn(fs, "stat").andCallFake(function(dirpath, callback){
 			return callback(null, {"isDirectory": function(){ return true }});
 		});
@@ -168,6 +284,11 @@ describe("update", function(){
 	});
 
 	it("call the callback a valid cache object", function(){
+		var spyIsSection = jasmine.createSpy();
+		spyIsSection.andReturn(false);
+
+		cache_store.templates = { "isSection": spyIsSection };
+		cache_store.contents = { "isSection": spyIsSection };
 
 		spyOn(fs, "stat").andCallFake(function(dirpath, callback) {
 			return callback(null, { "isDirectory": function(){ return true } });
