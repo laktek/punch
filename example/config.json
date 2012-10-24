@@ -9,6 +9,7 @@
 					  "key" : "key"
 					, "secret" : "secret"
 					, "bucket" : "bucketname"
+					, "x-amz-acl": "public-read"
 					}
 			},
 

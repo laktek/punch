@@ -98,4 +98,24 @@ describe("copy a file to s3 bucket", function() {
 		expect(s3_publisher.client.put.mostRecentCall.args[0]).toEqual("sub/file.html");
 	});
 
+	it("pass the request headers to the client", function() {
+		var spy_callback = jasmine.createSpy();
+
+		spyOn(fs, "readFile").andCallFake(function(path, callback) {
+			callback(null, new Buffer("sample"));
+		});
+
+		var dummy_req_obj = { "on": function() { }, "end": function() { } };
+
+		s3_publisher.client = { "put": function() { } };
+
+		s3_publisher.publishOptions = { "key": "key", "secret": "secret", "bucket": "bucket", "x-amz-acl": "public-read" };
+
+		spyOn(s3_publisher.client, "put").andReturn(dummy_req_obj);
+
+		s3_publisher.copyFile("output_dir/sub/file.html", "sub/file.html", spy_callback);
+
+		expect(s3_publisher.client.put.mostRecentCall.args[1]).toEqual({ "Content-Length": jasmine.any(Number), "Content-Type": jasmine.any(String), "x-amz-acl": "public-read" });
+	});
+
 });
