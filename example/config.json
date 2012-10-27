@@ -1,14 +1,14 @@
 {
         "template_dir" : "templates"
       , "content_dir" : "contents"
-      , "output_dir" : "public"
+      , "output_dir" : "output"
 
 			, "publish" : {
 					"strategy" : "s3", 
 					"options" : {
-					  "key" : "key"
+					 "bucket" : "bucketname"
+					, "key" : "key"
 					, "secret" : "secret"
-					, "bucket" : "bucketname"
 					, "x-amz-acl": "public-read"
 					}
 			},
