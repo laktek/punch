@@ -1,3 +1,4 @@
 todo
-*/**/.DS_Store
+*.DS_Store
 example/public
+node_modules
