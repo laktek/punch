@@ -208,7 +208,7 @@ describe("generate site", function() {
 		var spyCallback = jasmine.createSpy();
 		site_generator.generate(spyCallback);
 
-		expect(site_generator.runGeneratorHooks).toHaveBeenCalledWith(null, true, spyCallback);
+		expect(site_generator.runGeneratorHooks).toHaveBeenCalledWith(null, { finished: true }, spyCallback);
 	});
 
 	it("call the user provided callback", function() {
