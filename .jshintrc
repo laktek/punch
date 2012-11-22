@@ -9,7 +9,8 @@
         "beforeEach",
         "waits",
         "waitsFor",
-        "runs"
+        "runs",
+				"raise"
     ],
 		
 	"node" : true,
