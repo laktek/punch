@@ -307,6 +307,14 @@ describe("negotiate content", function(){
 		expect(default_handler.getContent.mostRecentCall.args[0]).toEqual("path/test");
 	});
 
+	it("get the content for a path with special output format", function(){
+		spyOn(default_handler, "getContent");
+		var spyCallback = jasmine.createSpy();
+		default_handler.negotiateContent("path/test", ".rss", {}, spyCallback);
+
+		expect(default_handler.getContent.mostRecentCall.args[0]).toEqual("path/test.rss");
+	});
+
 	it("extend it with shared contents", function(){
 		spyOn(default_handler, "getContent").andCallFake(function(path, callback){
 			return callback(null, {});
@@ -392,6 +400,17 @@ describe("get content paths", function(){
 		default_handler.getContentPaths("path/test", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/page1", "path/test/page2"]);
+	});
+
+	it("collect files with special output extensions", function(){
+		spyOn(fs, "readdir").andCallFake(function(path, callback) {
+			return callback(null, ["index.json", "page1.json", "page1.rss.json", "page2.json", "_shared"]);
+		});
+
+		var spyCallback = jasmine.createSpy();
+		default_handler.getContentPaths("path/test", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/page1", "path/test/page1.rss", "path/test/page2"]);
 	});
 
 	it("collect the extended directories", function(){
