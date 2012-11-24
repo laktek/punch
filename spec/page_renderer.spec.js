@@ -344,11 +344,11 @@ describe("compile template", function() {
 		expect(spyCompile).toHaveBeenCalledWith("template output", "templates/path/test.coffee", jasmine.any(Function));
 	});
 
-	it("call the callback without an output if template is not modified", function() {
+	it("call the callback without an output if force compile option is disabled and template is not modified", function() {
 		var spyCompile = jasmine.createSpy();
 
 		renderer.compilers = {
-			".js": { "compile": spyCompile, "input_extensions": [".coffee"] }
+			".js": { "compile": spyCompile, "input_extensions": [".coffee"], "force_compile": false }
 		};
 
 		var spyGetTemplates = jasmine.createSpy();
@@ -373,6 +373,37 @@ describe("compile template", function() {
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "body": null, "modified": false });
 
+	});
+
+	it("call compile if force compile option is enabled and template is not modified", function() {
+		var spyCompile = jasmine.createSpy();
+
+		renderer.compilers = {
+			".css": { "compile": spyCompile, "input_extensions": [".less"], "force_compile": true }
+		};
+
+		var spyGetTemplates = jasmine.createSpy();
+		spyGetTemplates.andCallFake(function(basepath, callback) {
+			callback(null, [{ "full_path": "path/test.html", "last_modified": new Date(2012, 6, 13) },
+											{ "full_path": "path/test.less", "last_modified": new Date(2012, 6, 13) }
+										 ]);
+		});
+
+		var spyReadTemplate = jasmine.createSpy();
+		spyReadTemplate.andCallFake(function(path, callback) {
+			callback(null, "template output");
+		});
+
+		renderer.templates = {
+			"getTemplates": spyGetTemplates,
+			"readTemplate": spyReadTemplate,
+			"templateDir": "templates"
+		};
+
+		var spyCallback = jasmine.createSpy();
+		renderer.compileTo("path/test.css", ".css", new Date(2012, 11, 25), spyCallback);
+
+		expect(spyCompile).toHaveBeenCalledWith("template output", "templates/path/test.less", jasmine.any(Function));
 	});
 
 	it("call the callback with an error if no compiler found for the given content type", function() {
