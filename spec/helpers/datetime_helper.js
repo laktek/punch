@@ -4,11 +4,11 @@ var date_helper = date_helper_obj.directAccess()["block_helpers"];
 describe("datetime", function() {
 
 	it("return datetime string for JSON date strings", function() {
-		expect(date_helper.datetime("2012-08-02T01:27:13.300Z")).toEqual("Thu Aug 02 2012 06:57:13 GMT+0530 (IST)");
+		expect(date_helper.datetime("2012-08-02T01:27:13.300Z")).toEqual(new Date("2012-08-02T01:27:13.300Z").toString());
 	});
 
 	it("return datetime string for unix epoch values", function() {
-		expect(date_helper.datetime("1343870833300")).toEqual("Thu Aug 02 2012 06:57:13 GMT+0530 (IST)");
+		expect(date_helper.datetime("1343870833300")).toEqual(new Date(1343870833300).toString());
 	});
 
 	it("return an empty string for null values", function() {
@@ -20,11 +20,11 @@ describe("datetime", function() {
 describe("date", function() {
 
 	it("return date string for JSON date strings", function() {
-		expect(date_helper.date("2012-08-02T01:27:13.300Z")).toEqual("Thu Aug 02 2012");
+		expect(date_helper.date("2012-08-02T01:27:13.300Z")).toEqual(new Date("2012-08-02T01:27:13.300Z").toDateString());
 	});
 
 	it("return date string for unix epoch values", function() {
-		expect(date_helper.date("1343870833300")).toEqual("Thu Aug 02 2012");
+		expect(date_helper.date("1343870833300")).toEqual(new Date(1343870833300).toDateString());
 	});
 
 	it("return an empty string for null values", function() {
@@ -36,11 +36,11 @@ describe("date", function() {
 describe("time", function() {
 
 	it("return time string for JSON date strings", function() {
-		expect(date_helper.time("2012-08-02T01:27:13.300Z")).toEqual("06:57:13 GMT+0530 (IST)");
+		expect(date_helper.time("2012-08-02T01:27:13.300Z")).toEqual(new Date("2012-08-02T01:27:13.300Z").toTimeString());
 	});
 
 	it("return date string for unix epoch values", function() {
-		expect(date_helper.time("1343870833300")).toEqual("06:57:13 GMT+0530 (IST)");
+		expect(date_helper.time("1343870833300")).toEqual(new Date(1343870833300).toTimeString());
 	});
 
 	it("return an empty string for null values", function() {

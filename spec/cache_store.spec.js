@@ -136,7 +136,7 @@ describe("get", function(){
 		cache_store.contents = { "isSection": spyIsSection };
 
 		spyOn(fs, "stat").andCallFake(function(file_path, callback){
-			return callback(null, { "mtime": new Date(2012, 6, 21), "size": 567 });
+			return callback(null, { "mtime": new Date(1342800000000), "size": 567 });
 		});
 
 		spyOn(fs, "readFile").andCallFake(function(file_path, encoding, callback){
@@ -146,7 +146,7 @@ describe("get", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.get("path/test", ".html", { "options": { "header": { "custom-key": "custom-value" } } }, {}, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, { "body": cached_content, "options": { "header": { "Content-Length": 14, "ETag": "\"567-1342809000000\"", "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT", "custom-key": "custom-value" } } });
+		expect(spyCallback).toHaveBeenCalledWith(null, { "body": cached_content, "options": { "header": { "Content-Length": 14, "ETag": "\"567-1342800000000\"", "Last-Modified": new Date(1342800000000).toUTCString(), "custom-key": "custom-value" } } });
 
 	});
 
@@ -159,7 +159,7 @@ describe("get", function(){
 		cache_store.contents = { "isSection": spyIsSection };
 
 		spyOn(fs, "stat").andCallFake(function(file_path, callback){
-			return callback(null, { "mtime": new Date(2012, 6, 21), "size": 567 });
+			return callback(null, { "mtime": new Date(1342809000000), "size": 567 });
 		});
 
 		spyOn(fs, "readFile").andCallFake(function(file_path, encoding, callback){
@@ -169,7 +169,7 @@ describe("get", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.get("path/test", ".html", { "options": { "header": {} } }, {}, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith("error", { "body": null, "options": { "header": { "Content-Length": 0, "ETag": "\"567-1342809000000\"", "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
+		expect(spyCallback).toHaveBeenCalledWith("error", { "body": null, "options": { "header": { "Content-Length": 0, "ETag": "\"567-1342809000000\"", "Last-Modified": new Date(1342809000000).toUTCString() } } });
 
 	});
 
@@ -299,13 +299,13 @@ describe("update", function(){
 		});
 
 		spyOn(cache_store, "stat").andCallFake(function(file_path, file_ext, options, callback) {
-			return callback(null, {"mtime": new Date(2012, 6, 21), "size": 527});
+			return callback(null, {"mtime": new Date(1342809000000), "size": 527});
 		});
 
 		var spyCallback = jasmine.createSpy();
 		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": { "Content-Type": "text/css", "Cache-Control": "public, max-age=0" } } }, {}, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "test", "options": { "header": { "Content-Type": "text/css", "Cache-Control": "public, max-age=0", "Content-Length": 4, "ETag": "\"527-1342809000000\"", "Last-Modified": "Fri, 20 Jul 2012 18:30:00 GMT" } } });
+		expect(spyCallback).toHaveBeenCalledWith(null, { "body": "test", "options": { "header": { "Content-Type": "text/css", "Cache-Control": "public, max-age=0", "Content-Length": 4, "ETag": "\"527-1342809000000\"", "Last-Modified": new Date(1342809000000).toUTCString() } } });
 	});
 
 });

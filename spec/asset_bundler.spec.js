@@ -609,7 +609,7 @@ describe("fingerprint a bundle", function() {
 		var spyBundleContent = jasmine.createSpy();
 
 		spyOn(asset_bundler, "statBundle").andCallFake(function(basename, extension, callback) {
-			return callback(null, { "mtime": new Date(2012, 10, 8) });
+			return callback(null, { "mtime": new Date(1352313000000) });
 		});
 
 		var spyCacheStoreGet = jasmine.createSpy();
@@ -629,7 +629,7 @@ describe("fingerprint a bundle", function() {
 		var spyBundleContent = jasmine.createSpy();
 
 		spyOn(asset_bundler, "statBundle").andCallFake(function(basename, extension, callback) {
-			return callback(null, { "mtime": new Date(2012, 10, 8) });
+			return callback(null, { "mtime": new Date(1352313000000) });
 		});
 
 		var spyCacheStoreGet = jasmine.createSpy();
