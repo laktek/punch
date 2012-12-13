@@ -31,7 +31,7 @@ describe("require and setup", function() {
 			if (path === "/current/node_modules/custom_module") {
 				return {}
 			} else {
-				raise("module not found");
+				throw("module not found");
 			}
 		});
 
@@ -44,7 +44,7 @@ describe("require and setup", function() {
 			if (path === "custom_module") {
 				return {}
 			} else {
-				raise("module not found");
+				throw("module not found");
 			}
 		});
 

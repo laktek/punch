@@ -243,9 +243,10 @@ describe("get config", function() {
 			return callback("error", null);
 		});
 
-		config_handler.getConfig("custom_config.json", function(output) {
-			expect(output.server.port).toEqual(9009);
-		});
+		var spyCallback = jasmine.createSpy();
+		expect(function() {
+			config_handler.getConfig("custom_config.json", spyCallback);
+		}).toThrow();
 
 	});
 
