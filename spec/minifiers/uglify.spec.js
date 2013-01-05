@@ -1,24 +1,12 @@
-var jsp = require("uglify-js").parser;
-var pro = require("uglify-js").uglify;
+var uglifyJS = require("uglify-js");
 var uglify_minifier = require("../../lib/minifiers/uglify");
 
 describe("calling minify", function() {
 
-	it("calls the callback with the result", function(){
-		spyOn(jsp, "parse").andCallFake(function(input){
-			return "initial ast";
-		});
+	it("call the callback with the result", function(){
 
-		spyOn(pro, "ast_mangle").andCallFake(function(input){
-			return "initial ast";
-		});
-
-		spyOn(pro, "ast_squeeze").andCallFake(function(input){
-			return "initial ast";
-		});
-
-		spyOn(pro, "gen_code").andCallFake(function(input){
-			return "{ function(){} };";
+		spyOn(uglifyJS, "minify").andCallFake(function(input){
+			return { code: "{ function(){} };", map: null };
 		});
 
 		var spyCallback = jasmine.createSpy();
@@ -27,8 +15,8 @@ describe("calling minify", function() {
 		expect(spyCallback).toHaveBeenCalledWith(undefined, "{ function(){} };");
 	});
 
-	it("calls the callback with the error", function(){
-		spyOn(jsp, "parse").andCallFake(function(input){
+	it("call the callback with the error", function(){
+		spyOn(uglifyJS, "minify").andCallFake(function(input){
 			throw "error";
 		});
 
