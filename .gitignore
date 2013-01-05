@@ -1,4 +1,4 @@
 todo
 *.DS_Store
-example/public
+example/output
 node_modules

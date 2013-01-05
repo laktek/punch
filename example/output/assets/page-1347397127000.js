@@ -1,1 +1,0 @@
-$("body").append("Added from site JS");square=function(e){return e*e},$("body").append("<p>Added from CoffeeScript - "+square(2)+"<p>");

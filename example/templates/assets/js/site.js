@@ -1,2 +1,2 @@
-$("body").append("Added from site JS");
+$("body").append("Added from site JS")
 
