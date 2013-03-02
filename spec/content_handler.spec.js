@@ -33,12 +33,15 @@ describe("setup", function(){
 		default_handler.parsers = {};
 
 		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
-			return {"id": id};
+      if (id === "sample_markdown_parser") {
+        return { "id": id, "supportedExtensions": [".markdown", ".md"] };
+      } else {
+        return {"id": id};
+      }
 		});
 
 		default_handler.setup(sample_config);
-		expect(default_handler.parsers).toEqual({".markdown": {"id": "sample_markdown_parser"}, ".yml": {"id": "sample_yml_parser"}});
-
+		expect(default_handler.parsers).toEqual({".markdown": {"id": "sample_markdown_parser", "supportedExtensions": [".markdown", ".md"] }, ".md": {"id": "sample_markdown_parser", "supportedExtensions": [".markdown", ".md"] }, ".yml": {"id": "sample_yml_parser"}});
 	});
 
 });
