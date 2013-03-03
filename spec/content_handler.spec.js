@@ -200,7 +200,7 @@ describe("parse extended content", function(){
 	it("parse all files in the directory", function(){
 
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			return callback(null, ["test1.markdown", "test2.markdown"]);
+			return callback(null, ["test1.markdown", "test2.coffee.markdown"]);
 		});
 
 		spyOn(fs, "stat").andCallFake(function(path, callback){
