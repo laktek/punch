@@ -48,6 +48,10 @@ describe("setup", function(){
 
 describe("check for sections", function(){
 
+	it("return false if the given path is null", function(){
+		expect(default_handler.isSection(null)).not.toBeTruthy();
+	});
+
 	it("return true if the given path is a directory", function(){
 		spyOn(fs, "statSync").andCallFake(function(path){
 			return {"isDirectory": function(){ return true } };
@@ -393,6 +397,13 @@ describe("get sections", function(){
 });
 
 describe("get content paths", function(){
+
+	it("calls the callback with an error if basepath is null", function(){
+		var spyCallback = jasmine.createSpy();
+		default_handler.getContentPaths(null, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("basepath can't be null", []);
+	});
 
 	it("collect all content files (except shared file)", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
