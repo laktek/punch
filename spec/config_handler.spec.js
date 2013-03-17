@@ -110,6 +110,13 @@ describe("read the config form a file", function() {
 
 describe("read the config from a directory", function() {
 
+	it("call the callback with the error if config path is null", function() {
+		var spyCallback = jasmine.createSpy();
+		config_handler.readConfigDir(null, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("config path can't be null", null);
+	});
+
 	it("fetch all files in the given directory", function() {
 		spyOn(fs, "readdir");
 
