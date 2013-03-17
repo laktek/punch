@@ -363,6 +363,13 @@ describe("prepare a bundle", function() {
 
 describe("compile and minify", function() {
 
+	it("call the callback with an error if template path is null", function() {
+		var spyCallback = jasmine.createSpy();
+		asset_bundler.compileAndMinify(null, ".js", {}, null, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("Template path can't be null", null);
+	});
+
 	it("call the callback with an error if no minifier found", function() {
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.compileAndMinify("path/test.js", ".js", {}, null, spyCallback);
