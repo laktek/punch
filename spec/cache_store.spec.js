@@ -40,6 +40,13 @@ describe("setup", function(){
 
 describe("stat", function(){
 
+	it("call the callback with an error if request basename is null", function(){
+		var spyCallback = jasmine.createSpy();
+		cache_store.stat(null, ".html", {}, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("request basename can't be null");
+	});
+
 	it("call the callback with the file's modified time", function(){
 		var spyIsSection = jasmine.createSpy();
 		spyIsSection.andReturn(false);
@@ -84,6 +91,13 @@ describe("stat", function(){
 });
 
 describe("get", function(){
+
+	it("call the callback with an error if request basename is null", function(){
+		var spyCallback = jasmine.createSpy();
+		cache_store.get(null, ".html", { "options": {} }, {}, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("request basename can't be null");
+	});
 
 	it("correct the given path if it's a section", function() {
 		var spyIsSection = jasmine.createSpy();
@@ -176,6 +190,13 @@ describe("get", function(){
 });
 
 describe("update", function(){
+
+	it("call the callback with an error if request basename is null", function(){
+		var spyCallback = jasmine.createSpy();
+		cache_store.update(null, ".html", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("request basename can't be null");
+	});
 
 	it("create missing directories", function(){
 		var spyIsSection = jasmine.createSpy();
