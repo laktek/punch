@@ -75,6 +75,18 @@ describe("setup", function() {
 
 describe("handle rendering request", function() {
 
+	it("treat null request path as the root path", function() {
+		spyOn(renderer, "serveStatic");
+
+		renderer.templates = { "isSection": function() { return true } };
+		renderer.contents = { "isSection": function() { return true } };
+
+		var spyCallback = jasmine.createSpy();
+		renderer.render(null, ".html", null, {}, spyCallback);
+
+		expect(renderer.serveStatic.mostRecentCall.args[0]).toEqual("/index.html");
+	});
+
 	it("point the top level request path to index files", function() {
 		spyOn(renderer, "serveStatic");
 
