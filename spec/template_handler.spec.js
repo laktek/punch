@@ -11,6 +11,10 @@ describe("setup", function() {
 
 describe("check for sections", function(){
 
+	it("return false if the path is null", function(){
+		expect(default_handler.isSection(null)).not.toBeTruthy();
+	});
+
 	it("return true if the given path is a directory", function(){
 		spyOn(fs, "statSync").andCallFake(function(path){
 			return {"isDirectory": function(){ return true } };
@@ -39,6 +43,13 @@ describe("check for sections", function(){
 });
 
 describe("get template", function(){
+
+	it("call the callback with an error if the template path is null", function(){
+		var spyCallback = jasmine.createSpy();
+		default_handler.getTemplate(null, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("template path can't be null", null);
+	});
 
 	it("check if the template available", function(){
 
@@ -98,6 +109,13 @@ describe("get template", function(){
 });
 
 describe("get templates", function(){
+
+	it("call the callback with the error if the basepath is null", function(){
+		var spyCallback = jasmine.createSpy();
+		default_handler.getTemplates(null, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("basepath can't be null", null);
+	});
 
 	it("check if the given path is directory", function(){
 
@@ -180,6 +198,14 @@ describe("get templates", function(){
 
 describe("read template", function(){
 
+	it("calls the callback with the error if template path is null", function(){
+		var spyCallback = jasmine.createSpy();
+		default_handler.readTemplate(null, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("template path can't be null", null);
+	});
+
+
 	it("reads the template from the filesystem", function(){
 		spyOn(fs, "readFile");
 
@@ -223,6 +249,13 @@ describe("read template", function(){
 });
 
 describe("negotiate template", function() {
+
+	it("call the callback with the error if basepath is null", function() {
+		var spyCallback = jasmine.createSpy();
+		default_handler.negotiateTemplate(null, ".html", ".mustache", {}, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("basepath can't be null", null, null);
+	});
 
 	it("check for a template file for the given output extension", function() {
 		spyOn(fs, "readFile").andCallFake(function(path, callback) {
@@ -364,6 +397,13 @@ describe("negotiate template", function() {
 });
 
 describe("get partials", function(){
+
+	it("call the calback with the error when basepath is null", function() {
+		var spyCallback = jasmine.createSpy();
+		default_handler.getPartials(null, ".mustache", {}, spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith("basepath can't be null", null, null);
+	});
 
 	it("collects all partials in the given directory", function(){
 
