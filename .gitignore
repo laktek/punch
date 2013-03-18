@@ -2,3 +2,4 @@ todo
 *.DS_Store
 example/output
 node_modules
+.idea/
