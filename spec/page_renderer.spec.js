@@ -1,5 +1,7 @@
 var renderer = require("../lib/page_renderer.js");
 
+var path = require("path");
+
 var module_utils = require("../lib/utils/module_utils.js");
 
 describe("setup", function() {
@@ -84,7 +86,7 @@ describe("handle rendering request", function() {
 		var spyCallback = jasmine.createSpy();
 		renderer.render(null, ".html", null, {}, spyCallback);
 
-		expect(renderer.serveStatic.mostRecentCall.args[0]).toEqual("/index.html");
+		expect(renderer.serveStatic.mostRecentCall.args[0]).toEqual(path.join("/index.html"));
 	});
 
 	it("point the top level request path to index files", function() {
@@ -96,7 +98,7 @@ describe("handle rendering request", function() {
 		var spyCallback = jasmine.createSpy();
 		renderer.render("path/test", ".html", null, {}, spyCallback);
 
-		expect(renderer.serveStatic.mostRecentCall.args[0]).toEqual("path/test/index.html");
+		expect(renderer.serveStatic.mostRecentCall.args[0]).toEqual(path.join("path/test/index.html"));
 	});
 
 	it("serve the static file if it exists", function() {
@@ -353,7 +355,7 @@ describe("compile template", function() {
 		var spyCallback = jasmine.createSpy();
 		renderer.compileTo("path/test.js", ".js", null, spyCallback);
 
-		expect(spyCompile).toHaveBeenCalledWith("template output", "templates/path/test.coffee", jasmine.any(Function));
+		expect(spyCompile).toHaveBeenCalledWith("template output", path.join("templates/path/test.coffee"), jasmine.any(Function));
 	});
 
 	it("call the callback without an output if force compile option is disabled and template is not modified", function() {
@@ -415,7 +417,7 @@ describe("compile template", function() {
 		var spyCallback = jasmine.createSpy();
 		renderer.compileTo("path/test.css", ".css", new Date(2012, 11, 25), spyCallback);
 
-		expect(spyCompile).toHaveBeenCalledWith("template output", "templates/path/test.less", jasmine.any(Function));
+		expect(spyCompile).toHaveBeenCalledWith("template output", path.join("templates/path/test.less"), jasmine.any(Function));
 	});
 
 	it("call the callback with an error if no compiler found for the given content type", function() {

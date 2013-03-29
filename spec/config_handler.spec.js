@@ -1,6 +1,7 @@
 var config_handler = require("../lib/config_handler.js");
 
 var fs = require("fs");
+var path = require("path");
 
 describe("read the given config", function() {
 
@@ -158,7 +159,7 @@ describe("read the config from a directory", function() {
 		});
 
 		spyOn(config_handler, "readConfigFile").andCallFake(function(config_file, callback){
-			if (config_file === "path/config_dir/plugins.json") {
+			if (config_file === path.join("path/config_dir/plugins.json") ) {
 				return callback(null, { "plugin_name": "plugin_path" });
 			} else {
 				return callback(null, { "strategy": "" });
@@ -177,9 +178,9 @@ describe("read the config from a directory", function() {
 		});
 
 		spyOn(config_handler, "readConfigFile").andCallFake(function(config_file, callback){
-			if (config_file === "path/config_dir/main.json") {
+			if (config_file === path.join("path/config_dir/main.json") ) {
 				return callback(null, { "main_key": "main_value" });
-			} else if (config_file === "path/config_dir/plugins.json") {
+			} else if (config_file === path.join("path/config_dir/plugins.json") ) {
 				return callback(null, { "plugin_name": "plugin_path" });
 			} else {
 				return callback(null, { "strategy": "" });

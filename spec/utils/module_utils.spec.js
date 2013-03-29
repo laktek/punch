@@ -1,11 +1,12 @@
 var module_utils = require("../../lib/utils/module_utils.js");
 
+var pathConv = require("path");
 describe("require and setup", function() {
 
 	var sampleConfig = {};
 
 	beforeEach(function() {
-		spyOn(process, "cwd").andReturn("/current/path");
+		spyOn(process, "cwd").andReturn(pathConv.join("/current/path"));
 	});
 
 	it("locate local modules relative to current working directory", function() {
@@ -14,7 +15,7 @@ describe("require and setup", function() {
 		});
 
 		module_utils.requireAndSetup("./modules/local_module", sampleConfig);
-		expect(module_utils.wrappedRequire).toHaveBeenCalledWith("/current/path/modules/local_module");
+		expect(module_utils.wrappedRequire).toHaveBeenCalledWith(pathConv.join("/current/path/modules/local_module"));
 	});
 
 	it("try to locate required module from the current working directory's node modules", function() {
@@ -23,12 +24,12 @@ describe("require and setup", function() {
 		});
 
 		module_utils.requireAndSetup("custom_module", sampleConfig);
-		expect(module_utils.wrappedRequire).toHaveBeenCalledWith("/current/path/node_modules/custom_module");
+		expect(module_utils.wrappedRequire).toHaveBeenCalledWith(pathConv.join("/current/path/node_modules/custom_module"));
 	});
 
 	it("traverse till to top of the tree, looking for the module in each node modules directory", function() {
 		spyOn(module_utils, "wrappedRequire").andCallFake(function(path) {
-			if (path === "/current/node_modules/custom_module") {
+			if (path === pathConv.join("/current/node_modules/custom_module")) {
 				return {}
 			} else {
 				throw("module not found");
@@ -36,7 +37,7 @@ describe("require and setup", function() {
 		});
 
 		module_utils.requireAndSetup("custom_module", sampleConfig);
-		expect(module_utils.wrappedRequire).toHaveBeenCalledWith("/current/node_modules/custom_module");
+		expect(module_utils.wrappedRequire).toHaveBeenCalledWith(pathConv.join("/current/node_modules/custom_module"));
 	});
 
 	it("delegate module loading to node's paths, if module cannot be found in current working tree", function() {
