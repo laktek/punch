@@ -1,6 +1,7 @@
 var asset_bundler = require("../lib/asset_bundler.js");
 
 var fs = require("fs");
+var path = require("path");
 
 var module_utils = require("../lib/utils/module_utils.js");
 
@@ -413,7 +414,7 @@ describe("compile and minify", function() {
 		var spyCallback = jasmine.createSpy();
 		asset_bundler.compileAndMinify("path/test.coffee", ".coffee", dummy_compiler, {}, spyCallback);
 
-		expect(spyCompile).toHaveBeenCalledWith("template output", "templates/path/test.coffee", jasmine.any(Function));
+		expect(spyCompile).toHaveBeenCalledWith("template output", path.join("templates/path/test.coffee"), jasmine.any(Function));
 	});
 
 	it("call the callback with an error if compilation fails", function() {

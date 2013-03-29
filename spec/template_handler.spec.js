@@ -1,6 +1,7 @@
 var default_handler = require("../lib/template_handler.js");
 
 var fs = require("fs");
+var pathConv = require("path");
 
 describe("setup", function() {
 	it("set the template directory", function() {
@@ -20,7 +21,7 @@ describe("check for sections", function(){
 			return {"isDirectory": function(){ return true } };
 		});
 
-		expect(default_handler.isSection("path/sub_dir")).toBeTruthy();
+		expect(default_handler.isSection(pathConv.join("path/sub_dir"))).toBeTruthy();
 	});
 
 	it("return false if the directory is a hidden directory", function(){
@@ -28,7 +29,7 @@ describe("check for sections", function(){
 			return {"isDirectory": function(){ return true } };
 		});
 
-		expect(default_handler.isSection("path/.hidden/sub_dir")).not.toBeTruthy();
+		expect(default_handler.isSection(pathConv.join("path/.hidden/sub_dir"))).not.toBeTruthy();
 
 	});
 
@@ -37,7 +38,7 @@ describe("check for sections", function(){
 			throw "error";
 		});
 
-		expect(default_handler.isSection("path/_page/sub_dir")).not.toBeTruthy();
+		expect(default_handler.isSection(pathConv.join("path/_page/sub_dir"))).not.toBeTruthy();
 	});
 
 });
@@ -60,7 +61,7 @@ describe("get template", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getTemplate("path/test.html", spyCallback);
 
-		expect(fs.stat.mostRecentCall.args[0]).toEqual("template_dir/path/test.html");
+		expect(fs.stat.mostRecentCall.args[0]).toEqual(pathConv.join("template_dir/path/test.html"));
 	});
 
 	it("call the callback with last modified date and full path", function(){
@@ -126,7 +127,7 @@ describe("get templates", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getTemplates("path/sub_dir", spyCallback);
 
-		expect(fs.readdir.mostRecentCall.args[0]).toEqual("template_dir/path/sub_dir");
+		expect(fs.readdir.mostRecentCall.args[0]).toEqual(pathConv.join("template_dir/path/sub_dir"));
 	});
 
 	it("get all files (excluding hidden files and subdirs) in the given directory path", function(){
@@ -148,13 +149,13 @@ describe("get templates", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getTemplates("path/sub_dir", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, [ {"full_path": "path/sub_dir/test.html", "last_modified": new Date(2012, 6, 16)} ]);
+		expect(spyCallback).toHaveBeenCalledWith(null, [ {"full_path": pathConv.join("path/sub_dir/test.html"), "last_modified": new Date(2012, 6, 16)} ]);
 
 	});
 
 	it("move one level up and filter the files in directory with the basename", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			if(path === "template_dir/path/sub_dir/index"){
+			if(path === pathConv.join("template_dir/path/sub_dir/index")){
 				return callback("error", null);
 			} else {
 				return callback(null, ["test.html", "index.html", "test2.html", "index.css"]);
@@ -175,8 +176,8 @@ describe("get templates", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getTemplates("path/sub_dir/index", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, [{"full_path": "path/sub_dir/index.html", "last_modified": new Date(2012, 6, 16)},
-																										{"full_path": "path/sub_dir/index.css", "last_modified": new Date(2012, 6, 16)}
+		expect(spyCallback).toHaveBeenCalledWith(null, [{"full_path": pathConv.join("path/sub_dir/index.html"), "last_modified": new Date(2012, 6, 16)},
+																										{"full_path": pathConv.join("path/sub_dir/index.css"), "last_modified": new Date(2012, 6, 16)}
 																									 ]);
 	});
 
@@ -214,7 +215,7 @@ describe("read template", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.readTemplate("path/test.html", spyCallback);
 
-		expect(fs.readFile.mostRecentCall.args[0]).toEqual("template_dir/path/test.html");
+		expect(fs.readFile.mostRecentCall.args[0]).toEqual(pathConv.join("template_dir/path/test.html"));
 
 	});
 
@@ -259,7 +260,7 @@ describe("negotiate template", function() {
 
 	it("check for a template file for the given output extension", function() {
 		spyOn(fs, "readFile").andCallFake(function(path, callback) {
-			if (path === "template_dir/path/sub_dir/index.html.mustache") {
+			if (path === pathConv.join("template_dir/path/sub_dir/index.html.mustache")) {
 				return callback(null, "template output");
 			} else {
 				return callback("error", null);
@@ -267,7 +268,7 @@ describe("negotiate template", function() {
 		});
 
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			if (path === "template_dir/path/sub_dir/index.html.mustache") {
+			if (path === pathConv.join("template_dir/path/sub_dir/index.html.mustache")) {
 				return callback(null, {"mtime": new Date(2012, 6, 16) });
 			} else {
 				return callback("error", null);
@@ -282,7 +283,7 @@ describe("negotiate template", function() {
 
 	it("check for a layout file in the same level for the given output extension", function() {
 		spyOn(fs, "readFile").andCallFake(function(path, callback) {
-			if (path === "template_dir/path/sub_dir/_layout.html.mustache") {
+			if (path === pathConv.join("template_dir/path/sub_dir/_layout.html.mustache")) {
 				return callback(null, "layout output");
 			} else {
 				return callback("error", null);
@@ -290,7 +291,7 @@ describe("negotiate template", function() {
 		});
 
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			if (path === "template_dir/path/sub_dir/_layout.html.mustache") {
+			if (path === pathConv.join("template_dir/path/sub_dir/_layout.html.mustache")) {
 				return callback(null, {"mtime": new Date(2012, 6, 16) });
 			} else {
 				return callback("error", null);
@@ -305,7 +306,7 @@ describe("negotiate template", function() {
 
 	it("check for a layout file in the top levels for the given output extension", function() {
 		spyOn(fs, "readFile").andCallFake(function(path, callback) {
-			if (path === "template_dir/_layout.html.mustache") {
+			if (path === pathConv.join("template_dir/_layout.html.mustache")) {
 				return callback(null, "layout output");
 			} else {
 				return callback("error", null);
@@ -313,7 +314,7 @@ describe("negotiate template", function() {
 		});
 
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			if (path === "template_dir/_layout.html.mustache") {
+			if (path === pathConv.join("template_dir/_layout.html.mustache")) {
 				return callback(null, {"mtime": new Date(2012, 6, 16) });
 			} else {
 				return callback("error", null);
@@ -328,7 +329,7 @@ describe("negotiate template", function() {
 
 	it("check for a generic template file", function() {
 		spyOn(fs, "readFile").andCallFake(function(path, callback) {
-			if (path === "template_dir/path/sub_dir/index.mustache") {
+			if (path === pathConv.join("template_dir/path/sub_dir/index.mustache")) {
 				return callback(null, "template output");
 			} else {
 				return callback("error", null);
@@ -336,7 +337,7 @@ describe("negotiate template", function() {
 		});
 
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			if (path === "template_dir/path/sub_dir/index.mustache") {
+			if (path === pathConv.join("template_dir/path/sub_dir/index.mustache")) {
 				return callback(null, {"mtime": new Date(2012, 6, 16) });
 			} else {
 				return callback("error", null);
@@ -351,7 +352,7 @@ describe("negotiate template", function() {
 
 	it("check for a generic layout file in the same level", function() {
 		spyOn(fs, "readFile").andCallFake(function(path, callback) {
-			if (path === "template_dir/path/sub_dir/_layout.mustache") {
+			if (path === pathConv.join("template_dir/path/sub_dir/_layout.mustache")) {
 				return callback(null, "layout output");
 			} else {
 				return callback("error", null);
@@ -359,7 +360,7 @@ describe("negotiate template", function() {
 		});
 
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			if (path === "template_dir/path/sub_dir/_layout.mustache") {
+			if (path === pathConv.join("template_dir/path/sub_dir/_layout.mustache")) {
 				return callback(null, {"mtime": new Date(2012, 6, 16) });
 			} else {
 				return callback("error", null);
@@ -374,7 +375,7 @@ describe("negotiate template", function() {
 
 	it("check for a generic layout file in the top levels", function() {
 		spyOn(fs, "readFile").andCallFake(function(path, callback) {
-			if (path === "template_dir/_layout.mustache") {
+			if (path === pathConv.join("template_dir/_layout.mustache")) {
 				return callback(null, "layout output");
 			} else {
 				return callback("error", null);
@@ -382,7 +383,7 @@ describe("negotiate template", function() {
 		});
 
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
-			if (path === "template_dir/_layout.mustache") {
+			if (path === pathConv.join("template_dir/_layout.mustache")) {
 				return callback(null, {"mtime": new Date(2012, 6, 16) });
 			} else {
 				return callback("error", null);
@@ -408,7 +409,7 @@ describe("get partials", function(){
 	it("collects all partials in the given directory", function(){
 
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			if(path === "template_dir/index"){
+			if(path === pathConv.join("template_dir/index")){
 				return callback("error", null);
 			} else {
 				return callback(null, ["index.html", "test.mustache", "_partial1.mustache", "_partial2.mustache"]);
@@ -431,11 +432,11 @@ describe("get partials", function(){
 
 	it("traverse all parent directories looking for partials", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			if(path === "template_dir/main"){
+			if(path === pathConv.join("template_dir/main")){
 				return callback(null, ["index.html", "test.mustache", "_partial1.mustache"]);
-			} else if(path === "template_dir/main/sub"){
+			} else if(path === pathConv.join("template_dir/main/sub")){
 				return callback(null, ["index.html", "test.mustache", "_partial2.mustache"]);
-			} else if(path === "template_dir/main/sub/sub-sub"){
+			} else if(path === pathConv.join("template_dir/main/sub/sub-sub")){
 				return callback(null, ["index.html", "test.mustache", "_partial3.mustache"]);
 			} else {
 				return callback("error", null);
@@ -459,7 +460,7 @@ describe("get partials", function(){
 
 	it("set the latest modified date of all partials as the last modified date", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			if (path === "template_dir/index") {
+			if (path === pathConv.join("template_dir/index")) {
 				return callback("error", null);
 			} else {
 				return callback(null, ["index.html", "test.mustache", "_partial1.mustache", "_partial2.mustache"]);
@@ -467,7 +468,7 @@ describe("get partials", function(){
 		});
 
 		spyOn(fs, "stat").andCallFake(function(path, callback){
-			if(path === "template_dir/_partial2.mustache"){
+			if(path === pathConv.join("template_dir/_partial2.mustache")){
 				return callback(null, {"mtime": new Date(2012, 6, 19) });
 			} else {
 				return callback(null, {"mtime": new Date(2012, 6, 17) });
@@ -513,7 +514,7 @@ describe("get sections", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getSections(spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(["/", "/sub1", "/sub2", "/sub1/subsub", "/sub2/subsub"]);
+		expect(spyCallback).toHaveBeenCalledWith([pathConv.join("/"), pathConv.join("/sub1"), pathConv.join("/sub2"), pathConv.join("/sub1/subsub"), pathConv.join("/sub2/subsub")]);
 
 	});
 

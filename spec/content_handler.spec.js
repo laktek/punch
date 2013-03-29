@@ -2,6 +2,7 @@ var default_handler = require("../lib/content_handler.js");
 var module_utils = require("../lib/utils/module_utils.js");
 
 var fs = require("fs");
+var path = require("path");
 
 describe("setup", function(){
 
@@ -57,7 +58,7 @@ describe("check for sections", function(){
 			return {"isDirectory": function(){ return true } };
 		});
 
-		expect(default_handler.isSection("path/sub_dir")).toBeTruthy();
+		expect(default_handler.isSection(path.join("path","sub_dir"))).toBeTruthy();
 	});
 
 	it("return false if the directory is a hidden directory", function(){
@@ -65,7 +66,7 @@ describe("check for sections", function(){
 			return {"isDirectory": function(){ return true } };
 		});
 
-		expect(default_handler.isSection("path/.hidden/sub_dir")).not.toBeTruthy();
+		expect(default_handler.isSection(path.join("path",".hidden","sub_dir"))).not.toBeTruthy();
 
 	});
 
@@ -74,7 +75,7 @@ describe("check for sections", function(){
 			return {"isDirectory": function(){ return true } };
 		});
 
-		expect(default_handler.isSection("path/_page/sub_dir")).not.toBeTruthy();
+		expect(default_handler.isSection(path.join("path","_page","sub_dir"))).not.toBeTruthy();
 
 	});
 
@@ -83,7 +84,7 @@ describe("check for sections", function(){
 			throw "error";
 		});
 
-		expect(default_handler.isSection("path/_page/sub_dir")).not.toBeTruthy();
+		expect(default_handler.isSection(path.join("path","_page","sub_dir"))).not.toBeTruthy();
 	});
 
 });
@@ -195,9 +196,9 @@ describe("parse extended content", function(){
 		default_handler.contentDir = "content_dir";
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.parseExtendedContent("path/sub_dir/test", spyCallback);
+		default_handler.parseExtendedContent(path.join("path/sub_dir/test"), spyCallback);
 
-		expect(fs.readdir.mostRecentCall.args[0]).toEqual("content_dir/path/sub_dir/_test");
+		expect(fs.readdir.mostRecentCall.args[0]).toEqual(path.join("content_dir/path/sub_dir/_test"));
 
 	});
 
@@ -246,7 +247,7 @@ describe("parse extended content", function(){
 		default_handler.parsers = {".textile": {"parse": {}} };
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.parseExtendedContent("path/test", spyCallback);
+		default_handler.parseExtendedContent(path.join("path/test"), spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, {}, null);
 
@@ -390,7 +391,7 @@ describe("get sections", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getSections(spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(["/", "/sub1", "/sub2", "/sub1/subsub", "/sub2/subsub"]);
+		expect(spyCallback).toHaveBeenCalledWith([path.join("/"), path.join("/sub1"), path.join("/sub2"), path.join("/sub1/subsub"), path.join("/sub2/subsub")]);
 
 	});
 
@@ -413,7 +414,7 @@ describe("get content paths", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getContentPaths("path/test", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/page1", "path/test/page2"]);
+		expect(spyCallback).toHaveBeenCalledWith(null, [path.join("path/test/index"), path.join("path/test/page1"), path.join("path/test/page2")]);
 	});
 
 	it("collect files with special output extensions", function(){
@@ -424,7 +425,7 @@ describe("get content paths", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getContentPaths("path/test", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/page1", "path/test/page1.rss", "path/test/page2"]);
+		expect(spyCallback).toHaveBeenCalledWith(null, [path.join("path/test/index"), path.join("path/test/page1"), path.join("path/test/page1.rss"), path.join("path/test/page2")]);
 	});
 
 	it("collect the extended directories", function(){
@@ -435,7 +436,7 @@ describe("get content paths", function(){
 		var spyCallback = jasmine.createSpy();
 		default_handler.getContentPaths("path/test", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, ["path/test/index", "path/test/another_page"]);
+		expect(spyCallback).toHaveBeenCalledWith(null, [path.join("path/test/index"), path.join("path/test/another_page")]);
 
 	});
 

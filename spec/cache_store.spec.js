@@ -57,7 +57,7 @@ describe("stat", function(){
 		cache_store.outputDir = "output_dir";
 
 		spyOn(fs, "stat").andCallFake(function(file_path, callback){
-			if(file_path === "output_dir/path/test.html"){
+			if(file_path === path.join("output_dir/path/test.html")){
 				return callback(null, {"mtime": new Date(2012, 6, 21), "size": 527});
 			}
 		});
@@ -113,7 +113,7 @@ describe("get", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.get("path/test", ".html", { "options": {} }, {}, spyCallback);
 
-		expect(fs.stat).toHaveBeenCalledWith("output_dir/path/test/index.html", jasmine.any(Function));
+		expect(fs.stat).toHaveBeenCalledWith(path.join("output_dir/path/test/index.html"), jasmine.any(Function));
 	});
 
 	it("read the file with the correct encoding", function() {
@@ -136,7 +136,7 @@ describe("get", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.get("path/test", ".html", { "options": { "header": { "custom-key": "custom-value" } } }, {}, spyCallback);
 
-		expect(fs.readFile).toHaveBeenCalledWith("output_dir/path/test.html", "utf8", jasmine.any(Function));
+		expect(fs.readFile).toHaveBeenCalledWith(path.join("output_dir/path/test.html"), "utf8", jasmine.any(Function));
 	});
 
 	it("call the callback with file content", function(){
@@ -240,7 +240,7 @@ describe("update", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
 
-		expect(fs.writeFile).toHaveBeenCalledWith("output_dir/path/subdir/test.html", "test", "utf8", jasmine.any(Function));
+		expect(fs.writeFile).toHaveBeenCalledWith(path.join("output_dir/path/subdir/test.html"), "test", "utf8", jasmine.any(Function));
 	});
 
 	it("correct the given path if it's a section", function() {
@@ -261,7 +261,7 @@ describe("update", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.update("path/subdir/test", ".html", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
 
-		expect(fs.writeFile).toHaveBeenCalledWith("output_dir/path/subdir/test/index.html", "test", "utf8", jasmine.any(Function));
+		expect(fs.writeFile).toHaveBeenCalledWith(path.join("output_dir/path/subdir/test/index.html"), "test", "utf8", jasmine.any(Function));
 	});
 
 	it("set the correct encoding", function(){
@@ -280,7 +280,7 @@ describe("update", function(){
 		var spyCallback = jasmine.createSpy();
 		cache_store.update("path/subdir/test", ".jpg", { "body": "test", "options": { "header": {} } }, {}, spyCallback);
 
-		expect(fs.writeFile).toHaveBeenCalledWith("output_dir/path/subdir/test.jpg", "test", "binary", jasmine.any(Function));
+		expect(fs.writeFile).toHaveBeenCalledWith(path.join("output_dir/path/subdir/test.jpg"), "test", "binary", jasmine.any(Function));
 	});
 
 	it("call the callback with the error if there's an error in writing the file", function(){
