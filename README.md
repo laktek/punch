@@ -39,7 +39,7 @@ Punch is a simple, intuitive web publishing framework that will delight both des
 
 * Follow the steps in hands-on tutorial.
 
-**Note**: If you experience any issues in installing Punch on Windows, please [read this guide](https://github.com/laktek/punch/wiki/Windows).
+**Note**: If you experience any issues in installing Punch on Windows, please [read this guide](https://github.com/laktek/punch/wiki/Installing-on-Windows).
 
 ### Documentation
 
