@@ -35,3 +35,47 @@ describe("get the basename", function() {
 	});
 
 });
+
+describe("match a path", function() {
+
+	it("matches a single path", function() {
+		var matches = path_utils.matchPath("/css/less/main.less", "/css/less/*");
+		expect(matches[0]).toEqual("/css/less/");
+	});
+
+	it("matches a single path on windows", function() {
+		var matches = path_utils.matchPath("\\css\\less\\main.less", "/css/less/*");
+		expect(matches[0]).toEqual("/css/less/");
+	});
+
+	it("matches multiple paths", function() {
+		var matches = path_utils.matchPath("/css/less/main.less", ["/css/less/*", "/css/sass/*"]);
+		expect(matches).toBeTruthy();
+	});
+
+	it("matches multiple paths on windows", function() {
+		var matches = path_utils.matchPath("\\css\\less\\main.less", ["/css/less/*", "/css/sass/*"]);
+		expect(matches).toBeTruthy();
+	});
+
+	it("fails a match on single path", function() {
+		var matches = path_utils.matchPath("/css/less/main.less", "/css/sass/*");
+		expect(matches).toBeFalsy();
+	});
+
+	it("fails a match on single path on windows", function() {
+		var matches = path_utils.matchPath("\\css\\less\\main.less", "/css/sass/*");
+		expect(matches).toBeFalsy();
+	});
+
+	it("fails a match on multiple paths", function() {
+		var matches = path_utils.matchPath("/css/less/main.less", ["/css/les/*", "/css/sass/*"]);
+		expect(matches).toBeTruthy();
+	});
+
+	it("fails a match on multiple paths on windows", function() {
+		var matches = path_utils.matchPath("\\css\\less\\main.less", ["/css/les/*", "/css/sass/*"]);
+		expect(matches).toBeTruthy();
+	});
+
+});
