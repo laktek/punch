@@ -1,4 +1,5 @@
 var path_utils = require("../../lib/utils/path_utils.js");
+var os = require("os");
 
 describe("get the extension", function() {
 
@@ -23,15 +24,15 @@ describe("get the extension", function() {
 describe("get the basename", function() {
 
 	it("return the path after removing the extension", function() {
-		expect(path_utils.getBasename("path/sub/test.html", ".html")).toEqual("path/sub/test");	
+		expect(path_utils.getBasename("path/sub/test.html", ".html")).toEqual("path/sub/test");
 	});
 
 	it("don't change the paths without the extension", function() {
-		expect(path_utils.getBasename("path/sub_html/api", ".html")).toEqual("path/sub_html/api");	
+		expect(path_utils.getBasename("path/sub_html/api", ".html")).toEqual("path/sub_html/api");
 	});
 
 	it("set the root path to index", function() {
-		expect(path_utils.getBasename("/", ".html")).toEqual("/index");	
+		expect(path_utils.getBasename("/", ".html")).toEqual("/index");
 	});
 
 });
@@ -44,6 +45,9 @@ describe("match a path", function() {
 	});
 
 	it("matches a single path on windows", function() {
+    spyOn(os, "platform").andCallFake(function(){
+      return "win32"
+    });
 		var matches = path_utils.matchPath("\\css\\less\\main.less", "/css/less/*");
 		expect(matches[0]).toEqual("/css/less/");
 	});
@@ -54,6 +58,9 @@ describe("match a path", function() {
 	});
 
 	it("matches multiple paths on windows", function() {
+    spyOn(os, "platform").andCallFake(function(){
+      return "win32"
+    });
 		var matches = path_utils.matchPath("\\css\\less\\main.less", ["/css/less/*", "/css/sass/*"]);
 		expect(matches).toBeTruthy();
 	});
@@ -64,6 +71,9 @@ describe("match a path", function() {
 	});
 
 	it("fails a match on single path on windows", function() {
+    spyOn(os, "platform").andCallFake(function(){
+      return "win32"
+    });
 		var matches = path_utils.matchPath("\\css\\less\\main.less", "/css/sass/*");
 		expect(matches).toBeFalsy();
 	});
@@ -74,6 +84,9 @@ describe("match a path", function() {
 	});
 
 	it("fails a match on multiple paths on windows", function() {
+    spyOn(os, "platform").andCallFake(function(){
+      return "win32"
+    });
 		var matches = path_utils.matchPath("\\css\\less\\main.less", ["/css/les/*", "/css/sass/*"]);
 		expect(matches).toBeTruthy();
 	});
