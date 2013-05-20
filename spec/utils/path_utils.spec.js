@@ -32,7 +32,7 @@ describe("get the basename", function() {
 	});
 
 	it("set the root path to index", function() {
-		expect(path_utils.getBasename("/", ".html")).toEqual("/index");
+		expect(path_utils.getBasename("/", ".html")).toEqual(path.sep + "index");
 	});
 
 });
