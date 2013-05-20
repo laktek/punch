@@ -1,4 +1,5 @@
 var path_utils = require("../../lib/utils/path_utils.js");
+var path = require("path");
 var os = require("os");
 
 describe("get the extension", function() {
