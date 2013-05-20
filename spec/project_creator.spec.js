@@ -2,8 +2,18 @@ var project_creator = require("../lib/project_creator.js");
 
 var fs = require("fs");
 var child_process = require("child_process");
+var os = require("os");
 
 describe("creating a bare structure", function() {
+
+	function getCopyCommand(templatePath, path)
+	{
+		if (os.platform() === "win32") {
+			return "ROBOCOPY " + templatePath + " " + path  + " *.* /E";
+		}
+
+		return "cp -r " + templatePath + "/* " + path;
+	}
 
 	it("create the site directory if needed", function() {
 		spyOn(fs, "stat").andCallFake(function(path, callback) {
@@ -26,7 +36,7 @@ describe("creating a bare structure", function() {
 
 		project_creator.createStructure("site_path", "path/to/template");
 
-		expect(child_process.exec).toHaveBeenCalledWith("cp -r path/to/template/* site_path", jasmine.any(Function));
+		expect(child_process.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "site_path"), jasmine.any(Function));
 	});
 
 	it("use the default template to create the structure if no template given", function() {
@@ -40,7 +50,7 @@ describe("creating a bare structure", function() {
 
 		project_creator.createStructure("site_path");
 
-		expect(child_process.exec).toHaveBeenCalledWith("cp -r default_template_path/* site_path", jasmine.any(Function));
+		expect(child_process.exec).toHaveBeenCalledWith(getCopyCommand("default_template_path", "site_path"), jasmine.any(Function));
 	});
 
 	it("don't create the structure if site directory creation fails", function() {
@@ -67,7 +77,7 @@ describe("creating a bare structure", function() {
 
 		project_creator.createStructure(null, "path/to/template");
 
-		expect(child_process.exec).toHaveBeenCalledWith("cp -r path/to/template/* current_path", jasmine.any(Function));
+		expect(child_process.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "current_path"), jasmine.any(Function));
 	});
 
 	it("use the current path if dot is given as the path", function(){
@@ -76,7 +86,7 @@ describe("creating a bare structure", function() {
 
 		project_creator.createStructure(".", "path/to/template");
 
-		expect(child_process.exec).toHaveBeenCalledWith("cp -r path/to/template/* current_path", jasmine.any(Function));
+		expect(child_process.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "current_path"), jasmine.any(Function));
 	});
 
 });

@@ -425,18 +425,18 @@ describe("get partials", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getPartials("/index", ".mustache", {}, spyCallback);
+		default_handler.getPartials(pathConv.sep + "index", ".mustache", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, {"partial1": "partial output", "partial2": "partial output"}, new Date(2012, 6, 17));
 	});
 
 	it("traverse all parent directories looking for partials", function(){
 		spyOn(fs, "readdir").andCallFake(function(path, callback){
-			if(path === pathConv.join("template_dir/main")){
+			if(path === pathConv.join("template_dir","main")){
 				return callback(null, ["index.html", "test.mustache", "_partial1.mustache"]);
-			} else if(path === pathConv.join("template_dir/main/sub")){
+			} else if(path === pathConv.join("template_dir","main","sub")){
 				return callback(null, ["index.html", "test.mustache", "_partial2.mustache"]);
-			} else if(path === pathConv.join("template_dir/main/sub/sub-sub")){
+			} else if(path === pathConv.join("template_dir","main","sub","sub-sub")){
 				return callback(null, ["index.html", "test.mustache", "_partial3.mustache"]);
 			} else {
 				return callback("error", null);
@@ -452,7 +452,7 @@ describe("get partials", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getPartials("main/sub/sub-sub/index", ".mustache", {}, spyCallback);
+		default_handler.getPartials(pathConv.join("main","sub","sub-sub","index"), ".mustache", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, {"partial1": "partial output", "partial2": "partial output", "partial3": "partial output"}, new Date(2012, 6, 17));
 
@@ -480,7 +480,7 @@ describe("get partials", function(){
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getPartials("/index", ".mustache", {}, spyCallback);
+		default_handler.getPartials(pathConv.sep + "index", ".mustache", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, {"partial1": "partial output", "partial2": "partial output"}, new Date(2012, 6, 19));
 
