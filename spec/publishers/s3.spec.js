@@ -1,4 +1,5 @@
 var fs = require("fs");
+var path = require("path");
 var knox = require("knox");
 var s3_publisher = require("../../lib/publishers/s3.js");
 
@@ -93,7 +94,7 @@ describe("copy a file to s3 bucket", function() {
 
 		spyOn(s3_publisher.client, "put").andReturn(dummy_req_obj);
 
-		s3_publisher.copyFile("output_dir/sub/file.html", "sub/file.html", spy_callback);
+		s3_publisher.copyFile(path.join("output_dir" , "sub" , "file.html"), path.join("sub" , "file.html"), spy_callback);
 
 		expect(s3_publisher.client.put.mostRecentCall.args[0]).toEqual("sub/file.html");
 	});
