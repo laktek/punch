@@ -1,37 +1,37 @@
-var cli = require("../lib/cli.js");
+var Cli = require("../lib/cli.js");
 
-var child_process = require('child_process');
+var ChildProcess = require('child_process');
 
-var project_creator = require("../lib/project_creator.js");
-var server = require("../lib/server.js");
-var generator = require("../lib/site_generator.js");
-var publisher = require("../lib/publisher.js");
-var config_handler = require("../lib/config_handler.js");
+var ProjectCreator = require("../lib/project_creator");
+var Server = require("../lib/server");
+var SiteGenerator = require("../lib/site_generator.js");
+var Publisher = require("../lib/publisher.js");
+var ConfigHandler = require("../lib/config_handler.js");
 
 describe("init", function() {
 
 	it("pass arguments to the called command", function() {
-		spyOn(cli, "server");
+		spyOn(Cli, "Server");
 
-		cli.init(["server", "3009"]);
+		Cli.init(["Server", "3009"]);
 
-		expect(cli.server).toHaveBeenCalledWith(["3009"]);
+		expect(Cli.Server).toHaveBeenCalledWith(["3009"]);
 	});
 
 	it("call commands by short code", function() {
-		spyOn(cli, "server");
+		spyOn(Cli, "Server");
 
-		cli.init(["s", "3009"]);
+		Cli.init(["s", "3009"]);
 
-		expect(cli.server).toHaveBeenCalledWith(["3009"]);
+		expect(Cli.Server).toHaveBeenCalledWith(["3009"]);
 	});
 
 	it("return help for invalid commands", function() {
-		spyOn(cli, "help");
+		spyOn(Cli, "help");
 
-		cli.init(["nothing"]);
+		Cli.init(["nothing"]);
 
-		expect(cli.help).toHaveBeenCalled();
+		expect(Cli.help).toHaveBeenCalled();
 	});
 
 });
@@ -39,63 +39,63 @@ describe("init", function() {
 describe("setup a new site", function() {
 
 	it("create a site in target path with default template", function() {
-		spyOn(cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
-		spyOn(project_creator, "createStructure");
+		spyOn(Cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
+		spyOn(ProjectCreator, "createStructure");
 
-		cli.setup(["path/target"]);
+		Cli.setup(["path/target"]);
 
-		expect(project_creator.createStructure).toHaveBeenCalledWith("path/target");
+		expect(ProjectCreator.createStructure).toHaveBeenCalledWith("path/target");
 	});
 
 	it("create a site in target path with given template", function() {
-		spyOn(cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
-		spyOn(project_creator, "createStructure");
+		spyOn(Cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
+		spyOn(ProjectCreator, "createStructure");
 
-		cli.setup(["--template", "path/to/template", "path/target"]);
+		Cli.setup(["--template", "path/to/template", "path/target"]);
 
-		expect(project_creator.createStructure).toHaveBeenCalledWith("path/target", "path/to/template");
+		expect(ProjectCreator.createStructure).toHaveBeenCalledWith("path/target", "path/to/template");
 	});
 
 	it("create a site in current path with given template", function() {
-		spyOn(cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
-		spyOn(project_creator, "createStructure");
+		spyOn(Cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
+		spyOn(ProjectCreator, "createStructure");
 
-		cli.setup(["-t", "path/to/template"]);
+		Cli.setup(["-t", "path/to/template"]);
 
-		expect(project_creator.createStructure).toHaveBeenCalledWith(undefined, "path/to/template");
+		expect(ProjectCreator.createStructure).toHaveBeenCalledWith(undefined, "path/to/template");
 	});
 
 	it("create a site in current path with default template", function() {
-		spyOn(cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
-		spyOn(project_creator, "createStructure");
+		spyOn(Cli, "notifyIfOutdated").andCallFake(function(cb) { return cb(); });
+		spyOn(ProjectCreator, "createStructure");
 
-		cli.setup([]);
+		Cli.setup([]);
 
-		expect(project_creator.createStructure).toHaveBeenCalledWith(undefined);
+		expect(ProjectCreator.createStructure).toHaveBeenCalledWith(undefined);
 	});
 
 });
 
-describe("start the server", function() {
+describe("start the Server", function() {
 
 	it("get the config given in the path", function() {
-		spyOn(config_handler, "getConfig");
+		spyOn(ConfigHandler, "getConfig");
 
-		cli.server(["custom_config.json"]);
+		Cli.Server(["custom_config.json"]);
 
-		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
+		expect(ConfigHandler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
 	});
 
-	it("start the server with the port given in arguments", function() {
-		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
-			return callback({ "server": { "port": 9009 } });
+	it("start the Server with the port given in arguments", function() {
+		spyOn(ConfigHandler, "getConfig").andCallFake(function(config_path, callback) {
+			return callback({ "Server": { "port": 9009 } });
 		});
 
-		spyOn(server, "startServer");
+		spyOn(Server, "startServer");
 
-		cli.server(["3001"]);
+		Cli.Server(["3001"]);
 
-		expect(server.startServer).toHaveBeenCalledWith({ "server": { "port": 3001 } });
+		expect(Server.startServer).toHaveBeenCalledWith({ "Server": { "port": 3001 } });
 	});
 
 });
@@ -103,51 +103,51 @@ describe("start the server", function() {
 describe("generate a site", function() {
 
 	it("get the config given in the path", function() {
-		spyOn(config_handler, "getConfig");
+		spyOn(ConfigHandler, "getConfig");
 
-		cli.generate(["custom_config.json"]);
+		Cli.generate(["custom_config.json"]);
 
-		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
+		expect(ConfigHandler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
 	});
 
 	it("set the blank state", function() {
-		spyOn(config_handler, "getConfig").andCallFake(function(path, callback) {
-			callback({ "generator": { "blank": false }, "plugins": { "generator_hooks": {} } });
+		spyOn(ConfigHandler, "getConfig").andCallFake(function(path, callback) {
+			callback({ "SiteGenerator": { "blank": false }, "plugins": { "SiteGenerator_hooks": {} } });
 		});
-		spyOn(generator, "setup");
-		spyOn(generator, "generate");
+		spyOn(SiteGenerator, "setup");
+		spyOn(SiteGenerator, "generate");
 
-		cli.generate(["--blank"]);
+		Cli.generate(["--blank"]);
 
-		expect(generator.setup).toHaveBeenCalledWith({ "generator": { "blank": true }, "plugins": { "generator_hooks": {} } });
+		expect(SiteGenerator.setup).toHaveBeenCalledWith({ "SiteGenerator": { "blank": true }, "plugins": { "SiteGenerator_hooks": {} } });
 	});
 
-	it("setup the generator with the supplied config", function() {
-		var dummy_config = { "generator": { "blank": false }, "plugins": { "generator_hooks": {} } };
-		spyOn(config_handler, "getConfig").andCallFake(function(path, callback) {
+	it("setup the SiteGenerator with the supplied config", function() {
+		var dummy_config = { "SiteGenerator": { "blank": false }, "plugins": { "SiteGenerator_hooks": {} } };
+		spyOn(ConfigHandler, "getConfig").andCallFake(function(path, callback) {
 			callback(dummy_config);
 		});
 
-		spyOn(generator, "setup");
-		spyOn(generator, "generate");
+		spyOn(SiteGenerator, "setup");
+		spyOn(SiteGenerator, "generate");
 
-		cli.generate(["custom_config.json"]);
+		Cli.generate(["custom_config.json"]);
 
-		expect(generator.setup).toHaveBeenCalledWith(dummy_config);
+		expect(SiteGenerator.setup).toHaveBeenCalledWith(dummy_config);
 	});
 
 	it("call generate with a callback", function() {
-		var dummy_config = { "generator": { "blank": false }, "plugins": { "generator_hooks": {} } };
-		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
+		var dummy_config = { "SiteGenerator": { "blank": false }, "plugins": { "SiteGenerator_hooks": {} } };
+		spyOn(ConfigHandler, "getConfig").andCallFake(function(config_path, callback) {
 			return callback(dummy_config);
 		});
 
-		spyOn(generator, "setup");
-		spyOn(generator, "generate");
+		spyOn(SiteGenerator, "setup");
+		spyOn(SiteGenerator, "generate");
 
-		cli.generate(["custom_config.json"]);
+		Cli.generate(["custom_config.json"]);
 
-		expect(generator.generate).toHaveBeenCalledWith(jasmine.any(Function));
+		expect(SiteGenerator.generate).toHaveBeenCalledWith(jasmine.any(Function));
 	});
 
 });
@@ -155,27 +155,27 @@ describe("generate a site", function() {
 describe("publish a site", function() {
 
 	it("get the config given in the path", function() {
-		spyOn(config_handler, "getConfig");
+		spyOn(ConfigHandler, "getConfig");
 
-		spyOn(publisher, "publish");
+		spyOn(Publisher, "publish");
 
-		cli.publish(["custom_config.json"]);
+		Cli.publish(["custom_config.json"]);
 
-		expect(config_handler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
+		expect(ConfigHandler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
 	});
 
 	it("call publish with the supplied config", function() {
 		var spyConfigObj = jasmine.createSpy();
 
-		spyOn(config_handler, "getConfig").andCallFake(function(config_path, callback) {
+		spyOn(ConfigHandler, "getConfig").andCallFake(function(config_path, callback) {
 			return callback(spyConfigObj);
 		});
 
-		spyOn(publisher, "publish");
+		spyOn(Publisher, "publish");
 
-		cli.publish(["custom_config.json"]);
+		Cli.publish(["custom_config.json"]);
 
-		expect(publisher.publish).toHaveBeenCalledWith(spyConfigObj);
+		expect(Publisher.publish).toHaveBeenCalledWith(spyConfigObj);
 	});
 
 });
@@ -183,12 +183,12 @@ describe("publish a site", function() {
 describe("notify if outdated", function() {
 
 	it("call the callback", function() {
-		spyOn(child_process, "exec").andCallFake(function(cmd, cb) {
+		spyOn(ChildProcess, "exec").andCallFake(function(cmd, cb) {
 			return cb(null, "outdated message");
 		});
 
 		var spyCallback = jasmine.createSpy();
-		cli.notifyIfOutdated(spyCallback);
+		Cli.notifyIfOutdated(spyCallback);
 
 		expect(spyCallback).toHaveBeenCalled();
 	});

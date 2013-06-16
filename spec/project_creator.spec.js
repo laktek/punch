@@ -1,14 +1,14 @@
-var project_creator = require("../lib/project_creator.js");
+var ProjectCreator = require("../lib/project_creator");
 
-var fs = require("fs");
-var child_process = require("child_process");
-var os = require("os");
+var Fs = require("fs");
+var ChildProcess = require("child_process");
+var Os = require("os");
 
 describe("creating a bare structure", function() {
 
 	function getCopyCommand(templatePath, path)
 	{
-		if (os.platform() === "win32") {
+		if (Os.platform() === "win32") {
 			return "ROBOCOPY " + templatePath + " " + path  + " *.* /E";
 		}
 
@@ -16,77 +16,77 @@ describe("creating a bare structure", function() {
 	}
 
 	it("create the site directory if needed", function() {
-		spyOn(fs, "stat").andCallFake(function(path, callback) {
+		spyOn(Fs, "stat").andCallFake(function(path, callback) {
 			return callback("error", null);
 		});
 
-		spyOn(fs, "mkdir");
+		spyOn(Fs, "mkdir");
 
-		project_creator.createStructure("site_path");
+		ProjectCreator.createStructure("site_path");
 
-		expect(fs.mkdir).toHaveBeenCalledWith("site_path", jasmine.any(Function));
+		expect(Fs.mkdir).toHaveBeenCalledWith("site_path", jasmine.any(Function));
 	});
 
 	it("create the structure using the given template", function() {
-		spyOn(fs, "stat").andCallFake(function(path, callback) {
+		spyOn(Fs, "stat").andCallFake(function(path, callback) {
 			return callback(null, { "isDirectory": function() { return true } });
 		});
 
-		spyOn(child_process, "exec");
+		spyOn(ChildProcess, "exec");
 
-		project_creator.createStructure("site_path", "path/to/template");
+		ProjectCreator.createStructure("site_path", "path/to/template");
 
-		expect(child_process.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "site_path"), jasmine.any(Function));
+		expect(ChildProcess.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "site_path"), jasmine.any(Function));
 	});
 
 	it("use the default template to create the structure if no template given", function() {
-		spyOn(fs, "stat").andCallFake(function(path, callback) {
+		spyOn(Fs, "stat").andCallFake(function(path, callback) {
 			return callback(null, { "isDirectory": function() { return true } });
 		});
 
-		spyOn(child_process, "exec");
+		spyOn(ChildProcess, "exec");
 
-		spyOn(project_creator, "getDefaultTemplate").andReturn("default_template_path");
+		spyOn(ProjectCreator, "getDefaultTemplate").andReturn("default_template_path");
 
-		project_creator.createStructure("site_path");
+		ProjectCreator.createStructure("site_path");
 
-		expect(child_process.exec).toHaveBeenCalledWith(getCopyCommand("default_template_path", "site_path"), jasmine.any(Function));
+		expect(ChildProcess.exec).toHaveBeenCalledWith(getCopyCommand("default_template_path", "site_path"), jasmine.any(Function));
 	});
 
 	it("don't create the structure if site directory creation fails", function() {
-		spyOn(fs, "stat").andCallFake(function(path, callback) {
+		spyOn(Fs, "stat").andCallFake(function(path, callback) {
 			return callback("error", null);
 		});
 
-		spyOn(fs, "mkdir").andCallFake(function(path, callback) {
+		spyOn(Fs, "mkdir").andCallFake(function(path, callback) {
 			return callback("error");
 		});
 
-		spyOn(child_process, "exec");
+		spyOn(ChildProcess, "exec");
 
-		project_creator.createStructure("site_path");
+		ProjectCreator.createStructure("site_path");
 
-		expect(child_process.exec).not.toHaveBeenCalled();
+		expect(ChildProcess.exec).not.toHaveBeenCalled();
 
 	});
 
 	it("use the current path if no path is given", function(){
 		spyOn(process, "cwd").andReturn("current_path");
 
-		spyOn(child_process, "exec");
+		spyOn(ChildProcess, "exec");
 
-		project_creator.createStructure(null, "path/to/template");
+		ProjectCreator.createStructure(null, "path/to/template");
 
-		expect(child_process.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "current_path"), jasmine.any(Function));
+		expect(ChildProcess.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "current_path"), jasmine.any(Function));
 	});
 
 	it("use the current path if dot is given as the path", function(){
 		spyOn(process, "cwd").andReturn("current_path");
-		spyOn(child_process, "exec");
+		spyOn(ChildProcess, "exec");
 
-		project_creator.createStructure(".", "path/to/template");
+		ProjectCreator.createStructure(".", "path/to/template");
 
-		expect(child_process.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "current_path"), jasmine.any(Function));
+		expect(ChildProcess.exec).toHaveBeenCalledWith(getCopyCommand("path/to/template", "current_path"), jasmine.any(Function));
 	});
 
 });

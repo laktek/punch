@@ -1,10 +1,10 @@
-var path = require("path");
+var Path = require("path");
 var DeepFstream = require("../../lib/utils/deep_fstream");
 
 describe("deep fstream function", function(){
 
 	it("emits directory event for every directory it finds", function(done){
-		var file_stream = new DeepFstream(path.join(__dirname, "../sample_directory"));
+		var file_stream = new DeepFstream(Path.join(__dirname, "../sample_directory"));
 
 		var count = 0;
 
@@ -25,7 +25,7 @@ describe("deep fstream function", function(){
 	});
 
 	it("emits file event for every file it finds (including the ones in sub-directories)", function(done){
-		var file_stream = new DeepFstream(path.join(__dirname, "../sample_directory"));
+		var file_stream = new DeepFstream(Path.join(__dirname, "../sample_directory"));
 
 		var count = 0;
 
@@ -46,7 +46,7 @@ describe("deep fstream function", function(){
 	});
 
 	it("skip reading files in directories marked to be skipped", function(done){
-		var file_stream = new DeepFstream(path.join(__dirname, "../sample_directory"));
+		var file_stream = new DeepFstream(Path.join(__dirname, "../sample_directory"));
 
 		var count = 0;
 

@@ -1,33 +1,33 @@
-var server = require("../lib/server.js");
+var Server = require("../lib/server.js");
 
-var connect = require("connect");
+var Connect = require("connect");
 
-var default_config = require("../lib/default_config.js");
-var pageServer = require("../lib/page_server.js");
+var DefaultConfig = require("../lib/default_config");
+var PageServer = require("../lib/page_server.js");
 
 describe("start server", function(){
 
   it("extend the default config with supplied config", function() {
     var supplied_config = { server: { port: 4000 } };
-		spyOn(connect, "call").andCallFake(function() {
+		spyOn(Connect, "call").andCallFake(function() {
 			return {"use": function(){}, "listen": function(){} };
 		});
 
-		spyOn(pageServer, "setup");
+		spyOn(PageServer, "setup");
 
-    server.startServer(supplied_config);
-    expect(server.config.server.port).toEqual(4000);
+    Server.startServer(supplied_config);
+    expect(Server.config.server.port).toEqual(4000);
   });
 
 	it("setup page server with extended config", function() {
-		spyOn(connect, "call").andCallFake(function() {
+		spyOn(Connect, "call").andCallFake(function() {
 			return {"use": function(middleware){}, "listen": function(){} };
 		});
 
-		spyOn(pageServer, "setup");
+		spyOn(PageServer, "setup");
 
-    server.startServer(default_config);
-    expect(pageServer.setup).toHaveBeenCalledWith(default_config);
+    Server.startServer(DefaultConfig);
+    expect(PageServer.setup).toHaveBeenCalledWith(DefaultConfig);
 	});
 
 });

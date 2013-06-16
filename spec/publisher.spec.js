@@ -1,67 +1,67 @@
-var publisher = require("../lib/publisher.js");
+var Publisher = require("../lib/publisher");
 
-var fs = require("fs");
+var Fs = require("fs");
 
-var site_generator = require("../lib/site_generator.js");
-var module_utils = require("../lib/utils/module_utils.js");
+var SiteGenerator = require("../lib/site_generator");
+var ModuleUtils = require("../lib/utils/module_utils");
 
 describe("calling publish", function() {
 
 	var config = { "publish": { "strategy": "s3" } };
 
 	it("require the selected strategy", function() {
-		spyOn(publisher, "requireStrategy");
-		spyOn(publisher, "getLastPublishedDate");
-		spyOn(publisher, "delegatedPublish");
+		spyOn(Publisher, "requireStrategy");
+		spyOn(Publisher, "getLastPublishedDate");
+		spyOn(Publisher, "delegatedPublish");
 
-		publisher.publish(config);
+		Publisher.publish(config);
 
-		expect(publisher.requireStrategy).toHaveBeenCalledWith("s3");
+		expect(Publisher.requireStrategy).toHaveBeenCalledWith("s3");
 	});
 
 	it("throw an error if no publishing strategy available in config", function(){
 		var supplied_config = { "foo": {"sftp": {} } };
 		var error = "No publishing settings found. Specify the publish settings in the config file.";
 
-		expect(function(){publisher.publish(supplied_config, null)}).toThrow(error);
+		expect(function(){Publisher.publish(supplied_config, null)}).toThrow(error);
 	});
 
 	it("read the timestamp file and set the last published date", function(){
 		var strategy_obj = { "publish": {} };
-		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
-		spyOn(publisher, "getLastPublishedDate");
-		spyOn(publisher, "delegatedPublish");
+		spyOn(Publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
+		spyOn(Publisher, "getLastPublishedDate");
+		spyOn(Publisher, "delegatedPublish");
 
-		publisher.publish(config);
+		Publisher.publish(config);
 
-		expect(publisher.getLastPublishedDate).toHaveBeenCalled();
+		expect(Publisher.getLastPublishedDate).toHaveBeenCalled();
 	});
 
 	it("generate the site before publishing if generate flag is set", function(){
 		var supplied_config = { "publish": { "strategy": "s3", "generate": true } };
 		var strategy_obj = { "publish": {} };
 
-		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
-		spyOn(publisher, "getLastPublishedDate");
+		spyOn(Publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
+		spyOn(Publisher, "getLastPublishedDate");
 
-		spyOn(site_generator, "setup");
-		spyOn(site_generator, "generate");
+		spyOn(SiteGenerator, "setup");
+		spyOn(SiteGenerator, "generate");
 
-		publisher.publish(supplied_config);
+		Publisher.publish(supplied_config);
 
-		expect(site_generator.generate).toHaveBeenCalled();
+		expect(SiteGenerator.generate).toHaveBeenCalled();
 	});
 
 	it("pass the strategy object to deleagated publish method", function(){
 		var strategy_obj = { "publish": {} };
 
-		spyOn(publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
-		spyOn(publisher, "getLastPublishedDate");
-		spyOn(publisher, "delegatedPublish");
+		spyOn(Publisher, "requireStrategy").andCallFake(function(strategy){ return strategy_obj });
+		spyOn(Publisher, "getLastPublishedDate");
+		spyOn(Publisher, "delegatedPublish");
 
-		publisher.publish(config);
+		Publisher.publish(config);
 
-		expect(publisher.delegatedPublish).toHaveBeenCalledWith(strategy_obj);
+		expect(Publisher.delegatedPublish).toHaveBeenCalledWith(strategy_obj);
 	});
 
 });
@@ -70,20 +70,20 @@ describe("require strategy", function() {
 
 	it("throw an error if the strategy is not available", function() {
 		var error = "s3 isn't available as a publishing strategy.";
-		publisher.config = { "plugins": {"publishers": {}} };
+		Publisher.config = { "plugins": {"publishers": {}} };
 
-		expect(function(){ publisher.requireStrategy("s3") }).toThrow(error);
+		expect(function(){ Publisher.requireStrategy("s3") }).toThrow(error);
 
 	});
 
 	it("require the given strategy", function() {
-		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config) {
+		spyOn(ModuleUtils, "requireAndSetup").andCallFake(function(id, config) {
 			return { "id": id };
 		});
 
-		publisher.config =  {"plugins": {"publishers": {"sample": "sample_publisher"}} };
+		Publisher.config =  {"plugins": {"publishers": {"sample": "sample_Publisher"}} };
 
-		expect(publisher.requireStrategy("sample").id).toEqual("sample_publisher");
+		expect(Publisher.requireStrategy("sample").id).toEqual("sample_Publisher");
 	});
 
 });
@@ -91,48 +91,48 @@ describe("require strategy", function() {
 describe("set last published date", function() {
 
 	it("read the timestamp file provided in the config", function() {
-		spyOn(fs, "readFileSync");
+		spyOn(Fs, "readFileSync");
 
-		publisher.config = { "publish": { "timestamp_file": "custom_timestamp_file" } };
+		Publisher.config = { "publish": { "timestamp_file": "custom_timestamp_file" } };
 
-		publisher.getLastPublishedDate();
+		Publisher.getLastPublishedDate();
 
-		expect(fs.readFileSync).toHaveBeenCalledWith("custom_timestamp_file", "utf8");
+		expect(Fs.readFileSync).toHaveBeenCalledWith("custom_timestamp_file", "utf8");
 	});
 
 	it("read the default file if no timestamp file provided in the config", function() {
-		spyOn(fs, "readFileSync");
+		spyOn(Fs, "readFileSync");
 
-		publisher.config = { "publish": {} };
+		Publisher.config = { "publish": {} };
 
-		publisher.getLastPublishedDate();
+		Publisher.getLastPublishedDate();
 
-		expect(fs.readFileSync).toHaveBeenCalledWith(".last_published", "utf8");
+		expect(Fs.readFileSync).toHaveBeenCalledWith(".last_published", "utf8");
 	});
 
 	it("parse and set the output of timestamp file as the last published date", function() {
-		spyOn(fs, "readFileSync").andCallFake(function() {
+		spyOn(Fs, "readFileSync").andCallFake(function() {
 			return "1343691639943";
 		});
 
-		publisher.config = { "publish": {} };
-		publisher.lastPublishedDate = null;
+		Publisher.config = { "publish": {} };
+		Publisher.lastPublishedDate = null;
 
-		publisher.getLastPublishedDate();
+		Publisher.getLastPublishedDate();
 
-		expect(publisher.lastPublishedDate).toEqual(new Date(1343691639943));
+		expect(Publisher.lastPublishedDate).toEqual(new Date(1343691639943));
 	});
 
 	it("set last published date to null if an error occurrs when reading the timestamp file", function() {
-		spyOn(fs, "readFileSync").andCallFake(function() {
+		spyOn(Fs, "readFileSync").andCallFake(function() {
 			throw "error";
 		});
 
-		publisher.config = { "publish": {} };
+		Publisher.config = { "publish": {} };
 
-		publisher.getLastPublishedDate();
+		Publisher.getLastPublishedDate();
 
-		expect(publisher.lastPublishedDate).toEqual(null);
+		expect(Publisher.lastPublishedDate).toEqual(null);
 	});
 });
 
@@ -143,7 +143,7 @@ describe("delegate publish", function(){
 			var strategy_obj = { };
 			var error = "Publish property not defined or it's not a function.";
 
-			expect(function() { publisher.delegatedPublish(strategy_obj) }).toThrow(error);
+			expect(function() { Publisher.delegatedPublish(strategy_obj) }).toThrow(error);
 
 		});
 
@@ -152,7 +152,7 @@ describe("delegate publish", function(){
 			var strategy_obj = { "publish": null };
 			var error = "Publish property not defined or it's not a function.";
 
-			expect(function() { publisher.delegatedPublish(strategy_obj) }).toThrow(error);
+			expect(function() { Publisher.delegatedPublish(strategy_obj) }).toThrow(error);
 
 		});
 
@@ -161,10 +161,10 @@ describe("delegate publish", function(){
 			var strategy_obj = { "publish": publishCallback };
 			var sample_config = { "foo": "bar" };
 
-			publisher.config = sample_config;
-			publisher.lastPublishedDate = new Date(2012, 7, 1);
+			Publisher.config = sample_config;
+			Publisher.lastPublishedDate = new Date(2012, 7, 1);
 
-			publisher.delegatedPublish(strategy_obj);
+			Publisher.delegatedPublish(strategy_obj);
 
 			expect(publishCallback).toHaveBeenCalledWith(sample_config, new Date(2012, 7, 1), jasmine.any(Function));
 		});
@@ -173,10 +173,10 @@ describe("delegate publish", function(){
 
 describe("after publish", function(){
 	it("call to set the last published date", function(){
-		spyOn(publisher, "setLastPublishedDate");
+		spyOn(Publisher, "setLastPublishedDate");
 
-		publisher.afterPublish();
+		Publisher.afterPublish();
 
-		expect(publisher.setLastPublishedDate).toHaveBeenCalled();
+		expect(Publisher.setLastPublishedDate).toHaveBeenCalled();
 	});
 });

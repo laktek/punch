@@ -1,24 +1,23 @@
-var path_utils = require("../../lib/utils/path_utils.js");
-var path = require("path");
-var os = require("os");
-var path = require("path");
+var PathUtils = require("../../lib/utils/path_utils");
+var Path = require("path");
+var Os = require("os");
 
 describe("get the extension", function() {
 
 	it("get directly from the path", function() {
-		expect( path_utils.getExtension("path/test.html", {}) ).toEqual(".html");
+		expect( PathUtils.getExtension("path/test.html", {}) ).toEqual(".html");
 	});
 
 	it("get from the accept type", function() {
-		expect(path_utils.getExtension("path/test", [ { "mediarange": "text/html" }, { "mediarange": "application/xhtml+xml" }, { "mediarange": "*/*" } ])).toEqual(".html");
+		expect(PathUtils.getExtension("path/test", [ { "mediarange": "text/html" }, { "mediarange": "application/xhtml+xml" }, { "mediarange": "*/*" } ])).toEqual(".html");
 	});
 
 	it("set html if it accept any type", function() {
-		expect(path_utils.getExtension("path/test", [ { "mediarange": "*/*" } ])).toEqual(".html");
+		expect(PathUtils.getExtension("path/test", [ { "mediarange": "*/*" } ])).toEqual(".html");
 	});
 
 	it("set html if no accept type given", function() {
-		expect(path_utils.getExtension("path/test", [])).toEqual(".html");
+		expect(PathUtils.getExtension("path/test", [])).toEqual(".html");
 	});
 
 });
@@ -26,15 +25,15 @@ describe("get the extension", function() {
 describe("get the basename", function() {
 
 	it("return the path after removing the extension", function() {
-		expect(path_utils.getBasename("path/sub/test.html", ".html")).toEqual("path/sub/test");
+		expect(PathUtils.getBasename("path/sub/test.html", ".html")).toEqual("path/sub/test");
 	});
 
 	it("don't change the paths without the extension", function() {
-		expect(path_utils.getBasename("path/sub_html/api", ".html")).toEqual("path/sub_html/api");
+		expect(PathUtils.getBasename("path/sub_html/api", ".html")).toEqual("path/sub_html/api");
 	});
 
 	it("set the root path to index", function() {
-		expect(path_utils.getBasename("/", ".html")).toEqual(path.sep + "index");
+		expect(PathUtils.getBasename("/", ".html")).toEqual(Path.sep + "index");
 	});
 
 });
@@ -42,54 +41,54 @@ describe("get the basename", function() {
 describe("match a path", function() {
 
 	it("matches a single path", function() {
-		var matches = path_utils.matchPath("/css/less/main.less", "/css/less/*");
+		var matches = PathUtils.matchPath("/css/less/main.less", "/css/less/*");
 		expect(matches[0]).toEqual("/css/less/");
 	});
 
 	it("matches a single path on windows", function() {
-    spyOn(os, "platform").andCallFake(function(){
+    spyOn(Os, "platform").andCallFake(function(){
       return "win32"
     });
-		var matches = path_utils.matchPath("\\css\\less\\main.less", "/css/less/*");
+		var matches = PathUtils.matchPath("\\css\\less\\main.less", "/css/less/*");
 		expect(matches[0]).toEqual("/css/less/");
 	});
 
 	it("matches multiple paths", function() {
-		var matches = path_utils.matchPath("/css/less/main.less", ["/css/less/*", "/css/sass/*"]);
+		var matches = PathUtils.matchPath("/css/less/main.less", ["/css/less/*", "/css/sass/*"]);
 		expect(matches).toBeTruthy();
 	});
 
 	it("matches multiple paths on windows", function() {
-    spyOn(os, "platform").andCallFake(function(){
+    spyOn(Os, "platform").andCallFake(function(){
       return "win32"
     });
-		var matches = path_utils.matchPath("\\css\\less\\main.less", ["/css/less/*", "/css/sass/*"]);
+		var matches = PathUtils.matchPath("\\css\\less\\main.less", ["/css/less/*", "/css/sass/*"]);
 		expect(matches).toBeTruthy();
 	});
 
 	it("fails a match on single path", function() {
-		var matches = path_utils.matchPath("/css/less/main.less", "/css/sass/*");
+		var matches = PathUtils.matchPath("/css/less/main.less", "/css/sass/*");
 		expect(matches).toBeFalsy();
 	});
 
 	it("fails a match on single path on windows", function() {
-    spyOn(os, "platform").andCallFake(function(){
+    spyOn(Os, "platform").andCallFake(function(){
       return "win32"
     });
-		var matches = path_utils.matchPath("\\css\\less\\main.less", "/css/sass/*");
+		var matches = PathUtils.matchPath("\\css\\less\\main.less", "/css/sass/*");
 		expect(matches).toBeFalsy();
 	});
 
 	it("fails a match on multiple paths", function() {
-		var matches = path_utils.matchPath("/css/less/main.less", ["/css/les/*", "/css/sass/*"]);
+		var matches = PathUtils.matchPath("/css/less/main.less", ["/css/les/*", "/css/sass/*"]);
 		expect(matches).toBeTruthy();
 	});
 
 	it("fails a match on multiple paths on windows", function() {
-    spyOn(os, "platform").andCallFake(function(){
+    spyOn(Os, "platform").andCallFake(function(){
       return "win32"
     });
-		var matches = path_utils.matchPath("\\css\\less\\main.less", ["/css/les/*", "/css/sass/*"]);
+		var matches = PathUtils.matchPath("\\css\\less\\main.less", ["/css/les/*", "/css/sass/*"]);
 		expect(matches).toBeTruthy();
 	});
 

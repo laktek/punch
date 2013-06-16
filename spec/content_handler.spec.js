@@ -1,8 +1,8 @@
-var default_handler = require("../lib/content_handler.js");
-var module_utils = require("../lib/utils/module_utils.js");
+var DefaultHandler = require("../lib/content_handler.js");
+var ModuleUtils = require("../lib/utils/module_utils.js");
 
-var fs = require("fs");
-var path = require("path");
+var Fs = require("fs");
+var Path = require("path");
 
 describe("setup", function(){
 
@@ -22,18 +22,18 @@ describe("setup", function(){
 	};
 
 	it("set the content directory", function(){
-		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+		spyOn(ModuleUtils, "requireAndSetup").andCallFake(function(id, config){
 			return {"id": id};
 		});
 
-		default_handler.setup(sample_config);
-		expect(default_handler.contentDir).toEqual("content_dir");
+		DefaultHandler.setup(sample_config);
+		expect(DefaultHandler.contentDir).toEqual("content_dir");
 	});
 
 	it("setup each parser", function(){
-		default_handler.parsers = {};
+		DefaultHandler.parsers = {};
 
-		spyOn(module_utils, "requireAndSetup").andCallFake(function(id, config){
+		spyOn(ModuleUtils, "requireAndSetup").andCallFake(function(id, config){
       if (id === "sample_markdown_parser") {
         return { "id": id, "supportedExtensions": [".markdown", ".md"] };
       } else {
@@ -41,8 +41,8 @@ describe("setup", function(){
       }
 		});
 
-		default_handler.setup(sample_config);
-		expect(default_handler.parsers).toEqual({".markdown": {"id": "sample_markdown_parser", "supportedExtensions": [".markdown", ".md"] }, ".md": {"id": "sample_markdown_parser", "supportedExtensions": [".markdown", ".md"] }, ".yml": {"id": "sample_yml_parser"}});
+		DefaultHandler.setup(sample_config);
+		expect(DefaultHandler.parsers).toEqual({".markdown": {"id": "sample_markdown_parser", "supportedExtensions": [".markdown", ".md"] }, ".md": {"id": "sample_markdown_parser", "supportedExtensions": [".markdown", ".md"] }, ".yml": {"id": "sample_yml_parser"}});
 	});
 
 });
@@ -50,41 +50,41 @@ describe("setup", function(){
 describe("check for sections", function(){
 
 	it("return false if the given path is null", function(){
-		expect(default_handler.isSection(null)).not.toBeTruthy();
+		expect(DefaultHandler.isSection(null)).not.toBeTruthy();
 	});
 
 	it("return true if the given path is a directory", function(){
-		spyOn(fs, "statSync").andCallFake(function(path){
+		spyOn(Fs, "statSync").andCallFake(function(path){
 			return {"isDirectory": function(){ return true } };
 		});
 
-		expect(default_handler.isSection(path.join("path","sub_dir"))).toBeTruthy();
+		expect(DefaultHandler.isSection(Path.join("path","sub_dir"))).toBeTruthy();
 	});
 
 	it("return false if the directory is a hidden directory", function(){
-		spyOn(fs, "statSync").andCallFake(function(path){
+		spyOn(Fs, "statSync").andCallFake(function(path){
 			return {"isDirectory": function(){ return true } };
 		});
 
-		expect(default_handler.isSection(path.join("path",".hidden","sub_dir"))).not.toBeTruthy();
+		expect(DefaultHandler.isSection(Path.join("path",".hidden","sub_dir"))).not.toBeTruthy();
 
 	});
 
 	it("return false if the directory is a special directory", function(){
-		spyOn(fs, "statSync").andCallFake(function(path){
+		spyOn(Fs, "statSync").andCallFake(function(path){
 			return {"isDirectory": function(){ return true } };
 		});
 
-		expect(default_handler.isSection(path.join("path","_page","sub_dir"))).not.toBeTruthy();
+		expect(DefaultHandler.isSection(Path.join("path","_page","sub_dir"))).not.toBeTruthy();
 
 	});
 
 	it("return false if the path doesn't exist", function(){
-		spyOn(fs, "statSync").andCallFake(function(path){
+		spyOn(Fs, "statSync").andCallFake(function(path){
 			throw "error";
 		});
 
-		expect(default_handler.isSection(path.join("path","_page","sub_dir"))).not.toBeTruthy();
+		expect(DefaultHandler.isSection(Path.join("path","_page","sub_dir"))).not.toBeTruthy();
 	});
 
 });
@@ -95,22 +95,22 @@ describe("get content", function(){
 
 		var sample_json = {"key": "value"};
 
-		spyOn(fs, "stat").andCallFake(function(path, callback){
+		spyOn(Fs, "stat").andCallFake(function(path, callback){
 			return callback(null, {"mtime": new Date(2012, 6, 17)});
 		});
 
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
+		spyOn(Fs, "readFile").andCallFake(function(path, callback){
 			return callback(null, new Buffer(JSON.stringify(sample_json)));
 		});
 
-		spyOn(default_handler, "parseExtendedContent").andCallFake(function(path, callback){
+		spyOn(DefaultHandler, "parseExtendedContent").andCallFake(function(path, callback){
 			return callback(null, {}, new Date(2012, 6, 15));
 		});
 
-		default_handler.contentDir = "content_dir";
+		DefaultHandler.contentDir = "content_dir";
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContent("path/test", spyCallback);
+		DefaultHandler.getContent("path/test", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, sample_json, new Date(2012, 6, 17));
 
@@ -122,15 +122,15 @@ describe("get content", function(){
 		var extended_sample_json = {"key2": "value2"};
 		var expected_json = {"key": "value", "key2": "value2"};
 
-		spyOn(fs, "stat").andCallFake(function(path, callback){
+		spyOn(Fs, "stat").andCallFake(function(path, callback){
 			return callback(null, {"mtime": new Date(2012, 6, 17)});
 		});
 
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
+		spyOn(Fs, "readFile").andCallFake(function(path, callback){
 			return callback(null, new Buffer(JSON.stringify(sample_json)));
 		});
 
-		spyOn(default_handler, "parseExtendedContent").andCallFake(function(path, callback){
+		spyOn(DefaultHandler, "parseExtendedContent").andCallFake(function(path, callback){
 			if(path === "path/test"){
 				return callback(null, extended_sample_json, new Date(2012, 6, 18));
 			} else {
@@ -138,49 +138,49 @@ describe("get content", function(){
 			}
 		});
 
-		default_handler.contentDir = "content_dir";
+		DefaultHandler.contentDir = "content_dir";
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContent("path/test", spyCallback);
+		DefaultHandler.getContent("path/test", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, expected_json, new Date(2012, 6, 18));
 
 	});
 
 	it("send an error if there's no JSON file or extended content", function() {
-		spyOn(fs, "stat").andCallFake(function(path, callback){
+		spyOn(Fs, "stat").andCallFake(function(path, callback){
 			return callback("error", null);
 		});
 
-		spyOn(default_handler, "parseExtendedContent").andCallFake(function(path, callback){
+		spyOn(DefaultHandler, "parseExtendedContent").andCallFake(function(path, callback){
 			return callback("error", null, null);
 		});
 
-		default_handler.contentDir = "content_dir";
+		DefaultHandler.contentDir = "content_dir";
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContent("path/test", spyCallback);
+		DefaultHandler.getContent("path/test", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("[Error] No content found", null, null);
 	});
 
 	it("send an empty object if the JSON file empty and extended content doesn't exist", function() {
-		spyOn(fs, "stat").andCallFake(function(path, callback){
+		spyOn(Fs, "stat").andCallFake(function(path, callback){
 			return callback(null, {"mtime": new Date(2012, 6, 17)});
 		});
 
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
+		spyOn(Fs, "readFile").andCallFake(function(path, callback){
 			return callback(null, new Buffer( "" ));
 		});
 
-		spyOn(default_handler, "parseExtendedContent").andCallFake(function(path, callback){
+		spyOn(DefaultHandler, "parseExtendedContent").andCallFake(function(path, callback){
 			return callback("error", null);
 		});
 
-		default_handler.contentDir = "content_dir";
+		DefaultHandler.contentDir = "content_dir";
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContent("path/test", spyCallback);
+		DefaultHandler.getContent("path/test", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, {}, new Date(2012, 6, 17));
 	});
@@ -191,28 +191,28 @@ describe("parse extended content", function(){
 
 	it("calls the relavant directory for the path", function(){
 
-		spyOn(fs, "readdir");
+		spyOn(Fs, "readdir");
 
-		default_handler.contentDir = "content_dir";
+		DefaultHandler.contentDir = "content_dir";
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.parseExtendedContent(path.join("path/sub_dir/test"), spyCallback);
+		DefaultHandler.parseExtendedContent(Path.join("path/sub_dir/test"), spyCallback);
 
-		expect(fs.readdir.mostRecentCall.args[0]).toEqual(path.join("content_dir/path/sub_dir/_test"));
+		expect(Fs.readdir.mostRecentCall.args[0]).toEqual(Path.join("content_dir/path/sub_dir/_test"));
 
 	});
 
 	it("parse all files in the directory", function(){
 
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
+		spyOn(Fs, "readdir").andCallFake(function(path, callback){
 			return callback(null, ["test1.markdown", "test2.coffee.markdown"]);
 		});
 
-		spyOn(fs, "stat").andCallFake(function(path, callback){
+		spyOn(Fs, "stat").andCallFake(function(path, callback){
 			return callback(null, {"mtime": new Date(2012, 6, 17)});
 		});
 
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
+		spyOn(Fs, "readFile").andCallFake(function(path, callback){
 			return callback(null, "parsed output");
 		});
 
@@ -220,10 +220,10 @@ describe("parse extended content", function(){
 		spyParse.andCallFake(function(content, callback){
 			return callback(null, content);
 		});
-		default_handler.parsers = { ".markdown": {"parse": spyParse} };
+		DefaultHandler.parsers = { ".markdown": {"parse": spyParse} };
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.parseExtendedContent("path/test", spyCallback);
+		DefaultHandler.parseExtendedContent("path/test", spyCallback);
 
 		var parsed_contents = { "test1": "parsed output", "test2": "parsed output" };
 		expect(spyCallback).toHaveBeenCalledWith(null, parsed_contents, new Date(2012, 6, 17));
@@ -231,23 +231,23 @@ describe("parse extended content", function(){
 
 	it("will not parse files without supported parser", function(){
 
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
+		spyOn(Fs, "readdir").andCallFake(function(path, callback){
 			return callback(null, ["test1.markdown", "test2.markdown"]);
 		});
 
-		spyOn(fs, "stat").andCallFake(function(path, callback){
+		spyOn(Fs, "stat").andCallFake(function(path, callback){
 			return callback(null, {"mtime": new Date(2012, 6, 17)});
 		});
 
 		var sample_json = {"key": "value"};
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
+		spyOn(Fs, "readFile").andCallFake(function(path, callback){
 			return callback(null, new Buffer(JSON.stringify(sample_json)));
 		});
 
-		default_handler.parsers = {".textile": {"parse": {}} };
+		DefaultHandler.parsers = {".textile": {"parse": {}} };
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.parseExtendedContent(path.join("path/test"), spyCallback);
+		DefaultHandler.parseExtendedContent(Path.join("path/test"), spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, {}, null);
 
@@ -255,23 +255,23 @@ describe("parse extended content", function(){
 
 	it("parses JSON files by default", function(){
 
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
+		spyOn(Fs, "readdir").andCallFake(function(path, callback){
 			return callback(null, ["test1.json", "test2.markdown"]);
 		});
 
-		spyOn(fs, "stat").andCallFake(function(path, callback){
+		spyOn(Fs, "stat").andCallFake(function(path, callback){
 			return callback(null, {"mtime": new Date(2012, 6, 17)});
 		});
 
 		var sample_json = {"key": "value"};
-		spyOn(fs, "readFile").andCallFake(function(path, callback){
+		spyOn(Fs, "readFile").andCallFake(function(path, callback){
 			return callback(null, new Buffer(JSON.stringify(sample_json)));
 		});
 
-		default_handler.parsers = {};
+		DefaultHandler.parsers = {};
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.parseExtendedContent("path/test", spyCallback);
+		DefaultHandler.parseExtendedContent("path/test", spyCallback);
 
 		var parsed_contents = { "test1": sample_json };
 		expect(spyCallback).toHaveBeenCalledWith(null, parsed_contents, new Date(2012, 6, 17));
@@ -280,12 +280,12 @@ describe("parse extended content", function(){
 
 	it("calls the callback with an error if directory doesn't exist", function(){
 
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
+		spyOn(Fs, "readdir").andCallFake(function(path, callback){
 			return callback("error", null);
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.parseExtendedContent("path/test", spyCallback);
+		DefaultHandler.parseExtendedContent("path/test", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error", null, null);
 
@@ -296,11 +296,11 @@ describe("parse extended content", function(){
 describe("get shared content", function(){
 
 	it("should call get content with shared path", function(){
-		spyOn(default_handler, "getContent");
+		spyOn(DefaultHandler, "getContent");
 		var spyCallback = jasmine.createSpy();
 
-		default_handler.getSharedContent(spyCallback);
-		expect(default_handler.getContent).toHaveBeenCalledWith("shared", spyCallback);
+		DefaultHandler.getSharedContent(spyCallback);
+		expect(DefaultHandler.getContent).toHaveBeenCalledWith("shared", spyCallback);
 	});
 
 });
@@ -308,57 +308,57 @@ describe("get shared content", function(){
 describe("negotiate content", function(){
 
 	it("get the content for the path", function(){
-		spyOn(default_handler, "getContent");
+		spyOn(DefaultHandler, "getContent");
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);
+		DefaultHandler.negotiateContent("path/test", ".html", {}, spyCallback);
 
-		expect(default_handler.getContent.mostRecentCall.args[0]).toEqual("path/test");
+		expect(DefaultHandler.getContent.mostRecentCall.args[0]).toEqual("path/test");
 	});
 
 	it("get the content for a path with special output format", function(){
-		spyOn(default_handler, "getContent");
+		spyOn(DefaultHandler, "getContent");
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", ".rss", {}, spyCallback);
+		DefaultHandler.negotiateContent("path/test", ".rss", {}, spyCallback);
 
-		expect(default_handler.getContent.mostRecentCall.args[0]).toEqual("path/test.rss");
+		expect(DefaultHandler.getContent.mostRecentCall.args[0]).toEqual("path/test.rss");
 	});
 
 	it("extend it with shared contents", function(){
-		spyOn(default_handler, "getContent").andCallFake(function(path, callback){
+		spyOn(DefaultHandler, "getContent").andCallFake(function(path, callback){
 			return callback(null, {});
 		});
 
-		spyOn(default_handler, "getSharedContent");
+		spyOn(DefaultHandler, "getSharedContent");
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);
+		DefaultHandler.negotiateContent("path/test", ".html", {}, spyCallback);
 
-		expect(default_handler.getSharedContent).toHaveBeenCalled();
+		expect(DefaultHandler.getSharedContent).toHaveBeenCalled();
 
 	});
 
 	it("call the callback with all collected content", function(){
-		spyOn(default_handler, "getContent").andCallFake(function(path, callback){
+		spyOn(DefaultHandler, "getContent").andCallFake(function(path, callback){
 			return callback(null, {"content_key": "content_value"}, new Date(2012, 6, 17));
 		});
 
-		spyOn(default_handler, "getSharedContent").andCallFake(function(callback){
+		spyOn(DefaultHandler, "getSharedContent").andCallFake(function(callback){
 			return callback(null, {"shared_key": "shared_value"}, new Date(2012, 6, 18));
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);
+		DefaultHandler.negotiateContent("path/test", ".html", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith(null, { "content_key": "content_value", "shared_key": "shared_value" }, {}, new Date(2012, 6, 18));
 	});
 
 	it("call the callback with an error object, if content for path doesn't exist", function(){
-		spyOn(default_handler, "getContent").andCallFake(function(path, callback){
+		spyOn(DefaultHandler, "getContent").andCallFake(function(path, callback){
 			return callback("error", null, null);
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.negotiateContent("path/test", ".html", {}, spyCallback);
+		DefaultHandler.negotiateContent("path/test", ".html", {}, spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("[Error: Content for path/test not found]", null, null, {});
 	});
@@ -368,17 +368,17 @@ describe("negotiate content", function(){
 describe("get sections", function(){
 
 	it("traverse and collect all valid directory paths", function(){
-		spyOn(fs, "readdir").andCallFake(function(dirpath, callback){
-			if(dirpath === "content_dir"){
+		spyOn(Fs, "readdir").andCallFake(function(dirPath, callback){
+			if(dirPath === "content_dir"){
 				return callback(null, ["sub1", "sub2", "shared", ".git", "index.json", "_page", "page.json"]);
-			} else if(dirpath.indexOf("subsub") < 0){
+			} else if(dirPath.indexOf("subsub") < 0){
 				return callback(null, ["subsub", "page1.json", "_page1"]);
 			}	else {
 				return callback(null, []);
 			}
 		});
 
-		spyOn(fs, "stat").andCallFake(function(p, callback){
+		spyOn(Fs, "stat").andCallFake(function(p, callback){
 			if(p.indexOf(".") > 0){
 				return callback(null, {"isDirectory": function(){ return false }});
 			}	else {
@@ -386,12 +386,12 @@ describe("get sections", function(){
 			}
 		});
 
-		default_handler.contentDir = "content_dir";
+		DefaultHandler.contentDir = "content_dir";
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getSections(spyCallback);
+		DefaultHandler.getSections(spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith([path.join("/"), path.join("/sub1"), path.join("/sub2"), path.join("/sub1/subsub"), path.join("/sub2/subsub")]);
+		expect(spyCallback).toHaveBeenCalledWith([Path.join("/"), Path.join("/sub1"), Path.join("/sub2"), Path.join("/sub1/subsub"), Path.join("/sub2/subsub")]);
 
 	});
 
@@ -399,54 +399,54 @@ describe("get sections", function(){
 
 describe("get content paths", function(){
 
-	it("calls the callback with an error if basepath is null", function(){
+	it("calls the callback with an error if base path is null", function(){
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContentPaths(null, spyCallback);
+		DefaultHandler.getContentPaths(null, spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith("basepath can't be null", []);
+		expect(spyCallback).toHaveBeenCalledWith("base path can't be null", []);
 	});
 
 	it("collect all content files (except shared file)", function(){
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
+		spyOn(Fs, "readdir").andCallFake(function(path, callback){
 			return callback(null, ["index.json", "page1.json", "page2.json", "_shared"]);
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContentPaths("path/test", spyCallback);
+		DefaultHandler.getContentPaths("path/test", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, [path.join("path/test/index"), path.join("path/test/page1"), path.join("path/test/page2")]);
+		expect(spyCallback).toHaveBeenCalledWith(null, [Path.join("path/test/index"), Path.join("path/test/page1"), Path.join("path/test/page2")]);
 	});
 
 	it("collect files with special output extensions", function(){
-		spyOn(fs, "readdir").andCallFake(function(path, callback) {
+		spyOn(Fs, "readdir").andCallFake(function(path, callback) {
 			return callback(null, ["index.json", "page1.json", "page1.rss.json", "page2.json", "_shared"]);
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContentPaths("path/test", spyCallback);
+		DefaultHandler.getContentPaths("path/test", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, [path.join("path/test/index"), path.join("path/test/page1"), path.join("path/test/page1.rss"), path.join("path/test/page2")]);
+		expect(spyCallback).toHaveBeenCalledWith(null, [Path.join("path/test/index"), Path.join("path/test/page1"), Path.join("path/test/page1.rss"), Path.join("path/test/page2")]);
 	});
 
 	it("collect the extended directories", function(){
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
+		spyOn(Fs, "readdir").andCallFake(function(path, callback){
 			return callback(null, ["index.json", "subdir", "_index", "_another_page", "another_subdir"]);
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContentPaths("path/test", spyCallback);
+		DefaultHandler.getContentPaths("path/test", spyCallback);
 
-		expect(spyCallback).toHaveBeenCalledWith(null, [path.join("path/test/index"), path.join("path/test/another_page")]);
+		expect(spyCallback).toHaveBeenCalledWith(null, [Path.join("path/test/index"), Path.join("path/test/another_page")]);
 
 	});
 
 	it("calls the callback with an error if directory not found", function(){
-		spyOn(fs, "readdir").andCallFake(function(path, callback){
+		spyOn(Fs, "readdir").andCallFake(function(path, callback){
 			return callback("error", null);
 		});
 
 		var spyCallback = jasmine.createSpy();
-		default_handler.getContentPaths("path/not_exist", spyCallback);
+		DefaultHandler.getContentPaths("path/not_exist", spyCallback);
 
 		expect(spyCallback).toHaveBeenCalledWith("error", []);
 	});
