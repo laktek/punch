@@ -11,19 +11,19 @@ var ConfigHandler = require("../lib/config_handler.js");
 describe("init", function() {
 
 	it("pass arguments to the called command", function() {
-		spyOn(Cli, "Server");
+		spyOn(Cli, "server");
 
-		Cli.init(["Server", "3009"]);
+		Cli.init(["server", "3009"]);
 
-		expect(Cli.Server).toHaveBeenCalledWith(["3009"]);
+		expect(Cli.server).toHaveBeenCalledWith(["3009"]);
 	});
 
 	it("call commands by short code", function() {
-		spyOn(Cli, "Server");
+		spyOn(Cli, "server");
 
 		Cli.init(["s", "3009"]);
 
-		expect(Cli.Server).toHaveBeenCalledWith(["3009"]);
+		expect(Cli.server).toHaveBeenCalledWith(["3009"]);
 	});
 
 	it("return help for invalid commands", function() {
@@ -76,26 +76,26 @@ describe("setup a new site", function() {
 
 });
 
-describe("start the Server", function() {
+describe("start the server", function() {
 
 	it("get the config given in the path", function() {
 		spyOn(ConfigHandler, "getConfig");
 
-		Cli.Server(["custom_config.json"]);
+		Cli.server(["custom_config.json"]);
 
 		expect(ConfigHandler.getConfig).toHaveBeenCalledWith("custom_config.json", jasmine.any(Function));
 	});
 
-	it("start the Server with the port given in arguments", function() {
+	it("start the server with the port given in arguments", function() {
 		spyOn(ConfigHandler, "getConfig").andCallFake(function(config_path, callback) {
-			return callback({ "Server": { "port": 9009 } });
+			return callback({ "server": { "port": 9009 } });
 		});
 
 		spyOn(Server, "startServer");
 
-		Cli.Server(["3001"]);
+		Cli.server(["3001"]);
 
-		expect(Server.startServer).toHaveBeenCalledWith({ "Server": { "port": 3001 } });
+		expect(Server.startServer).toHaveBeenCalledWith({ "server": { "port": 3001 } });
 	});
 
 });
