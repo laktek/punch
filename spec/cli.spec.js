@@ -112,18 +112,18 @@ describe("generate a site", function() {
 
 	it("set the blank state", function() {
 		spyOn(ConfigHandler, "getConfig").andCallFake(function(path, callback) {
-			callback({ "SiteGenerator": { "blank": false }, "plugins": { "SiteGenerator_hooks": {} } });
+			callback({ "generator": { "blank": false }, "plugins": { "generator_hooks": {} } });
 		});
 		spyOn(SiteGenerator, "setup");
 		spyOn(SiteGenerator, "generate");
 
 		Cli.generate(["--blank"]);
 
-		expect(SiteGenerator.setup).toHaveBeenCalledWith({ "SiteGenerator": { "blank": true }, "plugins": { "SiteGenerator_hooks": {} } });
+		expect(SiteGenerator.setup).toHaveBeenCalledWith({ "generator": { "blank": true }, "plugins": { "generator_hooks": {} } });
 	});
 
-	it("setup the SiteGenerator with the supplied config", function() {
-		var dummy_config = { "SiteGenerator": { "blank": false }, "plugins": { "SiteGenerator_hooks": {} } };
+	it("setup the generator with the supplied config", function() {
+		var dummy_config = { "generator": { "blank": false }, "plugins": { "generator_hooks": {} } };
 		spyOn(ConfigHandler, "getConfig").andCallFake(function(path, callback) {
 			callback(dummy_config);
 		});
@@ -137,7 +137,7 @@ describe("generate a site", function() {
 	});
 
 	it("call generate with a callback", function() {
-		var dummy_config = { "SiteGenerator": { "blank": false }, "plugins": { "SiteGenerator_hooks": {} } };
+		var dummy_config = { "generator": { "blank": false }, "plugins": { "generator_hooks": {} } };
 		spyOn(ConfigHandler, "getConfig").andCallFake(function(config_path, callback) {
 			return callback(dummy_config);
 		});
