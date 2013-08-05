@@ -35,3 +35,6 @@ tags
 auto-save-list
 tramp
 .\#*
+
+# WebStorm
+.idea
