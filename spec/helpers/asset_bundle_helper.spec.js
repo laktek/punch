@@ -5,7 +5,7 @@ var AssetBundler = require("../../lib/asset_bundler");
 
 describe("stylesheet bundle tag", function(){
 
-	it("output the bundled tag when bundling no host is provided and fingerprint is disabled", function(){
+	it("output the bundled tag when bundling with no host is provided and fingerprint is disabled", function(){
 		spyOn(AssetBundler, "setup");
 
 		spyOn(AssetBundler, "statBundle").andCallFake(function(basename, extension, callback) {
@@ -19,7 +19,7 @@ describe("stylesheet bundle tag", function(){
 		expect(AssetBundleHelper.stylesheet_bundle("/assets/all.css")).toEqual("<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/all.css\">");
 	});
 
-	it("output the bundled tag when bundling no host is provided and fingerprint is enabled", function(){
+	it("output the bundled tag when bundling with no host is provided and fingerprint is enabled", function(){
 		spyOn(AssetBundler, "setup");
 
 		spyOn(AssetBundler, "statBundle").andCallFake(function(basename, extension, callback) {
@@ -45,6 +45,20 @@ describe("stylesheet bundle tag", function(){
 		AssetBundleHelperObj.get( "/path/test", ".html", { "host": "localhost:9009" }, spyCallback);
 
 		expect(AssetBundleHelper.stylesheet_bundle("/assets/all.css")).toEqual("<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/initial.css\">\n<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/site.css\">");
+	});
+
+	it("output an empty string when bundling an incorrect bundle path", function(){
+		spyOn(AssetBundler, "setup");
+
+		spyOn(AssetBundler, "statBundle").andCallFake(function(basename, extension, callback) {
+			return callback(null, { "mtime": new Date(2012, 7, 25) });
+		});
+
+		AssetBundleHelperObj.setup( { "asset_bundling": { "skip_hosts": ["localhost", "127.0.0.1", ".local"], "fingerprint": true }, "bundles": { "/assets/all.css": [ "/assets/initial.css", "/assets/site.css" ]} });
+		var spyCallback = jasmine.createSpy();
+		AssetBundleHelperObj.get( "/path/test", ".html", { "host": "" }, spyCallback);
+
+		expect(AssetBundleHelper.stylesheet_bundle("/assets/invalid_path.css")).toEqual("");
 	});
 
 });
@@ -91,6 +105,20 @@ describe("javascript bundle tag", function(){
 		AssetBundleHelperObj.get( "/path/test", ".html", { "host": "localhost:9009" }, spyCallback);
 
 		expect(AssetBundleHelper.javascript_bundle("/assets/all.js")).toEqual("<script src=\"/assets/jquery.js\"></script>\n<script src=\"/assets/site.js\"></script>");
+	});
+
+	it("output an empty string when bundling an incorrect bundle path", function(){
+		spyOn(AssetBundler, "setup");
+
+		spyOn(AssetBundler, "statBundle").andCallFake(function(basename, extension, callback) {
+			return callback(null, { "mtime": new Date(2012, 7, 25) });
+		});
+
+		AssetBundleHelperObj.setup( { "asset_bundling": { "skip_hosts": ["localhost", "127.0.0.1", ".local"], "fingerprint": true }, "bundles": { "/assets/all.js": [ "/assets/jquery.js", "/assets/site.coffee" ]} });
+		var spyCallback = jasmine.createSpy();
+		AssetBundleHelperObj.get( "/path/test", ".html", { "host": undefined }, spyCallback);
+
+		expect(AssetBundleHelper.javascript_bundle("/assets/invalid_path.js")).toEqual("");
 	});
 
 });
