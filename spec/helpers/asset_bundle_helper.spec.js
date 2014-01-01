@@ -1,11 +1,12 @@
 var AssetBundleHelperObj = require("../../lib/helpers/asset_bundle_helper");
 var AssetBundleHelper = AssetBundleHelperObj.directAccess()["block_helpers"];
+var Fs = require("fs");
 
 var AssetBundler = require("../../lib/asset_bundler");
 
 describe("stylesheet bundle tag", function(){
 
-	it("output the bundled tag when bundling with no host is provided and fingerprint is disabled", function(){
+	it("output only the bundled tag when no host is provided and fingerprint is disabled", function(){
 		spyOn(AssetBundler, "setup");
 
 		spyOn(AssetBundler, "statBundle").andCallFake(function(basename, extension, callback) {
@@ -19,7 +20,7 @@ describe("stylesheet bundle tag", function(){
 		expect(AssetBundleHelper.stylesheet_bundle("/assets/all.css")).toEqual("<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/all.css\">");
 	});
 
-	it("output the bundled tag when bundling with no host is provided and fingerprint is enabled", function(){
+	it("output the bundled tag with fingerprint when fingerprint is enabled", function(){
 		spyOn(AssetBundler, "setup");
 
 		spyOn(AssetBundler, "statBundle").andCallFake(function(basename, extension, callback) {
@@ -33,18 +34,22 @@ describe("stylesheet bundle tag", function(){
 		expect(AssetBundleHelper.stylesheet_bundle("/assets/all.css")).toEqual("<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/all-" + new Date(2012, 7, 25).getTime() + ".css\">");
 	});
 
-	it("output tags for individual files in bundle when host is a local", function(){
+	it("output tags for individual files in bundle when host is a local", function() {
 		spyOn(AssetBundler, "setup");
 
 		spyOn(AssetBundler, "statBundle").andCallFake(function(basename, extension, callback) {
 			return callback(null, { "mtime": new Date(2012, 7, 25) });
 		});
 
-		AssetBundleHelperObj.setup( { "asset_bundling": { "skip_hosts": ["localhost", "127.0.0.1", ".local"] }, "bundles": { "/assets/all.css": [ "/assets/initial.css", "/assets/site.less" ]} });
+    spyOn(Fs, "readdirSync").andCallFake(function(dirpath) {
+      return ['one.css', 'two.css'];
+    });
+
+		AssetBundleHelperObj.setup( { "asset_bundling": { "skip_hosts": ["localhost", "127.0.0.1", ".local"] }, "bundles": { "/assets/all.css": [ "/assets/initial.css", "/assets/site.less", "/assets/extra/*.css" ]}, "template_dir": "templates" });
 		var spyCallback = jasmine.createSpy();
 		AssetBundleHelperObj.get( "/path/test", ".html", { "host": "localhost:9009" }, spyCallback);
 
-		expect(AssetBundleHelper.stylesheet_bundle("/assets/all.css")).toEqual("<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/initial.css\">\n<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/site.css\">");
+		expect(AssetBundleHelper.stylesheet_bundle("/assets/all.css")).toEqual("<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/initial.css\">\n<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/site.css\">\n<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/extra/one.css\">\n<link rel=\"stylesheet\" type=\"text/css\" media=\"screen\" href=\"/assets/extra/two.css\">");
 	});
 
 	it("output an empty string when bundling an incorrect bundle path", function(){
