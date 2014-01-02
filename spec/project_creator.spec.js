@@ -12,7 +12,7 @@ describe("creating a bare structure", function() {
 			return "ROBOCOPY " + templatePath + " " + path  + " *.* /E";
 		}
 
-		return "cp -r " + templatePath + "/* " + path;
+		return "cp -r " + templatePath + "/ " + path + "/";
 	}
 
 	it("create the site directory if needed", function() {
