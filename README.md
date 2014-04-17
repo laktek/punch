@@ -1,5 +1,5 @@
-# Punch 
-## A Fun and Easy Way to Build Modern Websites  
+# Punch
+## A Fun and Easy Way to Build Modern Websites
 
 Punch is a simple, intuitive web publishing framework that will delight both designers and developers.
 
@@ -25,7 +25,7 @@ Punch is a simple, intuitive web publishing framework that will delight both des
 * Add hooks to run after generating a page or site.
 * Define your own publishing strategy.
 
-### Getting Started 
+### Getting Started
 
 * Download and install Node.js. http://nodejs.org/#download 
 
@@ -40,6 +40,10 @@ Punch is a simple, intuitive web publishing framework that will delight both des
 * Follow the steps in hands-on tutorial.
 
 **Note**: If you experience any issues in installing Punch on Windows, please [read this guide](https://github.com/laktek/punch/wiki/Installing-on-Windows).
+
+Alternatively, you can use [Nitrous.IO](https://www.nitrous.io/hack_button?source=embed&runtime=nodejs&repo=laktek%2Fpunch&file_to_open=README) to setup a development enviroment to hack Punch.
+
+[![Hack laktek/punch on Nitrous.IO](https://d3o0mnbgv6k92a.cloudfront.net/assets/hack-l-v1-3cc067e71372f6045e1949af9d96095b.png)](https://www.nitrous.io/hack_button?source=embed&runtime=nodejs&repo=laktek%2Fpunch&file_to_open=README)
 
 ### Documentation
 
