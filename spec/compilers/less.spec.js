@@ -23,6 +23,17 @@ describe("calling compile", function() {
 		expect(spyCallback).toHaveBeenCalledWith(null, "rendered file");
 	});
 
+  it("calls the callback with the result when Less compiler returns an object (version > 2)", function() {
+		spyOn(Less, "render").andCallFake(function(input, options, callback) {
+			return callback(null, { css: "rendered file"});
+		});
+
+		var spyCallback = jasmine.createSpy();
+		LessCompiler.compile("test", "sample.less", spyCallback);
+
+		expect(spyCallback).toHaveBeenCalledWith(null, "rendered file");
+	});
+
   it("calls the callback with the error message when an error occurrs", function() {
 		spyOn(Less, "render").andCallFake(function(input, options, callback){
 			return callback({ message: "Some error occurred."}, null);
