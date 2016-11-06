@@ -41,10 +41,6 @@ Punch is a simple, intuitive web publishing framework that will delight both des
 
 **Note**: If you experience any issues in installing Punch on Windows, please [read this guide](https://github.com/laktek/punch/wiki/Installing-on-Windows).
 
-Alternatively, you can use [Nitrous.IO](https://www.nitrous.io/hack_button?source=embed&runtime=nodejs&repo=laktek%2Fpunch&file_to_open=README) to setup a development enviroment to hack Punch.
-
-[![Hack laktek/punch on Nitrous.IO](https://d3o0mnbgv6k92a.cloudfront.net/assets/hack-l-v1-3cc067e71372f6045e1949af9d96095b.png)](https://www.nitrous.io/hack_button?source=embed&runtime=nodejs&repo=laktek%2Fpunch&file_to_open=README)
-
 ### Documentation
 
 For complete documentation on usage & customizations, check the [Punch Guide](https://github.com/laktek/punch/wiki)
