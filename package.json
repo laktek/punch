@@ -36,6 +36,7 @@
     "less": ">= 1.4.1",
     "marked": ">= 0.2.5",
     "mime": ">= 1.2.5",
+    "mime-types": ">= 2.1.17",
     "mustache": "0.7.3",
     "uglify-js": ">= 2.2.3",
     "underscore": ">= 1.4.2"
